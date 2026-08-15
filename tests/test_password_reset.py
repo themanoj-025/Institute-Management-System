@@ -10,13 +10,13 @@ Tests cover:
 """
 
 import uuid
+from datetime import timedelta
 from unittest.mock import patch
 
 import bcrypt
 import pytest
-from datetime import timedelta
 
-from database.models import User, UserRole, PasswordResetToken
+from database.models import PasswordResetToken, User, UserRole
 from services.auth_service import AuthError
 from utils.time import utc_now
 

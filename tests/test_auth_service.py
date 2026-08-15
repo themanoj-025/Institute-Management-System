@@ -1,12 +1,11 @@
 from unittest.mock import patch
 
-from utils.time import utc_now
-
 import bcrypt
 import pytest
 
 from database.models import User, UserRole
 from services.auth_service import AuthError
+from utils.time import utc_now
 
 PWD_ADMIN = b"TestAdminPass123!"
 PWD_STAFF = b"StaffPass456!"

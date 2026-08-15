@@ -54,8 +54,10 @@ def test_pagination_response_shape():
 
     # Good auth shape test via creating a JWT (must include jti for blacklist check)
     import uuid
+
     import jwt
-    from api.main import SECRET_KEY, ALGORITHM
+
+    from api.main import ALGORITHM, SECRET_KEY
 
     token = jwt.encode(
         {
@@ -88,8 +90,9 @@ def test_pagination_response_shape():
 def _make_rate_limit_app(limits=None):
     """Create a minimal app with known rate limits for testing."""
     from fastapi import FastAPI
-    from api.rate_limiter import RateLimitMiddleware
+
     from api.main import v1_router
+    from api.rate_limiter import RateLimitMiddleware
 
     if limits is None:
         limits = {
@@ -159,8 +162,10 @@ def test_rate_limiter_independent_paths():
         rl_client.post("/v1/auth/login", json={"username": "none", "password": "bad"})
     # /v1/auth/refresh should still work (different counter)
     import uuid
+
     import jwt
-    from api.main import SECRET_KEY, ALGORITHM
+
+    from api.main import ALGORITHM, SECRET_KEY
 
     token = jwt.encode(
         {

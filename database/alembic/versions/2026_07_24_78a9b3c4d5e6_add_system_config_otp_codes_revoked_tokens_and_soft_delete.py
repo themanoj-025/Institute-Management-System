@@ -27,9 +27,8 @@ New indexes:
 
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "78a9b3c4d5e6"
@@ -71,9 +70,7 @@ def upgrade() -> None:
         sa.Column("attempt_count", sa.Integer(), server_default="0"),
         sa.Column("max_attempts", sa.Integer(), server_default="5"),
         sa.Column("is_used", sa.Boolean(), server_default="0"),
-        sa.Column(
-            "created_at", sa.DateTime(), nullable=True, server_default=sa.func.now()
-        ),
+        sa.Column("created_at", sa.DateTime(), nullable=True, server_default=sa.func.now()),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_otp_codes_user_id", "otp_codes", ["user_id"])
@@ -89,9 +86,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("jti", sa.String(length=64), nullable=False),
         sa.Column("token_type", sa.String(length=20), server_default="access"),
-        sa.Column(
-            "revoked_at", sa.DateTime(), nullable=True, server_default=sa.func.now()
-        ),
+        sa.Column("revoked_at", sa.DateTime(), nullable=True, server_default=sa.func.now()),
         sa.Column("expires_at", sa.DateTime(), nullable=False),
         sa.Column("user_id", sa.Integer(), sa.ForeignKey("users.id"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
@@ -105,33 +100,25 @@ def upgrade() -> None:
     # fees: soft-delete columns
     with op.batch_alter_table("fees") as batch_op:
         batch_op.add_column(
-            sa.Column(
-                "is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0")
-            )
+            sa.Column("is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0"))
         )
         batch_op.add_column(sa.Column("deleted_at", sa.DateTime(), nullable=True))
         batch_op.add_column(
-            sa.Column(
-                "deleted_by", sa.Integer(), sa.ForeignKey("users.id"), nullable=True
-            )
+            sa.Column("deleted_by", sa.Integer(), sa.ForeignKey("users.id"), nullable=True)
         )
         batch_op.create_index("ix_fees_is_deleted", ["is_deleted"])
 
     # fee_payments: soft-delete columns
     with op.batch_alter_table("fee_payments") as batch_op:
         batch_op.add_column(
-            sa.Column(
-                "is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0")
-            )
+            sa.Column("is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0"))
         )
         batch_op.add_column(sa.Column("deleted_at", sa.DateTime(), nullable=True))
 
     # results: soft-delete columns
     with op.batch_alter_table("results") as batch_op:
         batch_op.add_column(
-            sa.Column(
-                "is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0")
-            )
+            sa.Column("is_deleted", sa.Boolean(), nullable=False, server_default=sa.text("0"))
         )
         batch_op.add_column(sa.Column("deleted_at", sa.DateTime(), nullable=True))
         batch_op.create_index("ix_results_is_deleted", ["is_deleted"])

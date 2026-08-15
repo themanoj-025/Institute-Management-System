@@ -21,20 +21,9 @@ from datetime import datetime, timedelta
 import bcrypt
 import pytest
 
-from database.models import (
-    Attendance,
-    AttendanceStatus,
-    Course,
-    Fee,
-    FeeStatus,
-    Result,
-    Session as AcadSession,
-    Staff,
-    Student,
-    Subject,
-    User,
-    UserRole,
-)
+from database.models import Attendance, AttendanceStatus, Course, Fee, FeeStatus, Result
+from database.models import Session as AcadSession
+from database.models import Staff, Student, Subject, User, UserRole
 from utils.time import utc_now
 
 
@@ -305,8 +294,9 @@ class TestEndToEndJourney:
             assert "direction" in explanation
 
         # ── Step 7: Generate export (fee report) ──
-        from services.export_service import ExportService
         import tempfile
+
+        from services.export_service import ExportService
 
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
             svc = ExportService(export_dir=tmpdir, auto_create=True)

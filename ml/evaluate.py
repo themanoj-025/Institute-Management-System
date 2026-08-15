@@ -18,7 +18,6 @@ Typical usage::
 
 import json
 import logging
-from utils.time import utc_now
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -38,6 +37,7 @@ from sklearn.metrics import (
 from ml.features import FEATURE_NAMES, compute_all_features, compute_target
 from ml.registry import load_metadata, load_model
 from ml.train import DEFAULT_PARAMS
+from utils.time import utc_now
 
 logger = logging.getLogger("ml.evaluate")
 
@@ -580,6 +580,7 @@ def load_and_evaluate(
             logger.warning("Model '%s' not found in registry.", model_name)
             return None
         import base64
+
         import xgboost as xgb
 
         model_bytes = base64.b64decode(model_b64)

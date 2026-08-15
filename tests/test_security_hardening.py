@@ -89,9 +89,11 @@ class TestInputValidation:
     """Verify the API rejects or safely handles malicious input."""
 
     def _make_token(self):
-        import jwt
         import uuid
-        from api.main import SECRET_KEY, ALGORITHM
+
+        import jwt
+
+        from api.main import ALGORITHM, SECRET_KEY
 
         return jwt.encode(
             {
@@ -134,8 +136,8 @@ class TestInputValidation:
 
     def test_sql_injection_in_search(self):
         """SQL injection in search should not cause errors."""
-        from services.search_service import SearchService
         from database.db_session import SessionLocal
+        from services.search_service import SearchService
 
         session = SessionLocal()
         try:
@@ -192,7 +194,7 @@ def test_search_service_uses_parameterized_queries():
 
 def test_pagination_per_page_is_capped():
     """Verify paginated_response caps per_page at MAX_PER_PAGE."""
-    from api.main import paginated_response, MAX_PER_PAGE
+    from api.main import MAX_PER_PAGE, paginated_response
 
     assert MAX_PER_PAGE == 100
 
@@ -275,9 +277,10 @@ def test_health_check_probes_database():
 def test_account_lockout_after_max_attempts(test_db, auth_service):
     """Account must be locked after MAX_LOGIN_ATTEMPTS consecutive failures."""
     import bcrypt
+
+    from config.settings import MAX_LOGIN_ATTEMPTS
     from database.models import User, UserRole
     from services.auth_service import AuthError
-    from config.settings import MAX_LOGIN_ATTEMPTS
 
     assert MAX_LOGIN_ATTEMPTS == 5
     pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(4)).decode("utf-8")
@@ -306,9 +309,9 @@ def test_account_lockout_after_max_attempts(test_db, auth_service):
 
 def test_every_token_has_unique_jti():
     """Every JWT token should have a unique jti claim."""
-    from api.main import create_access_token
     import jwt
-    from api.main import SECRET_KEY, ALGORITHM
+
+    from api.main import ALGORITHM, SECRET_KEY, create_access_token
 
     jtis = set()
     for i in range(100):
@@ -344,6 +347,7 @@ def test_env_file_exists():
 def test_correct_login_resets_failed_attempts(test_db, auth_service):
     """Successful login resets failed_login_attempts to 0."""
     import bcrypt
+
     from database.models import User, UserRole
     from services.auth_service import AuthError
 
@@ -377,7 +381,8 @@ def test_correct_login_resets_failed_attempts(test_db, auth_service):
 def test_email_verification_tokens(test_db, auth_service):
     """Verify email verification token generation and validation."""
     import bcrypt
-    from database.models import User, UserRole, EmailVerificationToken
+
+    from database.models import EmailVerificationToken, User, UserRole
     from services.auth_service import AuthError
 
     pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(4)).decode("utf-8")
@@ -430,6 +435,7 @@ def test_email_verification_tokens(test_db, auth_service):
 def test_login_rejected_when_email_not_verified(test_db, auth_service):
     """Login must be rejected when email_verified is False."""
     import bcrypt
+
     from database.models import User, UserRole
     from services.auth_service import AuthError
 
@@ -452,6 +458,7 @@ def test_login_rejected_when_email_not_verified(test_db, auth_service):
 def test_invalid_verification_token_rejected(test_db, auth_service):
     """Invalid verification tokens should be rejected."""
     import bcrypt
+
     from database.models import User, UserRole
     from services.auth_service import AuthError
 

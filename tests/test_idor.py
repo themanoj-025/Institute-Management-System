@@ -8,10 +8,11 @@ Tests:
 4. Admin/staff access not blocked by IDOR checks
 """
 
-from fastapi.testclient import TestClient
 from unittest.mock import MagicMock
 
-from api.main import app, _resolve_student_user_id
+from fastapi.testclient import TestClient
+
+from api.main import _resolve_student_user_id, app
 
 _client = TestClient(app)
 

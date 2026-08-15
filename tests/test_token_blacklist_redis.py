@@ -11,7 +11,6 @@ import uuid
 from datetime import timedelta
 from unittest.mock import patch
 
-
 from utils.time import utc_now
 
 
@@ -21,7 +20,8 @@ class TestRedisTokenBlacklist:
     def _make_token(self, jti=None, user_id=1):
         """Create a JWT with the given jti."""
         import jwt
-        from api.main import SECRET_KEY, ALGORITHM
+
+        from api.main import ALGORITHM, SECRET_KEY
 
         if jti is None:
             jti = str(uuid.uuid4())
@@ -108,8 +108,8 @@ class TestRedisTokenBlacklist:
     def test_blacklist_consistency_redis_and_db(self):
         """Both Redis and DB should have the blacklisted token."""
         from api.main import _blacklist_token, _check_token_blacklist
-        from database.models import RevokedToken
         from database.db_session import SessionLocal
+        from database.models import RevokedToken
 
         token, jti, expire = self._make_token()
         _blacklist_token(jti, expire, user_id=1)

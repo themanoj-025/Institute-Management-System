@@ -7,16 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database.db_session import Base
-from database.models import (
-    Course,
-    Fee,
-    FeePayment,
-    FeeStatus,
-    Session,
-    Student,
-    User,
-    UserRole,
-)
+from database.models import Course, Fee, FeePayment, FeeStatus, Session, Student, User, UserRole
 from services.fee_service import FeeService
 
 

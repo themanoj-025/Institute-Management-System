@@ -41,8 +41,9 @@ class TestTimezoneRoundTrip:
         This test verifies the Python-level behavior (comparison safety) and
         documents the SQLite limitation.
         """
-        from database.models import User, UserRole
         import bcrypt
+
+        from database.models import User, UserRole
 
         pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(14)).decode("utf-8")
         now = utc_now()
@@ -129,8 +130,9 @@ class TestExportOutputValidity:
 
     def test_excel_opens_with_expected_sheet(self):
         """Excel export should open via openpyxl with expected sheet/row structure."""
-        from services.export_service import ExportService
         import openpyxl
+
+        from services.export_service import ExportService
 
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
             svc = ExportService(export_dir=tmpdir, auto_create=True)
@@ -233,10 +235,10 @@ class TestMLPromotionRule:
 
     def test_promotion_history_records_are_queryable(self, test_db):
         """Verify promotion history records are stored and queryable."""
-        from database.models import PromotionHistory
-
         # Insert two test records directly with unique identifiers
         import uuid
+
+        from database.models import PromotionHistory
 
         tag1 = uuid.uuid4().hex[:8]
         tag2 = uuid.uuid4().hex[:8]
@@ -311,7 +313,7 @@ class TestDesktopApiAuthIntegration:
         import bcrypt
         import jwt
 
-        from api.main import create_access_token, SECRET_KEY, ALGORITHM
+        from api.main import ALGORITHM, SECRET_KEY, create_access_token
 
         # Create a test user via auth_service
         pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(14)).decode("utf-8")
@@ -394,11 +396,7 @@ class TestDesktopApiAuthIntegration:
         import uuid
         from datetime import timedelta
 
-        from api.main import (
-            _blacklist_token,
-            _check_token_blacklist,
-            utc_now,
-        )
+        from api.main import _blacklist_token, _check_token_blacklist, utc_now
 
         # Create and blacklist a token
         jti = str(uuid.uuid4())

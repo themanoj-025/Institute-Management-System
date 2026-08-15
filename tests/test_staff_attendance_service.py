@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database.db_session import Base
-from database.models import Staff, StaffAttendance, AttendanceStatus, User, UserRole
+from database.models import AttendanceStatus, Staff, StaffAttendance, User, UserRole
 from services.staff_attendance_service import StaffAttendanceService
 
 

@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from database.db_session import Base
-from database.models import LeaveStatus, Staff, Student, User, UserRole, Course, Session
+from database.models import Course, LeaveStatus, Session, Staff, Student, User, UserRole
 from services.leave_service import LeaveService
 
 
