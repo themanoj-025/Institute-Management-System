@@ -18,7 +18,7 @@ repos:
         args: [--config-file, mypy.ini]
         additional_dependencies:
           - sqlalchemy>=2.0.30
-          - pydantic>=2.0.0
+          - pydantic>=2.13.4
           - fastapi>=0.100.0
         entry: mypy analytics api auth config database ml services utils
         language: python
