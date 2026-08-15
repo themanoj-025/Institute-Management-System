@@ -77,27 +77,19 @@ logger = setup_logger("bb-ims-api")
 from database.db_session import get_session
 from database.models import (
     Attendance,
-    AttendanceStatus,
     Course,
     Fee,
-    FeePayment,
     FeeStatus,
     Leave,
-    LeaveStatus,
-    Notice,
     Placement,
     PromotionHistory,
     Result,
     RevokedToken,
 )
-from database.models import Session as AcadSession
 from database.models import (
     Staff,
-    StaffAttendance,
     Student,
-    Subject,
     SystemConfig,
-    Timetable,
     User,
     UserRole,
 )
