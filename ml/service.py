@@ -18,8 +18,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import func
 from sqlalchemy import case as sql_case
+from sqlalchemy import func
 
 from database.models import Attendance, Fee, Student
 from ml.explain import explain_prediction

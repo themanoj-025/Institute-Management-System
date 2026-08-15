@@ -7,16 +7,7 @@ from sqlalchemy import create_engine, or_
 from sqlalchemy.orm import sessionmaker
 
 from database.db_session import Base
-from database.models import (
-    Course,
-    Notice,
-    Staff,
-    Student,
-    Subject,
-    User,
-    UserRole,
-    Session,
-)
+from database.models import Course, Notice, Session, Staff, Student, Subject, User, UserRole
 from services.search_service import SearchService
 
 

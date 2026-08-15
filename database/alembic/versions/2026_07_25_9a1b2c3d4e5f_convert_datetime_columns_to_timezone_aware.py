@@ -40,9 +40,8 @@ through a naive column is inherently lossy.
 
 from typing import List, Sequence, Tuple, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "9a1b2c3d4e5f"

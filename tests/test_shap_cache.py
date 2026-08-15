@@ -6,15 +6,11 @@ Tests cover:
 3. Cache miss (first call) creates and caches the explainer
 """
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 
-from ml.explain import (
-    _get_cached_explainer,
-    _explainer_cache,
-    invalidate_explainer_cache,
-)
+from ml.explain import _explainer_cache, _get_cached_explainer, invalidate_explainer_cache
 
 
 class TestShapExplainerCache:

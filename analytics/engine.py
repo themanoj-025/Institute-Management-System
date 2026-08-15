@@ -15,19 +15,11 @@ import logging
 from datetime import date, timedelta
 from typing import Any, Dict, List
 
-from sqlalchemy import func
 from sqlalchemy import case as sql_case
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from database.models import (
-    Attendance,
-    AttendanceStatus,
-    Fee,
-    FeeStatus,
-    Placement,
-    Result,
-    Student,
-)
+from database.models import Attendance, AttendanceStatus, Fee, FeeStatus, Placement, Result, Student
 
 logger = logging.getLogger("analytics.engine")
 

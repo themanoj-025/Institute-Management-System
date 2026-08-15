@@ -18,9 +18,8 @@ This enables the enforcement of email verification before first login.
 
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "b5c6d7e8f9a0"
@@ -72,11 +71,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Drop email_verification_tokens table and email_verified column."""
-    op.drop_index(
-        "ix_email_verification_expires", table_name="email_verification_tokens"
-    )
-    op.drop_index(
-        "ix_email_verification_user_id", table_name="email_verification_tokens"
-    )
+    op.drop_index("ix_email_verification_expires", table_name="email_verification_tokens")
+    op.drop_index("ix_email_verification_user_id", table_name="email_verification_tokens")
     op.drop_table("email_verification_tokens")
     op.drop_column("users", "email_verified")

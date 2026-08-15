@@ -11,9 +11,9 @@ Models directory: ``ml/models/``
 import json
 import os
 from pathlib import Path
+from typing import Dict, List, Optional
 
 from utils.time import utc_now
-from typing import Dict, List, Optional
 
 # Models directory
 MODELS_DIR = Path(__file__).resolve().parent / "models"

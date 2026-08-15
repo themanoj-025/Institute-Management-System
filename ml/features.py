@@ -18,15 +18,7 @@ from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
-from database.models import (
-    Attendance,
-    AttendanceStatus,
-    Fee,
-    FeeStatus,
-    Leave,
-    Result,
-    Student,
-)
+from database.models import Attendance, AttendanceStatus, Fee, FeeStatus, Leave, Result, Student
 from utils.time import utc_now
 
 # Feature names registry (used by SHAP explainer)

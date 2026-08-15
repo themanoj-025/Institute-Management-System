@@ -5,14 +5,14 @@ import sys
 import time
 from datetime import date, timedelta
 
-from utils.time import utc_now
-
 import bcrypt
 import numpy as np
 from faker import Faker
 from sqlalchemy import insert, text
 from sqlalchemy.orm import Session
 from tqdm import tqdm
+
+from utils.time import utc_now
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -30,13 +30,7 @@ from database.models import (
     Result,
 )
 from database.models import Session as AcadSession
-from database.models import (
-    Staff,
-    Student,
-    Subject,
-    User,
-    UserRole,
-)
+from database.models import Staff, Student, Subject, User, UserRole
 
 fake = Faker("en_IN")
 

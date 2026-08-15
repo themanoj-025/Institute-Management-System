@@ -154,10 +154,10 @@ class TestOtpFlow:
 
     def test_otp_never_in_response(self):
         """Verify OTP never appears in login response."""
-        from services.auth_service import AuthService
-
         # The login response should NOT contain otp_code
         import inspect
+
+        from services.auth_service import AuthService
 
         source = inspect.getsource(AuthService.login)
         # The return statement should not include 'otp_code' in the dict

@@ -50,23 +50,22 @@ import os
 import sys
 import traceback
 import uuid
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
-
-from utils.time import utc_now
 from enum import Enum
 from math import ceil
 from typing import Any, Dict, List, Optional
 
 import bcrypt
 import jwt
-from contextlib import asynccontextmanager
-
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+from utils.time import utc_now
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -90,7 +89,9 @@ from database.models import (
     PromotionHistory,
     Result,
     RevokedToken,
-    Session as AcadSession,
+)
+from database.models import Session as AcadSession
+from database.models import (
     Staff,
     StaffAttendance,
     Student,
@@ -692,8 +693,9 @@ def _check_token_blacklist(jti: str) -> bool:
     """
     # Try Redis first (fast path)
     try:
-        from config.settings import REDIS_URL
         import redis as _redis
+
+        from config.settings import REDIS_URL
 
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         if r.get(f"bl:{jti}") is not None:
@@ -721,9 +723,11 @@ def _blacklist_token(jti: str, expires_at: datetime, user_id: Optional[int] = No
 
     # Write to Redis with TTL matching token's remaining natural expiry
     try:
-        from config.settings import REDIS_URL
-        import redis as _redis
         import math
+
+        import redis as _redis
+
+        from config.settings import REDIS_URL
 
         now = utc_now()
         ttl_seconds = max(1, int(math.ceil((expires_at - now).total_seconds())))
@@ -1069,8 +1073,9 @@ def health_check():
     tags=["Health"],
 )
 def metrics():
-    from utils.observability import metrics_endpoint as _metrics
     from fastapi.responses import PlainTextResponse
+
+    from utils.observability import metrics_endpoint as _metrics
 
     return PlainTextResponse(content=_metrics(), media_type="text/plain; version=0.0.4")
 

@@ -25,16 +25,24 @@ class SearchService:
 
     def _init_fts(self):
         """Create FTS5 virtual tables if they don't exist."""
-        self.db.execute(text("""
+        self.db.execute(
+            text(
+                """
             CREATE VIRTUAL TABLE IF NOT EXISTS students_fts USING fts5(
                 name, roll_no, email, content='students', content_rowid='id'
             );
-        """))
-        self.db.execute(text("""
+        """
+            )
+        )
+        self.db.execute(
+            text(
+                """
             CREATE VIRTUAL TABLE IF NOT EXISTS notices_fts USING fts5(
                 title, body, content='notices', content_rowid='id'
             );
-        """))
+        """
+            )
+        )
         self.db.commit()
         logger.debug("FTS5 virtual tables initialised")
 

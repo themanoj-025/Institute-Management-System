@@ -13,24 +13,18 @@ Training protocol:
 
 import json
 import logging
-from utils.time import utc_now
 from typing import Dict, Tuple
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import (
-    accuracy_score,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from xgboost import XGBClassifier
 
 from ml.drift import _save_reference_distributions
 from ml.features import FEATURE_NAMES, compute_all_features, compute_target
 from ml.registry import get_latest_model, load_metadata, load_model, save_model
+from utils.time import utc_now
 
 logger = logging.getLogger("ml.train")
 
@@ -304,6 +298,7 @@ def load_risk_model():
     (XGBClassifier or None, model_name or None)
     """
     import base64
+
     import xgboost as xgb
 
     model_name = get_latest_model()

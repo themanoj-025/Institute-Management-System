@@ -431,7 +431,7 @@ def generate_export_task(
 
     export_type: 'csv', 'xlsx', or 'pdf'
     """
-    from services.export_service import ExportService, ExportError
+    from services.export_service import ExportError, ExportService
 
     try:
         svc = ExportService()
