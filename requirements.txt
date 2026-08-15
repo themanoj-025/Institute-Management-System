@@ -24,7 +24,7 @@ PyJWT
 pydantic
 scipy
 scikit-learn>=1.3.0
-xgboost>=2.0.0
+xgboost>=3.4.0
 shap>=0.44.0
 email-validator
 httpx<0.28.0
