@@ -12,7 +12,7 @@ pandas
 numpy
 mplcursors
 reportlab==4.0.7
-openpyxl==3.1.2
+openpyxl==3.1.5
 tkcalendar==1.6.1
 plyer==2.1.0
 faker==20.1.0
