@@ -270,3 +270,11 @@ Contributions are welcome!
 - ⭐ Star the repository if you found it useful
 - 🐛 [Report a bug](https://github.com/CodeWithHardik/Institute-Management-System/issues)
 - 💡 [Request a feature](https://github.com/CodeWithHardik/Institute-Management-System/issues)
+---
+
+## ⭐ Star History
+
+[![Last Commit](https://img.shields.io/github/last-commit/themanoj-025/Institute-Management-System?style=flat-square)](https://github.com/themanoj-025/Institute-Management-System)
+[![Contributors](https://img.shields.io/github/contributors/themanoj-025/Institute-Management-System?style=flat-square)](https://github.com/themanoj-025/Institute-Management-System/graphs/contributors)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=themanoj-025/Institute-Management-System&type=Date)](https://star-history.com/#Institute-Management-System&Date)
