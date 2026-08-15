@@ -11,6 +11,26 @@ A comprehensive educational institute management platform for small-to-medium co
 
 ---
 
+## 📋 Table of Contents
+
+- [Interfaces](#interfaces)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+- [Security](#security)
+- [ML Pipeline](#ml-pipeline)
+- [Project Structure](#project-structure)
+- [License](#-license)
+- [Contributing](#-contributing)
+
+---
+
+> 📸 **Screenshot placeholder:** Add screenshots of the desktop client and the web dashboard.
+
+---
+
 ## Interfaces
 
 | Interface | Stack | Users |
@@ -227,6 +247,26 @@ docker-compose up -d
 
 ---
 
-## License
+## 📄 License
 
-MIT
+MIT — see [LICENSE](LICENSE).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
+
+---
+
+## ⭐ Show Your Support
+
+- ⭐ Star the repository if you found it useful
+- 🐛 [Report a bug](https://github.com/CodeWithHardik/Institute-Management-System/issues)
+- 💡 [Request a feature](https://github.com/CodeWithHardik/Institute-Management-System/issues)
