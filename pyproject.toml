@@ -1,0 +1,42 @@
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+exclude = "(venv|alembic)"
+
+[tool.ruff]
+# Pin the lint rule contract explicitly: newer ruff releases keep expanding
+# their default rule selection (e.g. UP006/UP035/BLE001), which silently
+# breaks CI on pre-existing code. Selecting the classic default set
+# (E4/E7/E9/F) keeps the gate deterministic across ruff versions.
+exclude = ["venv", "alembic"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = ["E501", "F401", "E402", "E731", "E712"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip = ["venv", "alembic"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_return_any = true
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = "database.models"
+disable_error_code = ["var-annotated"]
+
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.bandit]
+exclude_dirs = ["venv", "alembic", "tests"]
+skips = ["B101"]  # allow assert in tests

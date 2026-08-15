@@ -1,0 +1,117 @@
+# ─────────────────────────────────────────────────────────────────────
+#  BB-IMS Prometheus Alerting Rules
+# ─────────────────────────────────────────────────────────────────────
+# File: monitoring/alerts.yml
+#
+# Serves as the canonical set of alerting rules for the Binary Brain
+# Institute Management System.  Place this file in a location that
+# your Prometheus instance picks up (e.g. mounted at
+# /etc/prometheus/alert.rules inside the Prometheus container).
+#
+# References:
+#   - Prometheus alerting rules docs:
+#     https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
+#   - Alertmanager configuration:
+#     https://prometheus.io/docs/alerting/latest/alertmanager/
+# ─────────────────────────────────────────────────────────────────────
+
+groups:
+  - name: bbims_alerts
+    interval: 30s
+    rules:
+
+      # ── 1. API Error Rate Spike ──────────────────────────────────
+      # Fires when the 5xx rate exceeds 5% over the last 5 minutes.
+      # Indicates a potential server-side failure or code defect.
+      - alert: ApiErrorRateSpike
+        expr: |
+          (
+            rate(bbims_http_requests_total{status=~"5.."}[5m])
+            /
+            rate(bbims_http_requests_total[5m])
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "API 5xx error rate exceeds 5%"
+          description: >
+            The HTTP 5xx error rate on the API has been above 5%
+            (currently {{ $value | humanizePercentage }}) for the last
+            2 minutes.  Check application logs and health checks.
+
+      # ── 2. Repeated Authentication Failures ──────────────────────
+      # Fires when more than 10 failed logins originate from a single
+      # IP address in 5 minutes — a potential brute-force attack.
+      - alert: ExcessiveAuthFailures
+        expr: |
+          rate(bbims_http_requests_total{endpoint="/v1/auth/login",status="401"}[5m]) > 0.033
+        for: 2m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "Repeated authentication failures detected"
+          description: >
+            More than 10 failed login attempts per 5-minute window
+            detected.  Possible brute-force attack in progress.
+
+      # ── 3. Database Connection Pool Exhaustion ───────────────────
+      # Fires when the health-check reports a database failure,
+      # or when the Prometheus DB gauge stays at 0 (unhealthy) for
+      # a sustained period.
+      - alert: DatabaseConnectionPoolExhaustion
+        expr: |
+          bbims_db_connection_status < 1
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Database connection failure"
+          description: >
+            The database health check has been failing for more than
+            1 minute.  The connection pool may be exhausted or the
+            database server may be unreachable.
+
+      # ── 4. Celery Task Failure Rate ──────────────────────────────
+      # Fires when more than 10% of Celery tasks fail over a rolling
+      # 10-minute window.  Requires celery-exporter to be configured
+      # with the ``celery_task_states`` metric.
+      # NOTE: This rule requires the celery-exporter to expose
+      # ``celery_task_states``.  If unavailable, this rule is a no-op.
+      - alert: CeleryTaskFailureRate
+        expr: |
+          (
+            rate(celery_task_states{state="FAILURE"}[10m])
+            /
+            rate(celery_task_states{state=~"SUCCESS|FAILURE"}[10m])
+          ) > 0.10
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "Celery task failure rate exceeds 10%"
+          description: >
+            The Celery task failure rate has been above 10% for the
+            last 5 minutes (currently {{ $value | humanizePercentage }}).
+            Check Celery worker logs and task definitions.
+
+      # ── 5. Health Check Failure ─────────────────────────────────
+      # Fires when the API or worker health endpoint reports
+      # "unhealthy" or "degraded" for more than 2 consecutive checks.
+      - alert: HealthCheckFailure
+        expr: |
+          bbims_http_requests_total{endpoint="/health",status="503"} > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Health check endpoint returning 503"
+          description: >
+            The health check endpoint has been returning HTTP 503
+            (Service Unavailable) for more than 1 minute.  The API
+            may be unable to serve requests.

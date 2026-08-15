@@ -1,0 +1,312 @@
+# ── GitHub Actions CI/CD Pipeline ───────────────────────────────────
+#
+# Stages:
+#   1. Lint — ruff (fast linter) + black --check (formatting)
+#   2. Test — pytest with coverage, minimum 70%
+#   3. Build — docker build for api and worker images
+#   4. Security — bandit (static analysis) + pip-audit (dependency vulns)
+#   5. Deploy — manual-approval-gated deploy on main branch
+# ───────────────────────────────────────────────────────────────────
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  DOCKER_IMAGE_API: ghcr.io/${{ github.repository }}/api
+  DOCKER_IMAGE_WORKER: ghcr.io/${{ github.repository }}/worker
+  DOCKER_IMAGE_NGINX: ghcr.io/${{ github.repository }}/nginx
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ── Stage 1: Lint ──────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Pinned so new ruff/black releases (which expand default rule
+          # sets / reformat) cannot break CI on pre-existing code. Rule
+          # selection is pinned in pyproject.toml [tool.ruff].
+          pip install ruff==0.16.1 black==26.5.1
+
+      - name: Run ruff (fast linter)
+        run: ruff check . --ignore E501,F401,E402,E731,E712 --exclude venv,alembic
+
+      - name: Run black (formatting check)
+        run: black --check --line-length 100 --exclude "venv|alembic" .
+
+  # ── Stage 2: Test ──────────────────────────────────────────────
+  test:
+    name: Test (Python backend)
+    needs: lint
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: bb_ims_test
+          POSTGRES_USER: bbims
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready -U bbims -d bb_ims_test
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage pytest pytest-cov
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: postgresql://bbims:testpass@localhost:5432/bb_ims_test
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key-for-ci-12345678
+          ENV: test
+        run: |
+          coverage run -m pytest tests/ -v --tb=short
+          coverage report --fail-under=70
+          coverage json -o coverage.json
+
+      - name: Verify closeout greps
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+        run: |
+          echo "=== Checking for datetime.now(timezone.utc) outside utc_now() ==="
+          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py" | grep -v "IMPLEMENTATION_NOTES.md" | wc -l)
+          if [ "$REMAINING" -ne "0" ]; then
+            echo "FAIL: Found $REMAINING datetime.now(timezone.utc) calls outside utc_now()"
+            grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py"
+            exit 1
+          fi
+          echo "PASS: Zero datetime.now(timezone.utc) calls outside utc_now()"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.json
+
+  # ── Stage 2b: Web frontend build ────────────────────────────
+  web-build:
+    name: Test (Web frontend)
+    needs: lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Node 24: required by jsdom 30 (>=22.22.2), vite 8.2 (>=20.19.0||>=22.12.0),
+          # and @vitejs/plugin-react 6 (>=22.12.0) — coordinated bump for dependabot majors.
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Run frontend tests with coverage
+        run: npm run test:ci
+
+      - name: Build frontend (production)
+        run: npm run build
+
+  # ── Stage 3: Build & Push ─────────────────────────────────────
+  # Builds Docker images and pushes them to GHCR on main branch.
+  # The deploy job later pulls these images on the production server.
+  build:
+    name: Build & Push Docker images
+    needs: [test, web-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_API }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_API }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Worker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.worker
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_WORKER }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_WORKER }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Nginx image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: nginx/Dockerfile.nginx
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_NGINX }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_NGINX }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Check build context size
+        run: |
+          SIZE=$(du -sh . | cut -f1)
+          echo "Build context size: $SIZE"
+          echo "If this is > 100MB, check .dockerignore"
+
+  # ── Stage 4: Security Scan ─────────────────────────────────────
+  security:
+    name: Security Scan
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit pip-audit
+
+      - name: Run Bandit (static analysis)
+        run: bandit -r . -x venv,alembic,tests -f json -o bandit-report.json || true
+
+      - name: Run pip-audit (dependency vulnerabilities)
+        run: pip-audit || true
+
+      - name: Run Gitleaks (secret scanning)
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          path: .
+          report-format: json
+          report-path: gitleaks-report.json
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            gitleaks-report.json
+
+  # ── Stage 5: Deploy (manual approval, main branch only) ────────
+  deploy:
+    name: Deploy to Production
+    needs: [build, security]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ims.binarybrain.edu.in
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          script: |
+            set -e
+            echo "=== Pulling latest images ==="
+            cd /opt/bb-ims
+            docker compose pull
+
+            echo "=== Setting up TLS certificates ==="
+            # If USE_LETSENCRYPT is set and domain is configured,
+            # symlink Let's Encrypt certs to the paths nginx expects.
+            # MUST use RELATIVE symlinks so they resolve inside the nginx
+            # container (which sees the same bind-mounted directory but at
+            # a different mount point: /etc/nginx/ssl vs /opt/bb-ims/nginx/ssl).
+            if [ "${USE_LETSENCRYPT:-false}" = "true" ] && [ -n "${DOMAIN_NAME:-}" ]; then
+              echo "Linking Let's Encrypt certificates for $DOMAIN_NAME"
+              cd /opt/bb-ims/nginx/ssl
+              ln -sf "live/$DOMAIN_NAME/fullchain.pem" "cert.pem"
+              ln -sf "live/$DOMAIN_NAME/privkey.pem" "key.pem"
+            fi
+
+            echo "=== Running Alembic migrations ==="
+            docker compose run --rm api alembic upgrade head
+
+            echo "=== Restarting services ==="
+            docker compose up -d --remove-orphans
+
+            echo "=== Pruning old images ==="
+            docker image prune -f
+
+            echo "=== Deployment complete ==="
+            docker compose ps

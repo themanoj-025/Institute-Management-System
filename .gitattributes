@@ -1,0 +1,62 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Python source
+*.py text diff=python
+
+# HTML templates
+*.html text diff=html
+
+# CSS stylesheets
+*.css text
+
+# JavaScript
+*.js text
+
+# Markdown documentation
+*.md text
+*.rst text
+
+# Config / locale files
+*.yml text
+*.yaml text
+*.toml text
+*.json text
+*.cfg text
+*.ini text
+*.env text
+
+# Shell / batch scripts
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Docker
+Dockerfile text
+Dockerfile.* text
+docker-compose.yml text
+
+# Requirements / project config
+requirements.txt text
+pyproject.toml text
+LICENSE text
+
+# Web dashboard
+package.json text
+vite.config.js text
+*.jsx text diff=javascript
+
+# Binary / export files - don't modify
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.xlsx binary
+*.xls binary
+*.db binary
+*.sqlite binary
+*.zip binary
+
+# nginx config
+nginx/*.conf text

@@ -1,0 +1,35 @@
+# Default code owners for the BB-IMS repository
+# Each line specifies a file pattern followed by one or more owners.
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for all files
+* @CodeWithHardik
+
+# Backend API & services
+/api/ @CodeWithHardik
+/services/ @CodeWithHardik
+
+# ML pipeline
+/ml/ @CodeWithHardik
+
+# Database & migrations
+/database/ @CodeWithHardik
+
+# Desktop client
+/modules/ @CodeWithHardik
+/landing/ @CodeWithHardik
+/auth/ @CodeWithHardik
+/ui/ @CodeWithHardik
+
+# Web dashboard
+/web/ @CodeWithHardik
+
+# Infrastructure
+/Dockerfile* @CodeWithHardik
+/docker-compose* @CodeWithHardik
+/.github/ @CodeWithHardik
+/nginx/ @CodeWithHardik
+
+# Documentation
+/docs/ @CodeWithHardik
+/*.md @CodeWithHardik

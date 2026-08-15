@@ -1,0 +1,19 @@
+FROM python:3.11-slim AS base
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      curl \
+      && rm -rf /var/lib/apt/lists/*
+
+FROM base AS dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+      pip install --no-cache-dir -r requirements.txt
+
+FROM dependencies AS app
+COPY . .
+RUN mkdir -p database logs assets/profiles exports/generated
+
+CMD ["celery", "-A", "celery_app", "worker", "--loglevel=info", "--concurrency=4"]

@@ -1,0 +1,180 @@
+# [GITIGNORE SECTION 1] Python runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# [GITIGNORE SECTION 2] Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env_folder/
+Pipfile.lock
+poetry.lock
+
+# [GITIGNORE SECTION 3] Environment & secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.json
+credentials.json
+nginx/ssl/
+# NOTE: .env.example is NOT ignored — it must be committed
+
+# [GITIGNORE SECTION 4] Database files
+database/*.db
+database/*.db-shm
+database/*.db-wal
+database/*.bak
+database/*.sqlite
+database/*.sqlite3
+# Database JSON data files contain seed/personal data — not committed
+# Locale JSON files (locales/*.json) remain tracked
+database/*.json
+
+# [GITIGNORE SECTION 5] Logs
+logs/
+*.log
+log/
+*.log.*
+
+# [GITIGNORE SECTION 6] User-generated assets (runtime)
+assets/profiles/*.jpg
+assets/profiles/*.jpeg
+assets/profiles/*.png
+database/uploads/
+exports/generated/
+
+# [GITIGNORE SECTION 7] OS artifacts
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# [GITIGNORE SECTION 8] IDE & editor artifacts
+# VS Code
+.vscode/*
+!.vscode/settings.json
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+
+# Vim / Neovim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+*~
+#*#
+.#*
+
+# [GITIGNORE SECTION 9] Testing & coverage
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+htmlcov/
+.hypothesis/
+nosetests.xml
+test-results/
+coverage.json
+
+# [GITIGNORE SECTION 10] Alembic runtime
+alembic/versions/*.pyc
+# alembic/versions/ migration scripts ARE committed
+
+# [GITIGNORE SECTION 11] ML model artifacts (runtime-generated)
+ml/models/*.json
+!ml/models/reference_distributions.json
+!ml/models/risk_v1_meta.json
+ml/models/*_eval.md
+ml/models/*_eval.json
+ml/models/*.model
+
+# [GITIGNORE SECTION 12] Backup & export files
+*.zip
+*.tar.gz
+*.bak
+*.backup
+backups/
+
+.gemini/
+.cursorrules
+
+CLAUDE.md
+
+# [GITIGNORE SECTION 13] Web dashboard (built separately)
+web/node_modules/
+web/dist/
+web/.vite/
+web/coverage/
+
+# [GITIGNORE SECTION 14] Jupyter (if used for analytics dev)
+.ipynb_checkpoints
+*.ipynb
+

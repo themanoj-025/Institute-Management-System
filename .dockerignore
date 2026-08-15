@@ -1,0 +1,55 @@
+# ── Ignore for smaller build context ───────────────────────────────
+.git
+.gitignore
+.gitattributes
+.github
+.dockerignore
+.editorconfig
+.pre-commit-config.yaml
+
+# ── Docs (not needed in runtime image) ─────────────────────────────
+docs/
+screenshots/
+
+# ── Tests (not needed in runtime image) ────────────────────────────
+tests/
+test_*.py
+
+# ── Development & build artifacts ──────────────────────────────────
+.env
+.env.*
+*.md
+LICENSE
+README.md
+CHANGELOG.md
+install.bat
+install.sh
+start.bat
+docker-compose.yml
+Dockerfile
+Dockerfile.worker
+nginx/
+pyproject.toml
+alembic.ini
+# NOTE: requirements.txt is intentionally NOT ignored — both Dockerfile
+# and Dockerfile.worker run `COPY requirements.txt` in the deps stage.
+
+# ── Python cache ───────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+*.egg
+
+# ── Web dashboard (build separately, not needed in API build context) ─
+web/node_modules/
+web/dist/
+web/.vite/
+
+# ── Local data (mounted as volumes instead) ────────────────────────
+database/bb_ims.db
+logs/
+exports/generated/
+assets/profiles/

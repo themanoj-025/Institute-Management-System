@@ -1,0 +1,21 @@
+{
+  "name": "risk_v1",
+  "saved_at": "2026-07-31T04:19:42.486620+00:00",
+  "metrics": {
+    "cv_accuracy": 0.9,
+    "cv_f1": 0.9333,
+    "cv_precision": 0.8857,
+    "cv_recall": 1.0,
+    "cv_auroc": 0.9333,
+    "test_accuracy": 0.9,
+    "test_f1": 0.9231,
+    "test_precision": 0.8571,
+    "test_recall": 1.0,
+    "test_auroc": 1.0,
+    "train_samples": 40,
+    "test_samples": 10,
+    "_promoted": true,
+    "_current_active_auroc": 1.0,
+    "_candidate_auroc": 1.0
+  }
+}

@@ -1,0 +1,140 @@
+services:
+  # ── PostgreSQL (production database) ────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: bb_ims_postgres
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: bb_ims
+      POSTGRES_USER: ${POSTGRES_USER:-bbims}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bbims} -d bb_ims"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Redis (token blacklist + Celery broker + cache) ─────────────
+  # NOTE: No ``ports`` mapping — Redis is only accessible on the internal
+  # Docker network. The api and worker services reach it via the service
+  # name ``redis`` (``redis://redis:6379/0``).
+  redis:
+    image: redis:7-alpine
+    container_name: bb_ims_redis
+    # No host port mapping — internal network only
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── FastAPI Application ─────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bb_ims_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./assets/profiles:/app/assets/profiles
+      - ./ml/models:/app/ml/models
+    restart: unless-stopped
+
+  # ── Celery Worker (background tasks) ────────────────────────────
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: bb_ims_worker
+    env_file:
+      - .env
+    environment:
+      - ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./ml/models:/app/ml/models
+    restart: unless-stopped
+
+  # ── Nginx Reverse Proxy (TLS termination) ───────────────────────
+  # In local dev (USE_LETSENCRYPT not set), uses self-signed certs.
+  # In production (USE_LETSENCRYPT=true), uses Let's Encrypt certs
+  # provisioned by the certbot service via ACME HTTP-01 challenge.
+  nginx:
+    image: nginx:alpine
+    container_name: bb_ims_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── Let's Encrypt certbot (opt-in, for production) ─────────────
+  # Enable by setting USE_LETSENCRYPT=true, DOMAIN_NAME, and CERTBOT_EMAIL.
+  # On first run: docker compose run certbot --nginx
+  # For renewal the container runs `certbot renew` every 12 hours.
+  certbot:
+    image: certbot/certbot:latest
+    container_name: bb_ims_certbot
+    profiles:
+      - letsencrypt
+    volumes:
+      - ./nginx/ssl:/etc/letsencrypt:rw
+      - certbot_www:/var/www/certbot:rw
+    entrypoint: >
+      /bin/sh -c "
+        trap exit TERM;
+        while true; do
+          certbot renew --webroot -w /var/www/certbot --quiet
+          sleep 43200;  # 12 hours
+        done
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'sleep 43200' || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - nginx
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  certbot_www:

@@ -1,0 +1,77 @@
+# Auto-label PRs based on changed paths
+
+python:
+  - changed-files:
+      - any-glob-to-any-file: ['*.py', 'services/**', 'modules/**', 'ui/**', 'utils/**', 'auth/**', 'api/**']
+
+backend-api:
+  - changed-files:
+      - any-glob-to-any-file: ['api/**']
+
+desktop:
+  - changed-files:
+      - any-glob-to-any-file: ['ui/**', 'modules/**', 'landing/**']
+
+database:
+  - changed-files:
+      - any-glob-to-any-file: ['database/**']
+
+database-migrations:
+  - changed-files:
+      - any-glob-to-any-file: ['database/alembic/**', 'database/alembic.ini']
+
+rate-limiter:
+  - changed-files:
+      - any-glob-to-any-file: ['api/rate_limiter.py']
+
+security:
+  - changed-files:
+      - any-glob-to-any-file: ['SECURITY.md', 'config/settings.py', 'services/auth_service.py']
+
+docker:
+  - changed-files:
+      - any-glob-to-any-file: ['Dockerfile*', 'docker-compose*', '.dockerignore']
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ['.github/**']
+
+web-dashboard:
+  - changed-files:
+      - any-glob-to-any-file: ['web/**']
+
+ml:
+  - changed-files:
+      - any-glob-to-any-file: ['ml/**']
+
+nginx:
+  - changed-files:
+      - any-glob-to-any-file: ['nginx/**']
+
+scripts:
+  - changed-files:
+      - any-glob-to-any-file: ['scripts/**']
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ['*.md', 'docs/**']
+
+adr:
+  - changed-files:
+      - any-glob-to-any-file: ['docs/adr/**']
+
+migrations:
+  - changed-files:
+      - any-glob-to-any-file: ['database/alembic/**']
+
+auth:
+  - changed-files:
+      - any-glob-to-any-file: ['auth/**', 'services/auth_service.py']
+
+locales:
+  - changed-files:
+      - any-glob-to-any-file: ['locales/**']
+
+git-config:
+  - changed-files:
+      - any-glob-to-any-file: ['.git*', '.github/**']
