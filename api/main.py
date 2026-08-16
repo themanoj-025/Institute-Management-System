@@ -85,8 +85,6 @@ from database.models import (
     PromotionHistory,
     Result,
     RevokedToken,
-)
-from database.models import (
     Staff,
     Student,
     SystemConfig,
