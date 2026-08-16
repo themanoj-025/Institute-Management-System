@@ -56,7 +56,7 @@ jobs:
           # Pinned so new ruff/black releases (which expand default rule
           # sets / reformat) cannot break CI on pre-existing code. Rule
           # selection is pinned in pyproject.toml [tool.ruff].
-          pip install ruff==0.16.1 black==26.5.1
+          pip install ruff==0.16.1 black==24.10.0
 
       - name: Run ruff (fast linter)
         run: ruff check . --ignore E501,F401,E402,E731,E712 --exclude venv,alembic
