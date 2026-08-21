@@ -2,7 +2,7 @@ import customtkinter as ctk
 
 
 class KPICard(ctk.CTkFrame):
-    def __init__(self, master, title, value, icon="📊", color="#3b82f6", *args, **kwargs):
+    def __init__(self, master, title, value, icon="📊", color="#3b82f6", *args, **kwargs) -> None:
         super().__init__(
             master,
             corner_radius=10,
@@ -28,13 +28,13 @@ class KPICard(ctk.CTkFrame):
         self.val_lbl = ctk.CTkLabel(self, text=str(value), font=ctk.CTkFont(size=28, weight="bold"))
         self.val_lbl.grid(row=1, column=0, sticky="w", padx=15, pady=(0, 15))
 
-    def set_value(self, value):
+    def set_value(self, value) -> None:
         if self.winfo_exists():
             self.val_lbl.configure(text=str(value))
 
 
 class SkeletonLoader(ctk.CTkFrame):
-    def __init__(self, master, width=200, height=20, *args, **kwargs):
+    def __init__(self, master, width=200, height=20, *args, **kwargs) -> None:
         super().__init__(
             master,
             width=width,
@@ -48,7 +48,7 @@ class SkeletonLoader(ctk.CTkFrame):
         self._animating = True
         self._animate()
 
-    def _animate(self):
+    def _animate(self) -> None:
         if not self.winfo_exists() or not getattr(self, "_animating", True):
             return
         try:
@@ -61,5 +61,5 @@ class SkeletonLoader(ctk.CTkFrame):
             pass
         self.after(500, self._animate)
 
-    def stop(self):
+    def stop(self) -> None:
         self._animating = False

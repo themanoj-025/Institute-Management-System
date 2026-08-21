@@ -63,7 +63,7 @@ def _hash_otp(otp: str) -> str:
     return hashlib.sha256(otp.encode()).hexdigest()
 
 
-def _cleanup_expired_otps(session: Session):
+def _cleanup_expired_otps(session: Session) -> None:
     """Remove expired OTPs from the database."""
     now = utc_now()
     session.query(OtpCode).filter(
@@ -78,7 +78,7 @@ class AuthError(Exception):
 
 
 class AuthService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
     # ── Password Reset ─────────────────────────────────────────────
@@ -136,7 +136,7 @@ class AuthService:
         self.db.commit()
         return True
 
-    def send_password_reset_email(self, user: User):
+    def send_password_reset_email(self, user: User) -> None:
         """Generate a reset token and send the password reset email."""
         raw_token = self.generate_password_reset_token(user.id)
         reset_link = (
@@ -152,7 +152,7 @@ class AuthService:
         elif EMAIL_ENABLED and user.email:
             self._send_reset_email_smtp(user.email, reset_link)
 
-    def _send_reset_email_smtp(self, to_email: str, reset_link: str):
+    def _send_reset_email_smtp(self, to_email: str, reset_link: str) -> None:
         """Send password reset email via SMTP."""
         try:
             msg = MIMEMultipart()
@@ -197,7 +197,7 @@ class AuthService:
             raise AuthError("Password must contain at least one special character.")
         return password
 
-    def reset_password(self, user_id: int, raw_token: str, new_password: str):
+    def reset_password(self, user_id: int, raw_token: str, new_password: str) -> None:
         """Verify reset token and set new password.
 
         1. Verifies the reset token is valid, unexpired, and unused.
@@ -238,7 +238,7 @@ class AuthService:
         self.db.add(log)
         self.db.commit()
 
-    def invalidate_user_sessions(self, user_id: int):
+    def invalidate_user_sessions(self, user_id: int) -> None:
         """Invalidate all active sessions for a user.
 
         Sets ``password_changed_at`` on the user record to ``utc_now()``.
@@ -311,7 +311,7 @@ class AuthService:
         self.db.commit()
         return True
 
-    def send_verification_email(self, user: User):
+    def send_verification_email(self, user: User) -> None:
         """Generate a verification token and send the verification email."""
         raw_token = self.generate_verification_token(user.id)
         verification_link = (
@@ -326,7 +326,7 @@ class AuthService:
         elif EMAIL_ENABLED and user.email:
             self._send_verification_email_smtp(user.email, verification_link)
 
-    def _send_verification_email_smtp(self, to_email: str, verification_link: str):
+    def _send_verification_email_smtp(self, to_email: str, verification_link: str) -> None:
         """Send verification email via SMTP."""
         try:
             msg = MIMEMultipart()
@@ -351,7 +351,7 @@ class AuthService:
 
     # ── OTP Rate Limiting ──────────────────────────────────────────
 
-    def _check_otp_rate_limit(self, user_id: int):
+    def _check_otp_rate_limit(self, user_id: int) -> None:
         """Check if the user has exceeded the OTP request rate limit.
 
         Max ``OTP_MAX_REQUESTS_PER_WINDOW`` requests per
@@ -445,7 +445,7 @@ class AuthService:
             "message": "OTP sent. Check your email for the verification code.",
         }
 
-    def _send_otp_email(self, to_email: str, otp_code: str):
+    def _send_otp_email(self, to_email: str, otp_code: str) -> None:
         """Send OTP via SMTP. Failures are logged but do not block login."""
         try:
             msg = MIMEMultipart()

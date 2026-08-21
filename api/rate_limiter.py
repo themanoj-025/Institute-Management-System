@@ -86,7 +86,7 @@ class SlidingWindowCounter:
 
     __slots__ = ("max_requests", "window_seconds", "_store", "_lock")
 
-    def __init__(self, max_requests: int, window_seconds: int):
+    def __init__(self, max_requests: int, window_seconds: int) -> None:
         self.max_requests = max_requests
         self.window_seconds = window_seconds
         self._store: Dict[str, List[float]] = defaultdict(list)
@@ -177,7 +177,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 self._counters[matched] = SlidingWindowCounter(max_req, window)
             return self._counters[matched]
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> None:
         # Never rate-limit CORS preflight requests
         if request.method == "OPTIONS":
             return await call_next(request)

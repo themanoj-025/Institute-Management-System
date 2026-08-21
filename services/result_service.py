@@ -9,11 +9,14 @@ from sqlalchemy.orm import Session as DbSession
 from database.models import Result
 
 
+from typing import Any
+
+
 class ResultService:
-    def __init__(self, session: DbSession):
+    def __init__(self, session: DbSession) -> None:
         self.session = session
 
-    def get_existing_marks(self, subject_id, session_id, exam_type):
+    def get_existing_marks(self, subject_id: int, session_id: int, exam_type: str) -> dict[int, float]:
         records = (
             self.session.query(Result)
             .filter(
@@ -26,7 +29,7 @@ class ResultService:
         )
         return {r.student_id: r.marks_obtained for r in records}
 
-    def get_student_results(self, student_id):
+    def get_student_results(self, student_id: int) -> list[dict[str, Any]]:
         results = (
             self.session.query(Result)
             .filter(Result.student_id == student_id, Result.is_deleted == False)
@@ -46,7 +49,7 @@ class ResultService:
             for r in results
         ]
 
-    def bulk_upsert(self, records, session_id):
+    def bulk_upsert(self, records: list[dict[str, Any]], session_id: int) -> bool:
         for rec in records:
             existing = (
                 self.session.query(Result)

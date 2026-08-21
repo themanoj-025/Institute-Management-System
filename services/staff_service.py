@@ -8,11 +8,14 @@ from config.settings import BCRYPT_COST
 from database.models import Staff, User, UserRole
 
 
+from typing import Optional
+
+
 class StaffService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_all_staff(self, limit=25, offset=0, search_query=None):
+    def get_all_staff(self, limit: int = 25, offset: int = 0, search_query: Optional[str] = None) -> dict:
         query = self.db.query(Staff)
 
         if search_query:
@@ -29,13 +32,13 @@ class StaffService:
 
         return {"total": total, "staff": [self._format_staff(s) for s in staff_list]}
 
-    def get_staff_by_id(self, staff_id):
+    def get_staff_by_id(self, staff_id: int) -> dict:
         staff = self.db.query(Staff).filter(Staff.id == staff_id).first()
         if not staff:
             raise ValueError("Staff not found")
         return self._format_staff(staff)
 
-    def create_staff(self, data):
+    def create_staff(self, data: dict) -> dict:
         # Generate a secure random password for the new staff member
         temp_password = f"Stf-{secrets.token_hex(8)}"
         pw_hash = bcrypt.hashpw(temp_password.encode("utf-8"), bcrypt.gensalt(BCRYPT_COST)).decode(
@@ -63,7 +66,7 @@ class StaffService:
         self.db.commit()
         return self._format_staff(staff)
 
-    def _format_staff(self, staff):
+    def _format_staff(self, staff: Staff) -> dict:
         return {
             "id": staff.id,
             "user_id": staff.user_id,

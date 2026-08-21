@@ -38,10 +38,12 @@ class Base(DeclarativeBase):
     pass
 
 
+from collections.abc import Generator
 from contextlib import contextmanager
+from typing import Iterator
 
 
-def get_db():
+def get_db() -> Generator:
     db = SessionLocal()
     try:
         yield db
@@ -50,7 +52,7 @@ def get_db():
 
 
 @contextmanager
-def get_session():
+def get_session() -> Iterator:
     session = SessionLocal()
     try:
         yield session
@@ -62,5 +64,5 @@ def get_session():
         session.close()
 
 
-def init_db():
+def init_db() -> None:
     Base.metadata.create_all(bind=engine)

@@ -16,14 +16,14 @@ logger = setup_logger("search", context={"service": "search", "version": "1.0"})
 
 
 class SearchService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
         try:
             self._init_fts()
         except Exception as exc:
             logger.warning("FTS5 init failed (SQLite may lack FTS5 support): %s", exc)
 
-    def _init_fts(self):
+    def _init_fts(self) -> None:
         """Create FTS5 virtual tables if they don't exist."""
         self.db.execute(
             text(
@@ -46,7 +46,7 @@ class SearchService:
         self.db.commit()
         logger.debug("FTS5 virtual tables initialised")
 
-    def global_search(self, query, limit=20):
+    def global_search(self, query: str, limit: int = 20) -> dict[str, list[dict[str, str | int]]]:
         if not query or len(query) < 2:
             return {}
 
@@ -60,7 +60,7 @@ class SearchService:
         errors = []
 
         # Multi-threaded category queries
-        def query_students():
+        def query_students() -> None:
             try:
                 fts_query = self.db.execute(
                     text("SELECT rowid FROM students_fts WHERE students_fts MATCH :q LIMIT :lim"),
@@ -97,7 +97,7 @@ class SearchService:
                 logger.error("Student search failed: %s", exc)
                 errors.append(("students", str(exc)))
 
-        def query_staff():
+        def query_staff() -> None:
             try:
                 matches = (
                     self.db.query(Staff)
@@ -124,7 +124,7 @@ class SearchService:
                 logger.error("Staff search failed: %s", exc)
                 errors.append(("staff", str(exc)))
 
-        def query_courses():
+        def query_courses() -> None:
             try:
                 matches = (
                     self.db.query(Course)
@@ -151,7 +151,7 @@ class SearchService:
                 logger.error("Course search failed: %s", exc)
                 errors.append(("courses", str(exc)))
 
-        def query_notices():
+        def query_notices() -> None:
             try:
                 fts_query = self.db.execute(
                     text("SELECT rowid FROM notices_fts WHERE notices_fts MATCH :q LIMIT :lim"),
@@ -185,7 +185,7 @@ class SearchService:
                 logger.error("Notice search failed: %s", exc)
                 errors.append(("notices", str(exc)))
 
-        def query_subjects():
+        def query_subjects() -> None:
             try:
                 matches = (
                     self.db.query(Subject)
@@ -232,7 +232,7 @@ class SearchService:
 
 # Set up automatic FTS5 synchronizations
 @event.listens_for(Student, "after_insert")
-def sync_student_fts_insert(mapper, connection, target):
+def sync_student_fts_insert(mapper, connection, target) -> None:
     try:
         connection.execute(
             text("INSERT INTO students_fts(rowid, name, roll_no) VALUES (:id, :name, :roll)"),
@@ -247,7 +247,7 @@ def sync_student_fts_insert(mapper, connection, target):
 
 
 @event.listens_for(Notice, "after_insert")
-def sync_notice_fts_insert(mapper, connection, target):
+def sync_notice_fts_insert(mapper, connection, target) -> None:
     try:
         connection.execute(
             text("INSERT INTO notices_fts(rowid, title, body) VALUES (:id, :title, :body)"),

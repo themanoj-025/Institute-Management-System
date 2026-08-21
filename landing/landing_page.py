@@ -4,7 +4,7 @@ from landing.login_dialog import LoginDialog
 
 
 class LandingPage(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, show_main_app_cb, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, show_main_app_cb, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -19,7 +19,7 @@ class LandingPage(ctk.CTkFrame):
         self._build_login_section()
         self._build_contact_section()
 
-    def _build_hero_section(self):
+    def _build_hero_section(self) -> None:
         hero = ctk.CTkFrame(self.scroll, fg_color="transparent")
         hero.pack(fill="x", pady=40, padx=20)
 
@@ -65,7 +65,7 @@ class LandingPage(ctk.CTkFrame):
                 ),
             )
 
-    def _build_courses_section(self):
+    def _build_courses_section(self) -> None:
         from config.constants import AVAILABLE_COURSES
 
         frame = ctk.CTkFrame(self.scroll, fg_color="transparent")
@@ -106,7 +106,7 @@ class LandingPage(ctk.CTkFrame):
                 command=lambda c=course: self._apply_now(c),
             ).pack(side="left", padx=5)
 
-    def _show_syllabus(self, course):
+    def _show_syllabus(self, course) -> None:
         """Display a detailed syllabus dialog for the selected course."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title(f"{course['code']} — {course['name']}")
@@ -274,7 +274,7 @@ class LandingPage(ctk.CTkFrame):
 
         ctk.CTkLabel(main_frame, text="", height=10).pack()
 
-    def _apply_now(self, course):
+    def _apply_now(self, course) -> None:
         """Open a dialog to submit an enquiry directly for the selected course."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title(f"Apply for {course['code']} — {course['name']}")
@@ -341,7 +341,7 @@ class LandingPage(ctk.CTkFrame):
             f"I am interested in joining the {course['name']} program. Please send me more details.",
         )
 
-        def submit():
+        def submit() -> None:
             name = name_entry.get().strip()
             email = email_entry.get().strip()
             phone = phone_entry.get().strip()
@@ -434,7 +434,7 @@ class LandingPage(ctk.CTkFrame):
             text_color="gray",
         ).pack(anchor="w", pady=(10, 0))
 
-    def _build_login_section(self):
+    def _build_login_section(self) -> None:
         frame = ctk.CTkFrame(self.scroll, fg_color="transparent")
         frame.pack(fill="x", pady=40, padx=20)
         ctk.CTkLabel(frame, text="Portal Login", font=self.tm.header_font).pack(pady=20)
@@ -459,7 +459,7 @@ class LandingPage(ctk.CTkFrame):
             )
             btn.grid(row=0, column=i, padx=20)
 
-    def _open_login(self, role):
+    def _open_login(self, role) -> None:
         LoginDialog(
             self.winfo_toplevel(),
             self.tm,
@@ -469,7 +469,7 @@ class LandingPage(ctk.CTkFrame):
             self.show_main_app_cb,
         )
 
-    def logout(self):
+    def logout(self) -> None:
         """Log out and return to the landing page.
 
         Calls POST /v1/auth/logout to blacklist the token server-side.
@@ -500,7 +500,7 @@ class LandingPage(ctk.CTkFrame):
                 widget.destroy()
             self.pack(fill="both", expand=True)
 
-    def _build_contact_section(self):
+    def _build_contact_section(self) -> None:
         frame = ctk.CTkFrame(self.scroll, fg_color="transparent")
         frame.pack(fill="x", pady=40, padx=20)
         ctk.CTkLabel(frame, text="Contact Us", font=self.tm.header_font).pack(pady=20)
@@ -514,7 +514,7 @@ class LandingPage(ctk.CTkFrame):
         self.contact_email = ctk.CTkEntry(form, placeholder_text="Your Email", width=350, height=38)
         self.contact_email.pack(pady=8, padx=25)
 
-        def submit_enquiry():
+        def submit_enquiry() -> None:
             name = self.contact_name.get().strip()
             email = self.contact_email.get().strip()
             if name and email:

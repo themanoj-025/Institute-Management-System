@@ -57,7 +57,7 @@ def _generate_password() -> str:
             return pw
 
 
-def seed_database(db: Session):
+def seed_database(db: Session) -> None:
     # Check if already seeded
     if db.query(User).count() > 0:
         return

@@ -143,7 +143,7 @@ OPENAPI_TAGS = [
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> None:
     """Create required directories on application startup."""
     from config.settings import init_app
 
@@ -260,7 +260,7 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next):
+async def add_security_headers(request: Request, call_next) -> None:
     """Add security headers to every response."""
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -353,7 +353,7 @@ def paginated_response(query, page: int, per_page: int, serialize_fn, **filters)
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> Response:
     errors = exc.errors()
     logger.warning(f"Validation error on {request.method} {request.url.path}: {errors}")
     return JSONResponse(
@@ -375,7 +375,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 @app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
+async def http_exception_handler(request: Request, exc: HTTPException) -> Response:
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -389,7 +389,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
+async def global_exception_handler(request: Request, exc: Exception) -> Response:
     full_tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
     logger.error(f"Unhandled exception on {request.method} {request.url.path}:\n{full_tb}")
 
@@ -703,7 +703,7 @@ def _check_token_blacklist(jti: str) -> bool:
         session.close()
 
 
-def _blacklist_token(jti: str, expires_at: datetime, user_id: Optional[int] = None):
+def _blacklist_token(jti: str, expires_at: datetime, user_id: Optional[int] = None) -> None:
     """Add a token's JTI to the blacklist.
 
     Writes to both Redis (primary, with TTL matching token expiry) and
@@ -826,10 +826,10 @@ def get_current_user(
         raise credentials_exception
 
 
-def require_role(allowed_roles: List[str]):
+def require_role(allowed_roles: List[str]) -> dict:
     """Dependency: require the authenticated user to have one of the allowed roles."""
 
-    def dependency(user: dict = Depends(get_current_user)):
+    def dependency(user: dict = Depends(get_current_user)) -> dict:
         if user["role"] not in allowed_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -1041,7 +1041,7 @@ _health_checker = HealthChecker().with_db(get_session)
     response_description="Health report with per-check status and overall system health",
     tags=["Health"],
 )
-def health_check():
+def health_check() -> bool:
     from fastapi import status as http_status
 
     report = _health_checker.check()
@@ -1062,7 +1062,7 @@ def health_check():
     response_description="Prometheus-formatted metrics text",
     tags=["Health"],
 )
-def metrics():
+def metrics() -> dict:
     from fastapi.responses import PlainTextResponse
 
     from utils.observability import metrics_endpoint as _metrics
@@ -1077,7 +1077,7 @@ def metrics():
     response_description="Health report with version info and per-check status",
     tags=["Health"],
 )
-def v1_health_check():
+def v1_health_check() -> bool:
     from fastapi import status as http_status
 
     report = _health_checker.check()
@@ -1104,7 +1104,7 @@ def v1_health_check():
     response_description="OTP request confirmation with user_id (NO JWT - OTP verification required)",
     tags=["Auth"],
 )
-def login(req: LoginRequest):
+def login(req: LoginRequest) -> dict:
     from services.auth_service import AuthError, AuthService
 
     with get_session() as session:
@@ -1132,7 +1132,7 @@ def login(req: LoginRequest):
     response_description="JWT access token with user details",
     tags=["Auth"],
 )
-def verify_otp(req: VerifyOtpRequest):
+def verify_otp(req: VerifyOtpRequest) -> bool:
     from services.auth_service import AuthError, AuthService
 
     with get_session() as session:
@@ -1166,7 +1166,7 @@ def verify_otp(req: VerifyOtpRequest):
     response_description="New JWT access token (old token is invalidated)",
     tags=["Auth"],
 )
-def refresh_token(user: dict = Depends(get_current_user)):
+def refresh_token(user: dict = Depends(get_current_user)) -> dict:
     # Blacklist the old token before issuing a new one
     expires_at = (
         datetime.fromtimestamp(user["exp"], tz=timezone.utc)
@@ -1189,7 +1189,7 @@ def refresh_token(user: dict = Depends(get_current_user)):
     response_description="Verification email confirmation",
     tags=["Auth"],
 )
-def send_verification_email(req: VerifyOtpRequest):
+def send_verification_email(req: VerifyOtpRequest) -> dict:
     """Send verification email (resend). Uses user_id from request body."""
     from services.auth_service import AuthError, AuthService
 
@@ -1223,7 +1223,7 @@ def send_verification_email(req: VerifyOtpRequest):
     response_description="Verification confirmation",
     tags=["Auth"],
 )
-def confirm_verification(req: VerifyOtpRequest):
+def confirm_verification(req: VerifyOtpRequest) -> dict:
     """Confirm email verification with token.
 
     Accepts user_id and token (reusing VerifyOtpRequest schema since it has
@@ -1253,7 +1253,7 @@ def confirm_verification(req: VerifyOtpRequest):
     response_description="Confirmation message with blacklist status",
     tags=["Auth"],
 )
-def logout(user: dict = Depends(get_current_user)):
+def logout(user: dict = Depends(get_current_user)) -> dict:
     expires_at = (
         datetime.fromtimestamp(user["exp"], tz=timezone.utc)
         if user.get("exp")
@@ -1274,7 +1274,7 @@ def logout(user: dict = Depends(get_current_user)):
     response_description="Generic confirmation message",
     tags=["Auth"],
 )
-def forgot_password(req: ForgotPasswordRequest):
+def forgot_password(req: ForgotPasswordRequest) -> dict:
     """Request a password reset. Always returns 200 to prevent user enumeration."""
     from services.auth_service import AuthService
 
@@ -1303,7 +1303,7 @@ def forgot_password(req: ForgotPasswordRequest):
     response_description="Reset confirmation",
     tags=["Auth"],
 )
-def reset_password(req: ResetPasswordRequest):
+def reset_password(req: ResetPasswordRequest) -> dict:
     """Reset password using a valid reset token."""
     from services.auth_service import AuthError, AuthService
 
@@ -1358,7 +1358,7 @@ def get_students(
     response_description="Student record details",
     tags=["Students"],
 )
-def get_student(student_id: int, user: dict = Depends(get_current_user)):
+def get_student(student_id: int, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         s = session.query(Student).filter(Student.id == student_id).first()
         if not s:
@@ -1375,7 +1375,7 @@ def get_student(student_id: int, user: dict = Depends(get_current_user)):
     response_description="Created student record",
     tags=["Students"],
 )
-def create_student(req: StudentCreate):
+def create_student(req: StudentCreate) -> dict:
     with get_session() as session:
         existing = session.query(User).filter(User.email == req.email).first()
         if existing:
@@ -1423,7 +1423,7 @@ def create_student(req: StudentCreate):
     response_description="Updated student record",
     tags=["Students"],
 )
-def update_student(student_id: int, req: StudentCreate):
+def update_student(student_id: int, req: StudentCreate) -> dict:
     with get_session() as session:
         student = session.query(Student).filter(Student.id == student_id).first()
         if not student:
@@ -1446,7 +1446,7 @@ def update_student(student_id: int, req: StudentCreate):
     response_description="Updated student record",
     tags=["Students"],
 )
-def patch_student(student_id: int, req: StudentPatch):
+def patch_student(student_id: int, req: StudentPatch) -> dict:
     with get_session() as session:
         student = session.query(Student).filter(Student.id == student_id).first()
         if not student:
@@ -1473,7 +1473,7 @@ def patch_student(student_id: int, req: StudentPatch):
     response_description="Deletion confirmation",
     tags=["Students"],
 )
-def delete_student(student_id: int):
+def delete_student(student_id: int) -> dict:
     with get_session() as session:
         student = session.query(Student).filter(Student.id == student_id).first()
         if not student:
@@ -1494,7 +1494,7 @@ def delete_student(student_id: int):
     response_description="Confirmation with count of records entered",
     tags=["Attendance"],
 )
-def bulk_attendance(records: List[AttendanceRecord]):
+def bulk_attendance(records: List[AttendanceRecord]) -> dict:
     with get_session() as session:
         for r in records:
             att = Attendance(
@@ -1519,7 +1519,7 @@ def bulk_attendance(records: List[AttendanceRecord]):
     response_description="Confirmation with count of results registered",
     tags=["Results"],
 )
-def bulk_results(records: List[ResultRecord]):
+def bulk_results(records: List[ResultRecord]) -> dict:
     with get_session() as session:
         for r in records:
             res = Result(
@@ -1565,7 +1565,7 @@ def get_courses(
     response_description="Course details with modules and subjects",
     tags=["Courses"],
 )
-def get_course(course_id: int, user: dict = Depends(get_current_user)):
+def get_course(course_id: int, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         from sqlalchemy.orm import joinedload
 
@@ -1592,7 +1592,7 @@ def get_course(course_id: int, user: dict = Depends(get_current_user)):
     response_description="Created course record",
     tags=["Courses"],
 )
-def create_course(req: CourseCreate):
+def create_course(req: CourseCreate) -> dict:
     with get_session() as session:
         existing = session.query(Course).filter(Course.code == req.code).first()
         if existing:
@@ -1618,7 +1618,7 @@ def create_course(req: CourseCreate):
     response_description="Updated course record",
     tags=["Courses"],
 )
-def update_course(course_id: int, req: CourseCreate):
+def update_course(course_id: int, req: CourseCreate) -> dict:
     with get_session() as session:
         course = session.query(Course).filter(Course.id == course_id).first()
         if not course:
@@ -1641,7 +1641,7 @@ def update_course(course_id: int, req: CourseCreate):
     response_description="Updated course record",
     tags=["Courses"],
 )
-def patch_course(course_id: int, req: CoursePatch):
+def patch_course(course_id: int, req: CoursePatch) -> dict:
     with get_session() as session:
         course = session.query(Course).filter(Course.id == course_id).first()
         if not course:
@@ -1661,7 +1661,7 @@ def patch_course(course_id: int, req: CoursePatch):
     response_description="Deletion confirmation",
     tags=["Courses"],
 )
-def delete_course(course_id: int):
+def delete_course(course_id: int) -> dict:
     with get_session() as session:
         course = session.query(Course).filter(Course.id == course_id).first()
         if not course:
@@ -1702,7 +1702,7 @@ def get_staff(
     response_description="Staff member record",
     tags=["Staff"],
 )
-def get_staff_member(staff_id: int, user: dict = Depends(get_current_user)):
+def get_staff_member(staff_id: int, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         st = session.query(Staff).filter(Staff.id == staff_id).first()
         if not st:
@@ -1719,7 +1719,7 @@ def get_staff_member(staff_id: int, user: dict = Depends(get_current_user)):
     response_description="Created staff record",
     tags=["Staff"],
 )
-def create_staff(req: StaffCreate):
+def create_staff(req: StaffCreate) -> dict:
     with get_session() as session:
         existing = session.query(User).filter(User.email == req.email).first()
         if existing:
@@ -1761,7 +1761,7 @@ def create_staff(req: StaffCreate):
     response_description="Updated staff record",
     tags=["Staff"],
 )
-def update_staff(staff_id: int, req: StaffCreate):
+def update_staff(staff_id: int, req: StaffCreate) -> dict:
     with get_session() as session:
         staff = session.query(Staff).filter(Staff.id == staff_id).first()
         if not staff:
@@ -1785,7 +1785,7 @@ def update_staff(staff_id: int, req: StaffCreate):
     response_description="Updated staff record",
     tags=["Staff"],
 )
-def patch_staff(staff_id: int, req: StaffPatch):
+def patch_staff(staff_id: int, req: StaffPatch) -> dict:
     with get_session() as session:
         staff = session.query(Staff).filter(Staff.id == staff_id).first()
         if not staff:
@@ -1811,7 +1811,7 @@ def patch_staff(staff_id: int, req: StaffPatch):
     response_description="Deletion confirmation",
     tags=["Staff"],
 )
-def delete_staff(staff_id: int):
+def delete_staff(staff_id: int) -> dict:
     with get_session() as session:
         staff = session.query(Staff).filter(Staff.id == staff_id).first()
         if not staff:
@@ -1877,7 +1877,7 @@ def get_fees(
     response_description="Payment confirmation with receipt number",
     tags=["Fees"],
 )
-def record_payment(req: PaymentCreate):
+def record_payment(req: PaymentCreate) -> dict:
     from services.fee_service import FeeService
 
     with get_session() as session:
@@ -1908,7 +1908,7 @@ def record_payment(req: PaymentCreate):
     response_description="Soft-delete confirmation",
     tags=["Fees"],
 )
-def delete_fee(fee_id: int, permanent: bool = False, user: dict = Depends(get_current_user)):
+def delete_fee(fee_id: int, permanent: bool = False, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         fee = session.query(Fee).filter(Fee.id == fee_id).first()
         if not fee:
@@ -1934,7 +1934,7 @@ def delete_fee(fee_id: int, permanent: bool = False, user: dict = Depends(get_cu
     response_description="Restore confirmation",
     tags=["Fees"],
 )
-def restore_fee(fee_id: int):
+def restore_fee(fee_id: int) -> dict:
     with get_session() as session:
         fee = session.query(Fee).filter(Fee.id == fee_id, Fee.is_deleted).first()
         if not fee:
@@ -1991,7 +1991,7 @@ def get_placements(
     response_description="Created placement record",
     tags=["Placements"],
 )
-def create_placement(req: PlacementCreate):
+def create_placement(req: PlacementCreate) -> dict:
     from services.placement_service import PlacementService
 
     with get_session() as session:
@@ -2015,7 +2015,7 @@ def create_placement(req: PlacementCreate):
     response_description="Updated placement record",
     tags=["Placements"],
 )
-def patch_placement(placement_id: int, req: PlacementPatch):
+def patch_placement(placement_id: int, req: PlacementPatch) -> dict:
     pass
 
     with get_session() as session:
@@ -2042,7 +2042,7 @@ def patch_placement(placement_id: int, req: PlacementPatch):
     response_description="Deletion confirmation",
     tags=["Placements"],
 )
-def delete_placement(placement_id: int):
+def delete_placement(placement_id: int) -> dict:
     with get_session() as session:
         placement = session.query(Placement).filter(Placement.id == placement_id).first()
         if not placement:
@@ -2121,7 +2121,7 @@ def get_student_risk_explanation(
     response_description="Complete analytics data for dashboard charts",
     tags=["Analytics"],
 )
-def get_analytics_summary(user: dict = Depends(get_current_user)):
+def get_analytics_summary(user: dict = Depends(get_current_user)) -> dict:
     from analytics.engine import AnalyticsEngine
     from services.analytics_service import AnalyticsService
 
@@ -2223,7 +2223,7 @@ def _set_system_config_value(
     response_description="Current risk threshold values",
     tags=["Admin"],
 )
-def get_risk_thresholds(user: dict = Depends(require_role(["admin"]))):
+def get_risk_thresholds(user: dict = Depends(require_role(["admin"]))) -> dict:
     with get_session() as session:
         thresholds = {
             "attendance_risk_threshold": _get_system_config_value(
@@ -2260,7 +2260,7 @@ def get_risk_thresholds(user: dict = Depends(require_role(["admin"]))):
     response_description="Updated risk threshold values",
     tags=["Admin"],
 )
-def update_risk_thresholds(req: RiskThresholdUpdate, user: dict = Depends(require_role(["admin"]))):
+def update_risk_thresholds(req: RiskThresholdUpdate, user: dict = Depends(require_role(["admin"]))) -> dict:
     with get_session() as session:
         descriptions = {
             "attendance_risk_threshold": "Attendance percentage below which a student is flagged at-risk",

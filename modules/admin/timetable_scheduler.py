@@ -9,7 +9,7 @@ WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 
 class TimetableScheduler(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -21,7 +21,7 @@ class TimetableScheduler(ctk.CTkFrame):
         self._build_ui()
         self._load_courses()
 
-    def _build_ui(self):
+    def _build_ui(self) -> None:
         # ── Header ──
         ctk.CTkLabel(self, text="Timetable Scheduler", font=self.tm.header_font).pack(
             pady=20, anchor="w"
@@ -68,7 +68,7 @@ class TimetableScheduler(ctk.CTkFrame):
 
         self._build_empty_grid()
 
-    def _build_empty_grid(self):
+    def _build_empty_grid(self) -> None:
         """Show the empty weekday grid with 'No classes scheduled'."""
         for widget in self.grid_scroll.winfo_children():
             widget.destroy()
@@ -97,7 +97,7 @@ class TimetableScheduler(ctk.CTkFrame):
                 corner_radius=4,
             ).pack(side="left", padx=5, pady=4, fill="x", expand=True)
 
-    def _populate_grid(self, entries):
+    def _populate_grid(self, entries) -> None:
         """Populate the grid with actual timetable entries, grouped by day."""
         for widget in self.grid_scroll.winfo_children():
             widget.destroy()
@@ -173,13 +173,13 @@ class TimetableScheduler(ctk.CTkFrame):
                 text_color="gray",
             ).pack(pady=(5, 0))
 
-    def _load_courses(self):
+    def _load_courses(self) -> None:
         """Load courses into the dropdown."""
 
-        def fetch():
+        def fetch() -> None:
             return self.course_service.get_all_courses()
 
-        def on_success(courses):
+        def on_success(courses) -> None:
             self._course_map = {f"{c['name']} ({c['code']})": c["id"] for c in courses}
             names = list(self._course_map.keys())
             if names:
@@ -190,7 +190,7 @@ class TimetableScheduler(ctk.CTkFrame):
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _load_timetable(self):
+    def _load_timetable(self) -> None:
         """Load and display the timetable for the selected course."""
         selected = self.course_cb.get()
         course_id = self._course_map.get(selected)
@@ -200,15 +200,15 @@ class TimetableScheduler(ctk.CTkFrame):
 
         self._current_course_id = course_id
 
-        def fetch():
+        def fetch() -> None:
             return self.timetable_service.get_timetable_for_course(course_id)
 
-        def on_success(entries):
+        def on_success(entries) -> None:
             self._populate_grid(entries)
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _auto_generate(self):
+    def _auto_generate(self) -> None:
         """Auto-generate a timetable for the selected course."""
         selected = self.course_cb.get()
         course_id = self._course_map.get(selected)
@@ -217,10 +217,10 @@ class TimetableScheduler(ctk.CTkFrame):
             ToastManager.show(self.winfo_toplevel(), "Please select a course first.", "warning")
             return
 
-        def fetch():
+        def fetch() -> None:
             return self.timetable_service.auto_generate(course_id)
 
-        def on_success(result):
+        def on_success(result) -> None:
             status = result.get("status", "error")
             message = result.get("message", "Unknown result")
             if status == "created":

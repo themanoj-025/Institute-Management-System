@@ -94,7 +94,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             ACTIVE_REQUESTS.dec()  # type: ignore[name-defined]
 
 
-def metrics_endpoint():
+def metrics_endpoint() -> None:
     """Return a plain-text response with Prometheus-formatted metrics.
 
     Must be registered as a FastAPI route::
@@ -123,7 +123,7 @@ class HealthChecker:
         report = checker.check()
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._db_session_factory = None
 
     def with_db(self, session_factory) -> "HealthChecker":

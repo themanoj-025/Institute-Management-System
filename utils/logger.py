@@ -84,7 +84,7 @@ class ContextLogger(logging.LoggerAdapter):
         return msg, kwargs
 
 
-def _ensure_log_dir():
+def _ensure_log_dir() -> None:
     """Create the logs directory if it doesn't exist."""
     os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -171,6 +171,6 @@ def setup_logger(
     return logger
 
 
-def shutdown():
+def shutdown() -> None:
     """Flush and close all logging handlers (call on app exit)."""
     logging.shutdown()

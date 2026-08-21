@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import date, datetime
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -6,10 +7,10 @@ from database.models import StaffAttendance
 
 
 class StaffAttendanceService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_staff_attendance(self, staff_id, month=None, year=None):
+    def get_staff_attendance(self, staff_id: int, month: Optional[int] = None, year: Optional[int] = None) -> list[dict]:
         query = self.db.query(StaffAttendance).filter(StaffAttendance.staff_id == staff_id)
         if month and year:
             from calendar import monthrange
@@ -22,7 +23,7 @@ class StaffAttendanceService:
         records = query.order_by(StaffAttendance.date.desc()).all()
         return [self._format_attendance(r) for r in records]
 
-    def mark_attendance(self, staff_id, date, status, in_time=None, out_time=None):
+    def mark_attendance(self, staff_id: int, date: date, status: str, in_time: Optional[datetime] = None, out_time: Optional[datetime] = None) -> dict:
         record = (
             self.db.query(StaffAttendance)
             .filter(StaffAttendance.staff_id == staff_id, StaffAttendance.date == date)
@@ -45,7 +46,7 @@ class StaffAttendanceService:
         self.db.commit()
         return self._format_attendance(record)
 
-    def _format_attendance(self, r):
+    def _format_attendance(self, r: StaffAttendance) -> dict:
         return {
             "id": r.id,
             "date": r.date.isoformat(),

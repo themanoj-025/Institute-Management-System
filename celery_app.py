@@ -89,10 +89,10 @@ if not IS_DEV:
 class LoggedTask(Task):
     """Base task that logs start, success, and failure."""
 
-    def on_success(self, retval, task_id, args, kwargs):
+    def on_success(self, retval, task_id, args, kwargs) -> None:
         logger.info("Task %s succeeded", self.name, extra={"task_id": task_id})
 
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
+    def on_failure(self, exc, task_id, args, kwargs, einfo) -> None:
         logger.error(
             "Task %s failed: %s",
             self.name,
@@ -100,7 +100,7 @@ class LoggedTask(Task):
             extra={"task_id": task_id, "error": str(exc)},
         )
 
-    def on_retry(self, exc, task_id, args, kwargs, einfo):
+    def on_retry(self, exc, task_id, args, kwargs, einfo) -> None:
         logger.warning(
             "Task %s retrying after error: %s",
             self.name,
@@ -251,7 +251,7 @@ def _store_drift_report(session, report: dict) -> dict:
 
 
 @app.task(base=LoggedTask, bind=True, max_retries=1)
-def check_ml_drift_task(self):
+def check_ml_drift_task(self) -> None:
     """Run drift detection on current production features vs. reference.
 
     Compares current feature distributions against the reference
@@ -300,7 +300,7 @@ def check_ml_drift_task(self):
 
 
 @app.task(base=LoggedTask, bind=True, max_retries=2)
-def retrain_ml_model_task(self, force: bool = False):
+def retrain_ml_model_task(self, force: bool = False) -> None:
     """Retrain the ML risk prediction model and log metrics.
 
     Called weekly by Celery Beat, or on-demand via admin UI.
@@ -359,7 +359,7 @@ def retrain_ml_model_task(self, force: bool = False):
 
 
 @app.task(base=LoggedTask)
-def cleanup_expired_otps_task():
+def cleanup_expired_otps_task() -> None:
     """Clean up expired OTP codes from the database."""
     try:
         from database.db_session import SessionLocal
@@ -388,7 +388,7 @@ def cleanup_expired_otps_task():
 
 
 @app.task(base=LoggedTask)
-def cleanup_revoked_tokens_task():
+def cleanup_revoked_tokens_task() -> None:
     """Clean up expired revoked token entries."""
     try:
         from database.db_session import SessionLocal

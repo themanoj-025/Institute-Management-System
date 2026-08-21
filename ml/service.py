@@ -52,7 +52,7 @@ class MLService:
         kpis = svc.get_dashboard_kpis(session)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._model: Any = None
         self._model_name: Optional[str] = None
 

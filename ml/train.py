@@ -290,7 +290,7 @@ def train_risk_model(
     return True, metrics
 
 
-def load_risk_model():
+def load_risk_model() -> tuple[XGBClassifier | None, str | None]:
     """Load the latest risk prediction model from the registry.
 
     Returns

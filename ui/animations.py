@@ -3,12 +3,12 @@ import customtkinter as ctk
 
 class HoverEffect:
     @staticmethod
-    def bind_card(widget: ctk.CTkFrame, normal_color: str, hover_color: str):
-        def on_enter(e):
+    def bind_card(widget: ctk.CTkFrame, normal_color: str, hover_color: str) -> None:
+        def on_enter(e) -> None:
             if widget.winfo_exists():
                 widget.configure(fg_color=hover_color)
 
-        def on_leave(e):
+        def on_leave(e) -> None:
             if widget.winfo_exists():
                 widget.configure(fg_color=normal_color)
 
@@ -22,11 +22,11 @@ class HoverEffect:
 
 class CounterAnimation:
     @staticmethod
-    def animate(label: ctk.CTkLabel, target: int, duration_ms: int = 1200, prefix="", suffix=""):
+    def animate(label: ctk.CTkLabel, target: int, duration_ms: int = 1200, prefix="", suffix="") -> None:
         steps = 30
         step_ms = duration_ms // steps
 
-        def tick(current_step):
+        def tick(current_step) -> None:
             if not label.winfo_exists():
                 return
             try:
@@ -44,17 +44,17 @@ class CounterAnimation:
 
 class SlideTransition:
     @staticmethod
-    def fade_in(widget, duration_ms=200):
+    def fade_in(widget, duration_ms=200) -> None:
         # Color interpolation from #1e1e2e (mocha base) or #eff1f5 (latte base) to surface
         steps = 10
         step_ms = duration_ms // steps
 
         # Simple color blend helper
-        def hex_to_rgb(hex_str):
+        def hex_to_rgb(hex_str) -> None:
             hex_str = hex_str.lstrip("#")
             return tuple(int(hex_str[i : i + 2], 16) for i in (0, 2, 4))
 
-        def rgb_to_hex(rgb):
+        def rgb_to_hex(rgb) -> None:
             return "#{:02x}{:02x}{:02x}".format(*rgb)
 
         appearance = ctk.get_appearance_mode().lower()
@@ -68,7 +68,7 @@ class SlideTransition:
             # Fallback
             return
 
-        def blend(step):
+        def blend(step) -> None:
             if not widget.winfo_exists():
                 return
             ratio = step / steps

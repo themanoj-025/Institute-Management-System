@@ -5,7 +5,7 @@ from utils.async_loader import AsyncLoader
 
 
 class NoticeViewer(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -19,13 +19,13 @@ class NoticeViewer(ctk.CTkFrame):
         # Load notices
         self._load_notices()
 
-    def _load_notices(self):
+    def _load_notices(self) -> None:
         # Show loading
         for w in self.scroll.winfo_children():
             w.destroy()
         ctk.CTkLabel(self.scroll, text="⏳ Loading notices...", text_color="gray").pack(pady=30)
 
-        def fetch():
+        def fetch() -> None:
             role = (
                 self.app_state.current_user.get("role", "student")
                 if self.app_state.current_user
@@ -33,7 +33,7 @@ class NoticeViewer(ctk.CTkFrame):
             )
             return self.notice_service.get_all_notices(target_role=role)
 
-        def on_success(notices):
+        def on_success(notices) -> None:
             for w in self.scroll.winfo_children():
                 w.destroy()
 

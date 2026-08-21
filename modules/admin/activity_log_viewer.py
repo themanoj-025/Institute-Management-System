@@ -6,7 +6,7 @@ from utils.async_loader import AsyncLoader
 
 
 class ActivityLogViewer(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.db_session = db_session
@@ -22,10 +22,10 @@ class ActivityLogViewer(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             logs = (
                 self.db_session.query(ActivityLog).order_by(ActivityLog.id.desc()).limit(100).all()
             )
@@ -41,7 +41,7 @@ class ActivityLogViewer(ctk.CTkFrame):
                 for log in logs
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)

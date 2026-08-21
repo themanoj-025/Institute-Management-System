@@ -26,7 +26,7 @@ ROUTE_ICONS = {
 
 
 class Sidebar(ctk.CTkFrame):
-    def __init__(self, master, theme_manager, navigate_callback, role, *args, **kwargs):
+    def __init__(self, master, theme_manager, navigate_callback, role, *args, **kwargs) -> None:
         super().__init__(master, width=220, corner_radius=0, *args, **kwargs)
         self.tm = theme_manager
         self.navigate_callback = navigate_callback
@@ -128,7 +128,7 @@ class Sidebar(ctk.CTkFrame):
         self._top_level = self.winfo_toplevel()
         self._top_level.bind("<Configure>", self.on_window_configure, add="+")
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         settings_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "database",
@@ -146,7 +146,7 @@ class Sidebar(ctk.CTkFrame):
             except Exception:
                 pass
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         settings_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "database",
@@ -163,7 +163,7 @@ class Sidebar(ctk.CTkFrame):
         except Exception:
             pass
 
-    def build_menu(self):
+    def build_menu(self) -> None:
         # Clear existing
         for b in self.buttons:
             b.destroy()
@@ -220,7 +220,7 @@ class Sidebar(ctk.CTkFrame):
         logout_btn.pack(side="bottom", fill="x", padx=5, pady=5)
         self.buttons.append(logout_btn)
 
-    def show_tooltip(self, event, text):
+    def show_tooltip(self, event, text) -> None:
         self.hide_tooltip()
         self._tooltip = ctk.CTkToplevel(self)
         self._tooltip.overrideredirect(True)
@@ -242,7 +242,7 @@ class Sidebar(ctk.CTkFrame):
         y = event.y_root + 10
         self._tooltip.geometry(f"+{x}+{y}")
 
-    def hide_tooltip(self, event=None):
+    def hide_tooltip(self, event=None) -> None:
         if self._tooltip:
             try:
                 self._tooltip.destroy()
@@ -250,12 +250,12 @@ class Sidebar(ctk.CTkFrame):
                 pass
             self._tooltip = None
 
-    def navigate(self, route):
+    def navigate(self, route) -> None:
         if self._animating:
             return
         self.navigate_callback(route)
 
-    def toggle(self):
+    def toggle(self) -> None:
         if self._animating:
             return
         self._collapsed = not self._collapsed
@@ -268,7 +268,7 @@ class Sidebar(ctk.CTkFrame):
         target_width = 64 if self._collapsed else 220
         self._animate_step(target_width)
 
-    def _animate_step(self, target_width):
+    def _animate_step(self, target_width) -> None:
         current_width = self.winfo_width()
         step = 8 if current_width < target_width else -8
 
@@ -292,7 +292,7 @@ class Sidebar(ctk.CTkFrame):
             self.configure(width=next_width)
             self.after(12, lambda: self._animate_step(target_width))
 
-    def on_window_configure(self, event):
+    def on_window_configure(self, event) -> None:
         if hasattr(event, "widget") and event.widget == self._top_level:
             # Auto-collapse at 900px breakpoint
             if event.width < 900 and not self._collapsed and not self._animating:

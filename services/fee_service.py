@@ -12,16 +12,16 @@ from database.models import Fee, FeePayment, FeeStatus
 
 
 class FeeService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_student_fees(self, student_id):
+    def get_student_fees(self, student_id: int) -> list[dict]:
         fees = (
             self.db.query(Fee).filter(Fee.student_id == student_id, Fee.is_deleted == False).all()
         )
         return [self._format_fee(f) for f in fees]
 
-    def record_payment(self, fee_id, amount, mode, transaction_id=None):
+    def record_payment(self, fee_id: int, amount: float, mode: str, transaction_id: str | None = None) -> str:
         fee = self.db.query(Fee).filter(Fee.id == fee_id, Fee.is_deleted == False).first()
         if not fee:
             raise ValueError("Fee record not found or has been deleted")
@@ -45,11 +45,11 @@ class FeeService:
         self.db.commit()
         return receipt_no
 
-    def get_all_fees(self):
+    def get_all_fees(self) -> list[dict]:
         fees = self.db.query(Fee).filter(Fee.is_deleted == False).order_by(Fee.id.desc()).all()
         return [self._format_fee(f) for f in fees]
 
-    def _format_fee(self, fee):
+    def _format_fee(self, fee: Fee) -> dict:
         student_name = (
             f"{fee.student.first_name} {fee.student.last_name}" if fee.student else "Unknown"
         )

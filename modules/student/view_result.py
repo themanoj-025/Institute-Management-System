@@ -5,7 +5,7 @@ from utils.async_loader import AsyncLoader
 
 
 class ViewResult(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.result_service = ResultService(db_session)
@@ -58,7 +58,7 @@ class ViewResult(ctk.CTkFrame):
         # Auto-load
         self.after(300, self._load_results)
 
-    def _load_results(self):
+    def _load_results(self) -> None:
         student_id = self.app_state.current_user.get("profile_id")
         if not student_id:
             ctk.CTkLabel(
@@ -74,7 +74,7 @@ class ViewResult(ctk.CTkFrame):
             self._render_results,
         )
 
-    def _render_results(self, results):
+    def _render_results(self, results) -> None:
         for w in self._results_content.winfo_children():
             w.destroy()
 
