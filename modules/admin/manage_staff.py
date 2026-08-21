@@ -9,7 +9,7 @@ from utils.async_loader import AsyncLoader
 
 
 class ManageStaff(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.staff_service = StaffService(db_session)
@@ -36,10 +36,10 @@ class ManageStaff(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             res = self.staff_service.get_all_staff(limit=25)
             return [
                 [
@@ -52,12 +52,12 @@ class ManageStaff(ctk.CTkFrame):
                 for s in res.get("staff", [])
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _add_staff(self):
+    def _add_staff(self) -> None:
         """Open a dialog to add a new staff member."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title("Add New Staff")
@@ -152,7 +152,7 @@ class ManageStaff(ctk.CTkFrame):
         btn_frame = ctk.CTkFrame(frame, fg_color="transparent")
         btn_frame.pack(pady=(5, 0))
 
-        def submit():
+        def submit() -> None:
             first_name = first_name_entry.get().strip()
             last_name = last_name_entry.get().strip()
             email = email_entry.get().strip()

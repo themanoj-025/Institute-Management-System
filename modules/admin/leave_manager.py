@@ -7,7 +7,7 @@ from utils.async_loader import AsyncLoader
 
 
 class LeaveManager(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -25,8 +25,8 @@ class LeaveManager(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
-        def fetch():
+    def _load_data(self) -> None:
+        def fetch() -> None:
             res = self.leave_service.get_all_leaves()
             return [
                 [
@@ -39,12 +39,12 @@ class LeaveManager(ctk.CTkFrame):
                 for leave in res
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _on_row_click(self, row_data):
+    def _on_row_click(self, row_data) -> None:
         leave_id = row_data[0]
         current_status = row_data[4].lower() if len(row_data) > 4 else ""
 
@@ -78,19 +78,19 @@ class LeaveManager(ctk.CTkFrame):
         btn_frame = ctk.CTkFrame(frame, fg_color="transparent")
         btn_frame.pack(pady=5)
 
-        def approve():
+        def approve() -> None:
             dialog.destroy()
             self.leave_service.approve_leave(leave_id, self.app_state.current_user["id"])
             ToastManager.show(self.winfo_toplevel(), f"Leave #{leave_id} Approved", "success")
             self._load_data()
 
-        def reject():
+        def reject() -> None:
             dialog.destroy()
             self.leave_service.reject_leave(leave_id, self.app_state.current_user["id"])
             ToastManager.show(self.winfo_toplevel(), f"Leave #{leave_id} Rejected", "info")
             self._load_data()
 
-        def cancel():
+        def cancel() -> None:
             dialog.destroy()
 
         ctk.CTkButton(

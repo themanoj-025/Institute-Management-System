@@ -7,7 +7,7 @@ from utils.async_loader import AsyncLoader
 
 
 class NoticeBoard(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.notice_service = NoticeService(db_session)
@@ -31,10 +31,10 @@ class NoticeBoard(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             res = self.notice_service.get_all_notices()
             return [
                 [
@@ -48,12 +48,12 @@ class NoticeBoard(ctk.CTkFrame):
                 for n in res
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _create_notice(self):
+    def _create_notice(self) -> None:
         """Open a dialog to create a new notice."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title("Create New Notice")
@@ -118,7 +118,7 @@ class NoticeBoard(ctk.CTkFrame):
         btn_frame = ctk.CTkFrame(frame, fg_color="transparent")
         btn_frame.pack(pady=(5, 0))
 
-        def submit():
+        def submit() -> None:
             title = title_entry.get().strip()
             content = content_txt.get("1.0", "end").strip()
             target_role = role_cb.get()

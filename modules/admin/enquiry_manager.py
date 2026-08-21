@@ -6,7 +6,7 @@ from utils.async_loader import AsyncLoader
 
 
 class EnquiryManager(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.db_session = db_session
@@ -32,10 +32,10 @@ class EnquiryManager(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             enquiries = self.db_session.query(Enquiry).order_by(Enquiry.id.desc()).all()
             return [
                 [
@@ -50,7 +50,7 @@ class EnquiryManager(ctk.CTkFrame):
                 for e in enquiries
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)

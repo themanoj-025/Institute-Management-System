@@ -71,7 +71,7 @@ def _build_explainer(model) -> Optional[Any]:
         return None
 
 
-def invalidate_explainer_cache(model_version: Optional[str] = None):
+def invalidate_explainer_cache(model_version: Optional[str] = None) -> None:
     """Invalidate the SHAP explainer cache.
 
     If ``model_version`` is provided, only that version's entry is

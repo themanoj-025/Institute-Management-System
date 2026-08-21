@@ -9,7 +9,7 @@ from utils.async_loader import AsyncLoader
 
 
 class AnalyticsDashboard(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.db_session = db_session
@@ -126,7 +126,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
         # Load all data
         self._load_all()
 
-    def _manual_refresh(self):
+    def _manual_refresh(self) -> None:
         """Refresh button handler — reloads all charts while disabling the button."""
         if self._loading:
             return
@@ -134,12 +134,12 @@ class AnalyticsDashboard(ctk.CTkFrame):
         self.refresh_btn.configure(text="⏳ Refreshing...", state="disabled")
         AsyncLoader.run(self, self._fetch_all, self._render_all, on_error=self._on_refresh_error)
 
-    def _load_all(self):
+    def _load_all(self) -> None:
         """Load all analytics data in the background (initial load)."""
         self._loading = True
         AsyncLoader.run(self, self._fetch_all, self._render_all, on_error=self._on_refresh_error)
 
-    def _on_refresh_error(self, error):
+    def _on_refresh_error(self, error) -> None:
         """Handle errors during data fetch — re-enable the refresh button."""
         self._loading = False
         self.refresh_btn.configure(text="🔄 Refresh Data", state="normal")
@@ -154,13 +154,13 @@ class AnalyticsDashboard(ctk.CTkFrame):
         except Exception:
             pass
 
-    def _fetch_all(self):
+    def _fetch_all(self) -> None:
         """Fetch summary + course performance in one background pass."""
         summary = self.engine.full_summary()
         summary["course_performance"] = self.analytics_svc.get_course_performance_breakdown()
         return summary
 
-    def _render_all(self, data):
+    def _render_all(self, data) -> None:
         # Re-enable refresh button
         self.refresh_btn.configure(text="🔄 Refresh Data", state="normal")
         self._loading = False
@@ -193,7 +193,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
 
     # ── Individual chart renderers ──
 
-    def _render_attendance_trend(self, trend_data, att_summary):
+    def _render_attendance_trend(self, trend_data, att_summary) -> None:
         for w in self.chart1_body.winfo_children():
             w.destroy()
 
@@ -226,7 +226,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
 
         ChartFactory.embed(fig, self.chart1_body)
 
-    def _render_course_performance(self, course_perf):
+    def _render_course_performance(self, course_perf) -> None:
         """Render grouped bar chart using pre-computed data from AnalyticsService."""
         for w in self.chart2_body.winfo_children():
             w.destroy()
@@ -279,7 +279,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
 
         ChartFactory.embed(fig, self.chart2_body)
 
-    def _render_fee_pie(self, fees):
+    def _render_fee_pie(self, fees) -> None:
         for w in self.chart3_body.winfo_children():
             w.destroy()
 
@@ -327,7 +327,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
 
         ChartFactory.embed(fig, self.chart3_body)
 
-    def _render_placements(self, placements):
+    def _render_placements(self, placements) -> None:
         for w in self.chart4_body.winfo_children():
             w.destroy()
 

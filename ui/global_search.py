@@ -15,7 +15,7 @@ CATEGORY_ICONS = {
 
 
 class GlobalSearch(ctk.CTkToplevel):
-    def __init__(self, master, navigate_callback, *args, **kwargs):
+    def __init__(self, master, navigate_callback, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
         self.navigate = navigate_callback
         self.db_session = master.db_session
@@ -82,7 +82,7 @@ class GlobalSearch(ctk.CTkToplevel):
         self.load_recent()
         self.show_recent()
 
-    def load_recent(self):
+    def load_recent(self) -> None:
         self.recent_items = []
         settings_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -96,7 +96,7 @@ class GlobalSearch(ctk.CTkToplevel):
             except Exception:
                 pass
 
-    def save_recent(self, item):
+    def save_recent(self, item) -> None:
         # Remove if exists
         self.recent_items = [r for r in self.recent_items if r.get("id") != item.get("id")]
         self.recent_items.insert(0, item)
@@ -118,7 +118,7 @@ class GlobalSearch(ctk.CTkToplevel):
         except Exception:
             pass
 
-    def _on_key_release(self, event):
+    def _on_key_release(self, event) -> None:
         if event.keysym in ("Up", "Down", "Return", "Escape"):
             return
 
@@ -127,7 +127,7 @@ class GlobalSearch(ctk.CTkToplevel):
 
         self.debounce_timer = self.after(250, self.perform_search)
 
-    def perform_search(self):
+    def perform_search(self) -> None:
         query = self.entry.get().strip()
 
         # Clear existing
@@ -185,7 +185,7 @@ class GlobalSearch(ctk.CTkToplevel):
             )
             empty_lbl.pack()
 
-    def show_recent(self):
+    def show_recent(self) -> None:
         if not self.recent_items:
             recent_lbl = ctk.CTkLabel(
                 self.results_frame,
@@ -220,19 +220,19 @@ class GlobalSearch(ctk.CTkToplevel):
             btn.pack(fill="x", pady=1)
             self.flat_items.append((btn, item))
 
-    def _move_up(self, event):
+    def _move_up(self, event) -> None:
         if not self.flat_items:
             return
         if self.selected_index > 0:
             self._highlight_item(self.selected_index - 1)
 
-    def _move_down(self, event):
+    def _move_down(self, event) -> None:
         if not self.flat_items:
             return
         if self.selected_index < len(self.flat_items) - 1:
             self._highlight_item(self.selected_index + 1)
 
-    def _highlight_item(self, index):
+    def _highlight_item(self, index) -> None:
         # Reset current selection
         if self.selected_index != -1:
             self.flat_items[self.selected_index][0].configure(fg_color="transparent")
@@ -241,12 +241,12 @@ class GlobalSearch(ctk.CTkToplevel):
         # Highlight new selection
         self.flat_items[self.selected_index][0].configure(fg_color="#313244")
 
-    def _select_current(self, event):
+    def _select_current(self, event) -> None:
         if self.selected_index != -1:
             item = self.flat_items[self.selected_index][1]
             self._handle_click(item)
 
-    def _handle_click(self, item):
+    def _handle_click(self, item) -> None:
         self.save_recent(item)
         self.navigate(item["route"])
         self.destroy()

@@ -1,12 +1,18 @@
 import threading
+from typing import Any, Callable, Optional
 
 
 class AsyncLoader:
     """Runs a task in a daemon thread and updates UI on completion."""
 
     @staticmethod
-    def run(root, task_func, on_success, on_error=None):
-        def worker():
+    def run(
+        root: Any,
+        task_func: Callable[[], Any],
+        on_success: Callable[[Any], None],
+        on_error: Optional[Callable[[Exception], None]] = None,
+    ) -> None:
+        def worker() -> None:
             try:
                 result = task_func()
                 root.after(0, lambda: on_success(result))

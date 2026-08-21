@@ -11,7 +11,7 @@ logger = setup_logger("activity", context={"service": "activity", "version": "1.
 
 
 class ActivityService:
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
         self.hostname = socket.gethostname()
 
@@ -20,9 +20,9 @@ class ActivityService:
         user_id: int,
         action: str,
         module: str = "General",
-        details: dict = None,  # type: ignore
+        details: dict | None = None,
         result: str = "success",
-    ):
+    ) -> None:
         """Logs an activity for a given user to both Database and rotating files."""
         from utils.time import utc_now
 
@@ -55,7 +55,7 @@ class ActivityService:
                 extra={"extra_fields": {**extra, "db_error": str(e)}},
             )
 
-    def get_logs(self, limit: int = 100):
+    def get_logs(self, limit: int = 100) -> list[ActivityLog]:
         """Fetches the latest activity logs."""
         return (
             self.session.query(ActivityLog)
@@ -64,7 +64,7 @@ class ActivityService:
             .all()
         )
 
-    def get_user_logs(self, user_id: int, limit: int = 5):
+    def get_user_logs(self, user_id: int, limit: int = 5) -> list[ActivityLog]:
         """Fetches the latest activity logs for a specific user."""
         return (
             self.session.query(ActivityLog)

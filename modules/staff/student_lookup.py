@@ -5,7 +5,7 @@ from utils.async_loader import AsyncLoader
 
 
 class StudentLookup(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.student_service = StudentService(db_session)
@@ -71,7 +71,7 @@ class StudentLookup(ctk.CTkFrame):
             text_color="gray",
         ).pack(pady=50)
 
-    def _do_search(self):
+    def _do_search(self) -> None:
         query = self.search_entry.get().strip()
         if not query:
             from ui.toast import ToastManager
@@ -80,10 +80,10 @@ class StudentLookup(ctk.CTkFrame):
             return
 
         # Search and show results
-        def fetch():
+        def fetch() -> None:
             return self.student_service.get_all_students(limit=10, search_query=query)
 
-        def on_success(results):
+        def on_success(results) -> None:
             from ui.toast import ToastManager
 
             count = results.get("total", 0)

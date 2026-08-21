@@ -27,7 +27,7 @@ class ChartFactory:
     CACHE_TTL = 300  # 5 minutes
 
     @classmethod
-    def get_cached(cls, key: str):
+    def get_cached(cls, key: str) -> None:
         if key in cls._cache:
             data, timestamp = cls._cache[key]
             if time.time() - timestamp < cls.CACHE_TTL:
@@ -35,7 +35,7 @@ class ChartFactory:
         return None
 
     @classmethod
-    def set_cached(cls, key: str, data):
+    def set_cached(cls, key: str, data) -> None:
         cls._cache[key] = (data, time.time())
 
     @classmethod
@@ -74,7 +74,7 @@ class ChartFactory:
         return fig, ax
 
     @classmethod
-    def bar(cls, ax, labels, values, title, colors=None, horizontal=False):
+    def bar(cls, ax, labels, values, title, colors=None, horizontal=False) -> None:
         if not colors:
             colors = cls.COLORS
         if horizontal:
@@ -86,7 +86,7 @@ class ChartFactory:
         ax.set_title(title, pad=15, weight="bold")
 
     @classmethod
-    def line(cls, ax, x, y_dict: dict, title, smooth=True):
+    def line(cls, ax, x, y_dict: dict, title, smooth=True) -> None:
         colors = cls.COLORS
         for idx, (label, y) in enumerate(y_dict.items()):
             color = colors[idx % len(colors)]
@@ -110,7 +110,7 @@ class ChartFactory:
         ax.legend(frameon=False)
 
     @classmethod
-    def pie(cls, ax, labels, values, title, donut=False):
+    def pie(cls, ax, labels, values, title, donut=False) -> None:
         colors = cls.COLORS
         wedge_props = {"edgecolor": "none"}
         if donut:
@@ -129,7 +129,7 @@ class ChartFactory:
         ax.set_title(title, pad=15, weight="bold")
 
     @classmethod
-    def radar(cls, ax, categories, values_dict: dict, title):
+    def radar(cls, ax, categories, values_dict: dict, title) -> None:
         # ax must have polar=True projection
         angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
         angles += angles[:1]
@@ -148,7 +148,7 @@ class ChartFactory:
         ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1), frameon=False)
 
     @classmethod
-    def heatmap(cls, fig, ax, df, title):
+    def heatmap(cls, fig, ax, df, title) -> None:
         sns.heatmap(
             df,
             annot=True,
@@ -161,7 +161,7 @@ class ChartFactory:
         ax.set_title(title, pad=15, weight="bold")
 
     @classmethod
-    def scatter(cls, ax, x, y, colors, labels, title):
+    def scatter(cls, ax, x, y, colors, labels, title) -> None:
         sc = ax.scatter(x, y, c=colors, s=50, alpha=0.8, edgecolors="none")
         ax.set_title(title, pad=15, weight="bold")
 
@@ -172,14 +172,14 @@ class ChartFactory:
             cursor = mplcursors.cursor(sc, hover=True)
 
             @cursor.connect("add")
-            def on_add(sel):
+            def on_add(sel) -> None:
                 sel.annotation.set_text(labels[sel.index])
 
         except Exception:
             pass
 
     @classmethod
-    def boxplot(cls, ax, data_dict: dict, title):
+    def boxplot(cls, ax, data_dict: dict, title) -> None:
         labels = list(data_dict.keys())
         data = list(data_dict.values())
 
@@ -203,7 +203,7 @@ class ChartFactory:
         canvas.get_tk_widget().pack(fill="both", expand=True)
 
         # Auto-tight on configuration transitions
-        def on_resize(event):
+        def on_resize(event) -> None:
             try:
                 fig.tight_layout()
                 canvas.draw_idle()

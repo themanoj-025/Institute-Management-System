@@ -5,14 +5,17 @@ from plyer import notification
 from config.constants import APP_NAME
 
 
+from typing import Optional
+
+
 class DesktopNotifier:
-    def __init__(self):
+    def __init__(self) -> None:
         # Path to app icon if any
-        self.icon_path = None
+        self.icon_path: Optional[str] = None
         # Could point to an .ico file in assets/icons/ if needed
 
-    def notify(self, title: str, message: str, timeout: int = 5):
-        def task():
+    def notify(self, title: str, message: str, timeout: int = 5) -> None:
+        def task() -> None:
             try:
                 notification.notify(
                     title=f"{APP_NAME} - {title}",

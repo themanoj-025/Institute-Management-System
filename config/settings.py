@@ -66,7 +66,7 @@ MAX_UPLOAD_SIZE_MB = 5
 _initialized = False
 
 
-def init_app():
+def init_app() -> None:
     """Create necessary directories on app startup.
 
     Call this once during application bootstrap, never at import time.

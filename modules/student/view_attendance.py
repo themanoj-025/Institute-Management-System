@@ -8,7 +8,7 @@ from utils.async_loader import AsyncLoader
 
 
 class ViewAttendance(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.attendance_service = AttendanceService(db_session)
@@ -63,7 +63,7 @@ class ViewAttendance(ctk.CTkFrame):
         # Auto-load
         self.after(300, self._load_attendance)
 
-    def _load_attendance(self):
+    def _load_attendance(self) -> None:
         student_id = self.app_state.current_user.get("profile_id")
         if not student_id:
             ctk.CTkLabel(
@@ -79,7 +79,7 @@ class ViewAttendance(ctk.CTkFrame):
             self._render_attendance,
         )
 
-    def _fetch_data(self, student_id):
+    def _fetch_data(self, student_id) -> None:
         records = (
             self.db_session.query(Attendance)
             .filter(Attendance.student_id == student_id)
@@ -134,7 +134,7 @@ class ViewAttendance(ctk.CTkFrame):
             "overall_pct": overall_pct,
         }
 
-    def _render_attendance(self, data):
+    def _render_attendance(self, data) -> None:
         for w in self._sub_content.winfo_children():
             w.destroy()
 

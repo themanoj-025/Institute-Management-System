@@ -61,7 +61,7 @@ ACCENT_COLORS = {
 
 
 class ThemeManager:
-    def __init__(self, root):
+    def __init__(self, root) -> None:
         self.root = root
         self.current_theme_name = "dark"
         self.current_accent_name = "blue"
@@ -84,7 +84,7 @@ class ThemeManager:
 
         self.load_settings()
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         settings_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "database",
@@ -112,7 +112,7 @@ class ThemeManager:
         except Exception:
             self.apply("dark", save=False)
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         settings_path = os.path.join(
             os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
             "database",
@@ -130,7 +130,7 @@ class ThemeManager:
         except Exception:
             pass
 
-    def apply(self, theme_name: str, save: bool = True):
+    def apply(self, theme_name: str, save: bool = True) -> None:
         if theme_name not in THEMES:
             return
         self.current_theme_name = theme_name
@@ -149,7 +149,7 @@ class ThemeManager:
         if save:
             self.save_settings()
 
-    def set_accent(self, color_name: str, save: bool = True):
+    def set_accent(self, color_name: str, save: bool = True) -> None:
         if color_name not in ACCENT_COLORS:
             return
         self.current_accent_name = color_name
@@ -164,7 +164,7 @@ class ThemeManager:
         if save:
             self.save_settings()
 
-    def set_font_size(self, size: int, save: bool = True):
+    def set_font_size(self, size: int, save: bool = True) -> None:
         self.main_size = size
         self.small_size = max(10, size - 2)
         self.header_size = size + 10
@@ -178,7 +178,7 @@ class ThemeManager:
         if save:
             self.save_settings()
 
-    def _recursive_recolor(self, widget, theme):
+    def _recursive_recolor(self, widget, theme) -> None:
         # Configure the widget itself if it supports colors
         try:
             if isinstance(widget, ctk.CTkFrame):
@@ -211,7 +211,7 @@ class ThemeManager:
         except Exception:
             pass
 
-    def _recursive_resize(self, widget):
+    def _recursive_resize(self, widget) -> None:
         try:
             if isinstance(widget, (ctk.CTkLabel, ctk.CTkButton, ctk.CTkEntry, ctk.CTkTextbox)):
                 try:

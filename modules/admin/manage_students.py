@@ -11,7 +11,7 @@ from utils.async_loader import AsyncLoader
 
 
 class ManageStudents(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.db_session = db_session
@@ -40,10 +40,10 @@ class ManageStudents(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             res = self.student_service.get_all_students(limit=25)
             return [
                 [
@@ -56,12 +56,12 @@ class ManageStudents(ctk.CTkFrame):
                 for s in res.get("students", [])
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)
 
-    def _add_student(self):
+    def _add_student(self) -> None:
         """Open a dialog to add a new student."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title("Add New Student")
@@ -175,7 +175,7 @@ class ManageStudents(ctk.CTkFrame):
         btn_frame = ctk.CTkFrame(frame, fg_color="transparent")
         btn_frame.pack(pady=(5, 0))
 
-        def submit():
+        def submit() -> None:
             first_name = first_name_entry.get().strip()
             last_name = last_name_entry.get().strip()
             email = email_entry.get().strip()

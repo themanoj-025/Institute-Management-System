@@ -27,7 +27,7 @@ from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import Session
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Migrate SQLite database to PostgreSQL")
     parser.add_argument(
         "--sqlite",

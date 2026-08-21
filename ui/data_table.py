@@ -2,7 +2,7 @@ import customtkinter as ctk
 
 
 class DataTable(ctk.CTkFrame):
-    def __init__(self, master, columns, data, on_row_click=None, *args, **kwargs):
+    def __init__(self, master, columns, data, on_row_click=None, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.columns = columns
         self.on_row_click = on_row_click
@@ -23,7 +23,7 @@ class DataTable(ctk.CTkFrame):
 
         self.update_data(data)
 
-    def show_loading(self):
+    def show_loading(self) -> None:
         """Show loading indicator while data is being fetched."""
         self._loading = True
         for widget in self.scroll_frame.winfo_children():
@@ -37,7 +37,7 @@ class DataTable(ctk.CTkFrame):
         load_lbl.pack(pady=30)
         self.update_idletasks()
 
-    def update_data(self, data):
+    def update_data(self, data) -> None:
         if not hasattr(self, "scroll_frame") or not self.winfo_exists():
             return
         self._loading = False

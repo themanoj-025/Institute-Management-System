@@ -7,11 +7,14 @@ from sqlalchemy.orm import Session
 from database.models import Subject, Timetable
 
 
+from typing import Optional
+
+
 class TimetableService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_timetable_for_course(self, course_id: int):
+    def get_timetable_for_course(self, course_id: int) -> list[dict]:
         """Return all timetable entries for a given course, ordered by day then time."""
         entries = (
             self.db.query(Timetable)
@@ -24,7 +27,7 @@ class TimetableService:
         )
         return [self._format_entry(e) for e in entries]
 
-    def get_all_course_timetables(self):
+    def get_all_course_timetables(self) -> dict[str, list[dict]]:
         """Group timetable entries by course for display."""
         entries = (
             self.db.query(Timetable)
@@ -39,7 +42,7 @@ class TimetableService:
             grouped[course_name].append(self._format_entry(e))
         return grouped
 
-    def auto_generate(self, course_id: int, days: list[str] = None) -> dict:
+    def auto_generate(self, course_id: int, days: Optional[list[str]] = None) -> dict:
         """Auto-generate a timetable for a course by distributing subjects across weekdays.
 
         Args:
@@ -154,7 +157,7 @@ class TimetableService:
             "entries": result_entries,
         }
 
-    def _format_entry(self, entry):
+    def _format_entry(self, entry: Optional[Timetable]) -> Optional[dict]:
         if not entry:
             return None
         return {

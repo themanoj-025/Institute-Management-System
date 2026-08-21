@@ -11,7 +11,7 @@ from utils.async_loader import AsyncLoader
 
 
 class AttendanceTaker(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -72,7 +72,7 @@ class AttendanceTaker(ctk.CTkFrame):
         )
         self.save_btn.pack(pady=(0, 10))
 
-    def _show_placeholder(self, msg="Select course and date above, then click Load Students."):
+    def _show_placeholder(self, msg="Select course and date above, then click Load Students.") -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.grid_container, fg_color="transparent")
@@ -84,7 +84,7 @@ class AttendanceTaker(ctk.CTkFrame):
         ).pack(pady=(10, 5))
         ctk.CTkLabel(frame, text=msg, text_color="gray").pack()
 
-    def _load_students(self):
+    def _load_students(self) -> None:
         course_name = self.course_cb.get()
         course_id = self._course_map.get(course_name)
         if not course_id:
@@ -104,7 +104,7 @@ class AttendanceTaker(ctk.CTkFrame):
             lambda data: self._render_grid(data, att_date),
         )
 
-    def _fetch_students(self, course_id, att_date):
+    def _fetch_students(self, course_id, att_date) -> None:
         students = self.db_session.query(Student).filter(Student.course_id == course_id).all()
         existing = self.attendance_service.get_by_date_subject(att_date, 0)
         # We don't filter by subject here; show all students in the course
@@ -120,7 +120,7 @@ class AttendanceTaker(ctk.CTkFrame):
             )
         return result
 
-    def _render_grid(self, students, att_date):
+    def _render_grid(self, students, att_date) -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
 
@@ -184,7 +184,7 @@ class AttendanceTaker(ctk.CTkFrame):
                 }
             )
 
-    def _save_attendance(self):
+    def _save_attendance(self) -> None:
         if not self._students_data:
             ToastManager.show(
                 self.winfo_toplevel(),

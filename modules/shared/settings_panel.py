@@ -4,7 +4,7 @@ from ui.toast import ToastManager
 
 
 class SettingsPanel(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
 
@@ -133,13 +133,13 @@ class SettingsPanel(ctk.CTkFrame):
             pady=20
         )
 
-    def _change_theme(self, value):
+    def _change_theme(self, value) -> None:
         theme_map = {"Light": "light", "Dark": "dark", "System": "dark"}
         theme_name = theme_map.get(value, "dark")
         self.tm.apply(theme_name)
         ToastManager.show(self.winfo_toplevel(), f"Theme set to {value} ✅", "success")
 
-    def _set_accent(self, name):
+    def _set_accent(self, name) -> None:
         self.tm.set_accent(name)
         ToastManager.show(
             self.winfo_toplevel(),

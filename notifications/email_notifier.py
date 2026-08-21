@@ -13,7 +13,7 @@ from email.mime.text import MIMEText
 
 
 class EmailNotifier:
-    def __init__(self):
+    def __init__(self) -> None:
         """Load SMTP configuration from environment variables."""
         self.smtp_host = os.getenv("SMTP_HOST", "")
         try:
@@ -23,13 +23,13 @@ class EmailNotifier:
         self.sender = os.getenv("SMTP_USER", "")
         self.password = os.getenv("SMTP_PASSWORD", "")
 
-    def send_email(self, to_email: str, subject: str, body_html: str):
+    def send_email(self, to_email: str, subject: str, body_html: str) -> None:
         """Send an email asynchronously. Fails silently if SMTP not configured."""
         if not self.sender or not self.password:
             print("Email not configured (SMTP_USER/SMTP_PASSWORD missing). Skipping email send.")
             return
 
-        def task():
+        def task() -> None:
             try:
                 msg = MIMEMultipart()
                 msg["From"] = self.sender

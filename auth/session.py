@@ -32,7 +32,7 @@ class SessionTracker:
         monitors user activity and auto-logs out after inactivity.
     """
 
-    def __init__(self, logout_callback, root, timeout_minutes=30):
+    def __init__(self, logout_callback, root, timeout_minutes=30) -> None:
         self.logout_callback = logout_callback
         self.root = root
         self.timeout_minutes = timeout_minutes
@@ -42,7 +42,7 @@ class SessionTracker:
         self._access_token: Optional[str] = None
         self._token_expiry: Optional[datetime] = None
 
-    def set_token(self, access_token: str, expires_at: Optional[datetime] = None):
+    def set_token(self, access_token: str, expires_at: Optional[datetime] = None) -> None:
         """Store the JWT for this session.
 
         Parameters
@@ -67,7 +67,7 @@ class SessionTracker:
             return None
         return self._access_token
 
-    def clear_token(self):
+    def clear_token(self) -> None:
         """Clear the stored JWT (called on logout)."""
         self._access_token = None
         self._token_expiry = None
@@ -76,13 +76,13 @@ class SessionTracker:
         """Check if the stored token is still valid (not expired)."""
         return self.get_token() is not None
 
-    def start(self):
+    def start(self) -> None:
         """Begin session tracking."""
         self.is_active = True
         self.last_activity = utc_now()
         self._check_timeout()
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop session tracking and clear the token."""
         self.is_active = False
         self.clear_token()
@@ -93,12 +93,12 @@ class SessionTracker:
                 pass
             self._timer_id = None
 
-    def update_activity(self, event=None):
+    def update_activity(self, event=None) -> None:
         """Reset the idle timer on user activity."""
         if self.is_active:
             self.last_activity = utc_now()
 
-    def _check_timeout(self):
+    def _check_timeout(self) -> None:
         """Check if the session has timed out due to inactivity.
 
         Called every 60 seconds via ``after()``.

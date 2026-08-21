@@ -6,7 +6,7 @@ from utils.async_loader import AsyncLoader
 
 
 class FeeStatus(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.fee_service = FeeService(db_session)
@@ -72,7 +72,7 @@ class FeeStatus(ctk.CTkFrame):
         # Auto-load
         self.after(300, self._load_fee_data)
 
-    def _load_fee_data(self):
+    def _load_fee_data(self) -> None:
         student_id = self.app_state.current_user.get("profile_id")
         if not student_id:
             ctk.CTkLabel(
@@ -88,7 +88,7 @@ class FeeStatus(ctk.CTkFrame):
             self._render_fee_data,
         )
 
-    def _render_fee_data(self, fees):
+    def _render_fee_data(self, fees) -> None:
         for w in self._history_content.winfo_children():
             w.destroy()
 
@@ -186,7 +186,7 @@ class FeeStatus(ctk.CTkFrame):
             )
             s_badge.pack(side="right")
 
-    def _download_receipt(self):
+    def _download_receipt(self) -> None:
         ToastManager.show(
             self.winfo_toplevel(),
             "Receipt download will be available in a future update.",

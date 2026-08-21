@@ -101,7 +101,7 @@ class ExportService:
     MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     MIME_PDF = "application/pdf"
 
-    def __init__(self, export_dir: Optional[str] = None, auto_create: bool = True):
+    def __init__(self, export_dir: Optional[str] = None, auto_create: bool = True) -> None:
         self.export_dir = export_dir or EXPORT_DIR
         if auto_create:
             os.makedirs(self.export_dir, exist_ok=True)

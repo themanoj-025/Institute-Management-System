@@ -37,7 +37,7 @@ class AnalyticsService:
     tables into Python memory).
     """
 
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
         self._ml = MLService()
 

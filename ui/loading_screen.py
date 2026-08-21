@@ -2,7 +2,7 @@ import customtkinter as ctk
 
 
 class LoadingScreen(ctk.CTkToplevel):
-    def __init__(self, master, tm, *args, **kwargs):
+    def __init__(self, master, tm, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
         self.tm = tm
         self.title("Loading...")
@@ -25,13 +25,13 @@ class LoadingScreen(ctk.CTkToplevel):
         self.progress.pack(pady=20)
         self.progress.set(0)
 
-    def run_loading(self, on_complete):
+    def run_loading(self, on_complete) -> None:
         target_text = "BINARY BRAIN"
         self.char_idx = 0
         self.on_complete = on_complete
         self._animate_text(target_text)
 
-    def _animate_text(self, text):
+    def _animate_text(self, text) -> None:
         if self.char_idx < len(text):
             current = self.logo_lbl.cget("text")
             self.logo_lbl.configure(text=current + text[self.char_idx])
@@ -42,7 +42,7 @@ class LoadingScreen(ctk.CTkToplevel):
         else:
             self.after(500, self._finish)
 
-    def _finish(self):
+    def _finish(self) -> None:
         self.destroy()
         if self.on_complete:
             self.on_complete()

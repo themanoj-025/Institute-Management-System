@@ -7,7 +7,7 @@ from ui.toast import ToastManager
 from utils.async_loader import AsyncLoader
 
 
-def _calculate_grade(pct):
+def _calculate_grade(pct) -> None:
     if pct >= 90:
         return "A+"
     elif pct >= 80:
@@ -25,7 +25,7 @@ def _calculate_grade(pct):
 
 
 class ResultManager(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -100,7 +100,7 @@ class ResultManager(ctk.CTkFrame):
         )
         self.save_btn.pack(pady=(0, 10))
 
-    def _show_placeholder(self, msg="Filter by course and exam type, then click Load Students."):
+    def _show_placeholder(self, msg="Filter by course and exam type, then click Load Students.") -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.grid_container, fg_color="transparent")
@@ -110,7 +110,7 @@ class ResultManager(ctk.CTkFrame):
         )
         ctk.CTkLabel(frame, text=msg, text_color="gray").pack()
 
-    def _load_students(self):
+    def _load_students(self) -> None:
         course_name = self.course_cb.get()
         course_id = self._course_map.get(course_name)
         if not course_id:
@@ -123,7 +123,7 @@ class ResultManager(ctk.CTkFrame):
             self._render_grid,
         )
 
-    def _fetch_students(self, course_id):
+    def _fetch_students(self, course_id) -> None:
         students = self.db_session.query(Student).filter(Student.course_id == course_id).all()
         return [
             {
@@ -134,7 +134,7 @@ class ResultManager(ctk.CTkFrame):
             for s in students
         ]
 
-    def _render_grid(self, students):
+    def _render_grid(self, students) -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
 
@@ -192,8 +192,8 @@ class ResultManager(ctk.CTkFrame):
             grade_lbl.pack(side="left", padx=5, pady=4)
 
             # Auto-calculate grade on key release
-            def make_callback(mv=marks_var, gl=grade_lbl):
-                def callback(*_):
+            def make_callback(mv=marks_var, gl=grade_lbl) -> None:
+                def callback(*_) -> None:
                     try:
                         total = float(self.total_entry.get() or 100)
                         obtained = float(mv.get() or 0)
@@ -214,7 +214,7 @@ class ResultManager(ctk.CTkFrame):
                 }
             )
 
-    def _save_results(self):
+    def _save_results(self) -> None:
         if not self._marks_entries:
             ToastManager.show(
                 self.winfo_toplevel(),

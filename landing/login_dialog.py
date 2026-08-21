@@ -353,7 +353,7 @@ class LoginDialog(ctk.CTkToplevel):
     4. After OTP verification → JWT received → session starts
     """
 
-    def __init__(self, master, tm, role, db_session, app_state, success_cb, *args, **kwargs):
+    def __init__(self, master, tm, role, db_session, app_state, success_cb, *args, **kwargs) -> None:
         super().__init__(master, *args, **kwargs)
         self.tm = tm
         self.role = role
@@ -663,7 +663,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── UI Navigation ──────────────────────────────────────────────
 
-    def _show_login_form(self):
+    def _show_login_form(self) -> None:
         """Return to the login form, hiding OTP, verification, forgot, and reset frames."""
         self._otp_frame.pack_forget()
         self._verify_frame.pack_forget()
@@ -674,7 +674,7 @@ class LoginDialog(ctk.CTkToplevel):
         self.err_lbl.configure(text="")
         self.btn_login.configure(state="normal", text="Login")
 
-    def _show_otp_verify(self, user_id, username):
+    def _show_otp_verify(self, user_id, username) -> None:
         """Show the OTP verification form after successful login."""
         self._user_id = user_id
         self._username = username
@@ -687,7 +687,7 @@ class LoginDialog(ctk.CTkToplevel):
         self.geometry("400x450")
         self._otp_entry.focus()
 
-    def _show_forgot_form(self):
+    def _show_forgot_form(self) -> None:
         """Show the forgot-password form, hiding login and reset frames."""
         self._login_frame.pack_forget()
         self._otp_frame.pack_forget()
@@ -703,7 +703,7 @@ class LoginDialog(ctk.CTkToplevel):
         self.geometry("400x420")
         self._forgot_email_entry.focus()
 
-    def _show_reset_form(self):
+    def _show_reset_form(self) -> None:
         """Show the reset-password form, hiding login and forgot frames."""
         self._login_frame.pack_forget()
         self._otp_frame.pack_forget()
@@ -718,7 +718,7 @@ class LoginDialog(ctk.CTkToplevel):
         self.geometry("400x480")
         self._reset_token_entry.focus()
 
-    def _show_verification_prompt(self, user_id, username):
+    def _show_verification_prompt(self, user_id, username) -> None:
         """Show the email verification prompt when login fails due to unverified email.
 
         If ``user_id`` is not available from the failed login response (the API returns
@@ -746,7 +746,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── Login Step ────────────────────────────────────────────────
 
-    def _do_login(self):
+    def _do_login(self) -> None:
         """Authenticate via the shared API endpoint."""
         username = self.user_entry.get().strip()
         password = self.pass_entry.get().strip()
@@ -802,7 +802,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── OTP Verification Step ─────────────────────────────────────
 
-    def _do_verify_otp(self):
+    def _do_verify_otp(self) -> None:
         """Verify the OTP and receive the JWT."""
         otp = self._otp_entry.get().strip()
 
@@ -855,7 +855,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── Email Verification Step ───────────────────────────────────
 
-    def _do_send_verification(self):
+    def _do_send_verification(self) -> None:
         """Send a verification email to the user."""
         if not self._user_id:
             # We don't have user_id from the failed login — can't send
@@ -907,7 +907,7 @@ class LoginDialog(ctk.CTkToplevel):
             self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
             self._shake()
 
-    def _do_confirm_verification(self):
+    def _do_confirm_verification(self) -> None:
         """Confirm the email verification token."""
         token = self._verify_token_entry.get().strip()
 
@@ -962,7 +962,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── Forgot Password Step ──────────────────────────────────────
 
-    def _do_forgot_password(self):
+    def _do_forgot_password(self) -> None:
         """Request a password reset email."""
         email = self._forgot_email_entry.get().strip()
 
@@ -1005,7 +1005,7 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── Reset Password Step ────────────────────────────────────────
 
-    def _do_reset_password(self):
+    def _do_reset_password(self) -> None:
         """Complete the password reset with token + new password."""
         token = self._reset_token_entry.get().strip()
         new_password = self._reset_pass_entry.get()
@@ -1120,10 +1120,10 @@ class LoginDialog(ctk.CTkToplevel):
 
     # ── Shake Animation ───────────────────────────────────────────
 
-    def _shake(self):
+    def _shake(self) -> None:
         """A simple shake animation for error feedback."""
 
-        def animate(steps_left, x_offset):
+        def animate(steps_left, x_offset) -> None:
             if steps_left > 0:
                 self.geometry(f"+{self.winfo_x() + x_offset}+{self.winfo_y()}")
                 self.after(50, lambda: animate(steps_left - 1, -x_offset))

@@ -4,14 +4,14 @@ from database.models import Course
 
 
 class CourseService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_all_courses(self):
+    def get_all_courses(self) -> list[dict]:
         courses = self.db.query(Course).all()
         return [self._format_course(c) for c in courses]
 
-    def get_course_details(self, course_id):
+    def get_course_details(self, course_id: int) -> dict:
         course = self.db.query(Course).filter(Course.id == course_id).first()
         if not course:
             raise ValueError("Course not found")
@@ -21,7 +21,7 @@ class CourseService:
         data["subjects"] = [{"id": s.id, "code": s.code, "name": s.name} for s in course.subjects]
         return data
 
-    def _format_course(self, course):
+    def _format_course(self, course: Course) -> dict:
         return {
             "id": course.id,
             "code": course.code,

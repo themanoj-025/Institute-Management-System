@@ -368,7 +368,7 @@ class AnalyticsEngine:
         summary = engine.full_summary()
     """
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def attendance_summary(self, days: int = 30) -> Dict[str, Any]:

@@ -1,11 +1,12 @@
 import os
 from tkinter import filedialog
+from typing import Optional
 
 # MIME-type magic bytes (content sniffing)
 # Maps common file extensions to their expected magic byte signatures.
 # Used to validate that the actual file content matches the declared extension.
 
-MAGIC_BYTES: dict = {
+MAGIC_BYTES: dict[str, list[tuple[bytes, int]]] = {
     "pdf": [(b"%PDF", 0)],
     "png": [(b"\x89PNG\r\n\x1a\n", 0)],
     "jpg": [(b"\xff\xd8\xff", 0)],
@@ -39,11 +40,22 @@ def _check_magic_bytes(file_path: str, ext: str) -> bool:
 
 class Helpers:
     @staticmethod
-    def format_currency(amount):
+    def format_currency(amount: float) -> str:
+        """Format *amount* as Indian Rupee currency string."""
         return f"₹{amount:,.2f}"
 
     @staticmethod
-    def upload_file(allowed_extensions, max_size_mb):
+    def upload_file(
+        allowed_extensions: set[str],
+        max_size_mb: float,
+    ) -> tuple[Optional[str], Optional[str]]:
+        """Open a file dialog and validate the selected file.
+
+        Returns
+        -------
+        tuple[Optional[str], Optional[str]]
+            ``(file_path, error_message)`` — exactly one is non-None.
+        """
         file_path = filedialog.askopenfilename(
             title="Select File",
             filetypes=[("Allowed files", f"*.{ext}") for ext in allowed_extensions],

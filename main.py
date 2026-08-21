@@ -20,13 +20,13 @@ log = setup_logger("bb-ims")
 
 
 class AppState:
-    def __init__(self):
+    def __init__(self) -> None:
         self.current_user = None
         self.current_route = None
 
 
 class BBIMS_App(ctk.CTk):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Install global exception handler first so all errors are caught
         self._install_global_exception_handler()
@@ -62,7 +62,7 @@ class BBIMS_App(ctk.CTk):
         self.loading = LoadingScreen(self, self.tm)
         self.loading.run_loading(self.on_loading_complete)
 
-    def on_loading_complete(self):
+    def on_loading_complete(self) -> None:
         init_db()
 
         # Show landing page immediately, seed in background
@@ -72,7 +72,7 @@ class BBIMS_App(ctk.CTk):
         # Seed database in a background thread so UI stays responsive
         import threading
 
-        def _seed_task():
+        def _seed_task() -> None:
             try:
                 seed_database(self.db_session)
             except Exception as e:
@@ -81,14 +81,14 @@ class BBIMS_App(ctk.CTk):
         t = threading.Thread(target=_seed_task, daemon=True)
         t.start()
 
-    def show_landing_page(self):
+    def show_landing_page(self) -> None:
         self.clear_main_window()
         self.landing = LandingPage(
             self, self.tm, self.app_state, self.db_session, self.start_main_app
         )
         self.landing.pack(fill="both", expand=True)
 
-    def start_main_app(self):
+    def start_main_app(self) -> None:
         self.clear_main_window()
 
         # Start Session Tracker
@@ -118,22 +118,22 @@ class BBIMS_App(ctk.CTk):
         # Route to Dashboard
         self.navigate("dashboard")
 
-    def handle_logout(self):
+    def handle_logout(self) -> None:
         if hasattr(self, "session_tracker"):
             self.session_tracker.stop()
         self.app_state.current_user = None
         self.app_state.current_route = None
         self.show_landing_page()
 
-    def clear_main_window(self):
+    def clear_main_window(self) -> None:
         for widget in self.winfo_children():
             widget.destroy()
 
-    def show_global_search(self):
+    def show_global_search(self) -> None:
         if self.app_state.current_user:
             GlobalSearch(self, self.navigate)
 
-    def navigate(self, route):
+    def navigate(self, route) -> None:
         if route == "logout":
             self.handle_logout()
             return
@@ -166,7 +166,7 @@ class BBIMS_App(ctk.CTk):
             # _safe_import already showed an error dialog for import failures
             self.app_state.current_route = self._prev_route
 
-    def _safe_import(self, module_path: str, class_name: str):
+    def _safe_import(self, module_path: str, class_name: str) -> None:
         """Safely import a module class, showing an error dialog on failure."""
         import importlib
         import traceback as tb_mod
@@ -186,7 +186,7 @@ class BBIMS_App(ctk.CTk):
             )
             return None
 
-    def get_module_class(self, route):
+    def get_module_class(self, route) -> None:
         # Dynamic import based on route and role
         role = self.app_state.current_user.get("role", "student")
 
@@ -265,13 +265,13 @@ class BBIMS_App(ctk.CTk):
 
         return None
 
-    def _install_global_exception_handler(self):
+    def _install_global_exception_handler(self) -> None:
         """Install global exception hooks to show friendly dialogs instead of crashing."""
         import traceback as tb_module
 
         app = self
 
-        def _handler(exc_type, exc_value, exc_tb):
+        def _handler(exc_type, exc_value, exc_tb) -> None:
             """Catch unhandled exceptions and display a friendly dialog."""
             full_tb = "".join(tb_module.format_exception(exc_type, exc_value, exc_tb))
 
@@ -290,7 +290,7 @@ class BBIMS_App(ctk.CTk):
         # Catch exceptions from other parts of the main thread
         sys.excepthook = _handler
 
-    def show_error_dialog(self, friendly_msg, full_traceback=None):
+    def show_error_dialog(self, friendly_msg, full_traceback=None) -> None:
         """Show a friendly error dialog with options to restart or exit."""
         dialog = ctk.CTkToplevel(self)
         dialog.title("Unexpected Error")
@@ -356,7 +356,7 @@ class BBIMS_App(ctk.CTk):
         if full_traceback:
             self._add_error_details(frame, full_traceback)
 
-    def _add_error_details(self, parent, traceback_text):
+    def _add_error_details(self, parent, traceback_text) -> None:
         """Add a collapsible traceback section to the error dialog."""
         details_frame = ctk.CTkFrame(parent, fg_color="transparent")
         details_frame.pack(fill="x", pady=(8, 0))
@@ -366,7 +366,7 @@ class BBIMS_App(ctk.CTk):
         tracebox.insert("0.0", traceback_text)
         tracebox.configure(state="disabled")
 
-        def toggle():
+        def toggle() -> None:
             if tracebox.winfo_viewable():
                 tracebox.pack_forget()
                 toggle_btn.configure(text="📋 Show Details")
@@ -384,19 +384,19 @@ class BBIMS_App(ctk.CTk):
         )
         toggle_btn.pack()
 
-    def _restart_from_error(self, dialog):
+    def _restart_from_error(self, dialog) -> None:
         """Reset app state and return to the landing page."""
         dialog.destroy()
         self._reset_app_state()
         self.clear_main_window()
         self.show_landing_page()
 
-    def _exit_from_error(self, dialog):
+    def _exit_from_error(self, dialog) -> None:
         """Close the dialog and quit the application."""
         dialog.destroy()
         self.quit()
 
-    def _reset_app_state(self):
+    def _reset_app_state(self) -> None:
         """Safely reset all app state without destroying the window."""
         if hasattr(self, "session_tracker"):
             try:

@@ -21,7 +21,7 @@ from utils.time import utc_now
 
 
 class ReportsCenter(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.db_session = db_session
@@ -61,7 +61,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── Helper ─────────────────────────────────────────────────────
 
-    def _export_result(self, filename: str, title: str, headers, rows, fmt: str = "pdf"):
+    def _export_result(self, filename: str, title: str, headers, rows, fmt: str = "pdf") -> None:
         """Run export and show a toast with the result."""
         try:
             if fmt == "pdf":
@@ -81,7 +81,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 1. Attendance Report (PDF) ─────────────────────────────────
 
-    def _export_attendance(self):
+    def _export_attendance(self) -> None:
         records = (
             self.db_session.query(
                 Student.enrollment_no,
@@ -114,7 +114,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 2. Student Marks (Excel) ───────────────────────────────────
 
-    def _export_marks(self):
+    def _export_marks(self) -> None:
         records = (
             self.db_session.query(
                 Student.enrollment_no,
@@ -161,7 +161,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 3. Fee Collection (Excel) ──────────────────────────────────
 
-    def _export_fees(self):
+    def _export_fees(self) -> None:
         records = (
             self.db_session.query(
                 Student.enrollment_no,
@@ -216,7 +216,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 4. At-Risk Students (PDF) ──────────────────────────────────
 
-    def _export_at_risk(self):
+    def _export_at_risk(self) -> None:
         """Export student-level KPIs that feed into risk scoring:
         attendance %, average marks, fee status, leave counts."""
         now = utc_now().date()
@@ -291,7 +291,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 5. Topper List (PDF) ───────────────────────────────────────
 
-    def _export_toppers(self):
+    def _export_toppers(self) -> None:
         subq = (
             self.db_session.query(
                 Result.student_id,
@@ -337,7 +337,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 6. Staff Attendance (Excel) ────────────────────────────────
 
-    def _export_staff_attendance(self):
+    def _export_staff_attendance(self) -> None:
         records = (
             self.db_session.query(
                 Staff.first_name,
@@ -379,7 +379,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 7. Placement Summary (PDF) ─────────────────────────────────
 
-    def _export_placements(self):
+    def _export_placements(self) -> None:
         records = (
             self.db_session.query(
                 Student.enrollment_no,
@@ -418,7 +418,7 @@ class ReportsCenter(ctk.CTkFrame):
 
     # ── 8. Course Enrollment (Excel) ───────────────────────────────
 
-    def _export_enrollment(self):
+    def _export_enrollment(self) -> None:
         records = (
             self.db_session.query(
                 Course.code,

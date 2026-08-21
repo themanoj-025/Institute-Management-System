@@ -10,7 +10,7 @@ from utils.async_loader import AsyncLoader
 
 
 class StaffAttendanceManager(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -132,7 +132,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
         ).pack(pady=(10, 5))
         ctk.CTkLabel(frame, text=msg, text_color="gray").pack()
 
-    def _load_report(self):
+    def _load_report(self) -> None:
         dept = self.dept_cb.get()
         month_name = self.month_cb.get()
         year_str = self.year_cb.get().strip()
@@ -150,7 +150,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
             lambda data: self._render_report(data, year, month),
         )
 
-    def _fetch_data(self, dept, month, year):
+    def _fetch_data(self, dept, month, year) -> None:
         query = self.db_session.query(Staff)
         if dept != "All":
             query = query.filter(Staff.department == dept)
@@ -190,7 +190,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
             "total_absent": total_absent,
         }
 
-    def _render_report(self, data, year, month):
+    def _render_report(self, data, year, month) -> None:
         for w in self.details_frame.winfo_children():
             w.destroy()
 
@@ -298,7 +298,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
             )
             expand_btn.pack(side="right", padx=5)
 
-    def _show_staff_detail(self, staff_id, staff_name):
+    def _show_staff_detail(self, staff_id, staff_name) -> None:
         """Open a dialog showing per-day attendance for a specific staff member."""
         dialog = ctk.CTkToplevel(self.winfo_toplevel())
         dialog.title(f"Attendance — {staff_name}")

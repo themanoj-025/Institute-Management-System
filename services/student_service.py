@@ -9,11 +9,14 @@ from database.models import Student, User, UserRole
 from utils.time import utc_now
 
 
+from typing import Any, Optional
+
+
 class StudentService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_all_students(self, limit=25, offset=0, search_query=None):
+    def get_all_students(self, limit: int = 25, offset: int = 0, search_query: Optional[str] = None) -> dict:
         query = self.db.query(Student)
 
         if search_query:
@@ -30,13 +33,13 @@ class StudentService:
 
         return {"total": total, "students": [self._format_student(s) for s in students]}
 
-    def get_student_by_id(self, student_id):
+    def get_student_by_id(self, student_id: int) -> dict:
         student = self.db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise ValueError("Student not found")
         return self._format_student(student)
 
-    def create_student(self, data):
+    def create_student(self, data: dict[str, Any]) -> dict:
         # Create user first with a secure random password
         temp_password = f"Stu-{secrets.token_hex(8)}"
         pw_hash = bcrypt.hashpw(temp_password.encode("utf-8"), bcrypt.gensalt(BCRYPT_COST)).decode(
@@ -67,7 +70,7 @@ class StudentService:
         self.db.commit()
         return self._format_student(student)
 
-    def update_student(self, student_id, data):
+    def update_student(self, student_id: int, data: dict[str, Any]) -> dict:
         student = self.db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise ValueError("Student not found")
@@ -79,7 +82,7 @@ class StudentService:
         self.db.commit()
         return self._format_student(student)
 
-    def delete_student(self, student_id):
+    def delete_student(self, student_id: int) -> dict:
         student = self.db.query(Student).filter(Student.id == student_id).first()
         if not student:
             raise ValueError("Student not found")
@@ -90,7 +93,7 @@ class StudentService:
         self.db.commit()
         return {"status": "success"}
 
-    def _format_student(self, student):
+    def _format_student(self, student: Student) -> dict:
         return {
             "id": student.id,
             "user_id": student.user_id,

@@ -9,7 +9,7 @@ from utils.async_loader import AsyncLoader
 
 
 class MyAttendance(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.app_state = app_state
@@ -86,7 +86,7 @@ class MyAttendance(ctk.CTkFrame):
         # Auto-load
         self.after(300, self._load_attendance)
 
-    def _show_placeholder(self):
+    def _show_placeholder(self) -> None:
         for w in self.cal_frame.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.cal_frame, fg_color="transparent")
@@ -102,7 +102,7 @@ class MyAttendance(ctk.CTkFrame):
             text_color="gray",
         ).pack(expand=True)
 
-    def _load_attendance(self):
+    def _load_attendance(self) -> None:
         month_name = self.month_cb.get()
         year_str = self.year_cb.get().strip()
         try:
@@ -123,7 +123,7 @@ class MyAttendance(ctk.CTkFrame):
             lambda records: self._render_calendar(records, year, month),
         )
 
-    def _render_calendar(self, records, year, month):
+    def _render_calendar(self, records, year, month) -> None:
         for w in self.cal_frame.winfo_children():
             w.destroy()
 

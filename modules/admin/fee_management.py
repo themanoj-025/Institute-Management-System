@@ -6,7 +6,7 @@ from utils.async_loader import AsyncLoader
 
 
 class FeeManagement(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, *args, **kwargs):
+    def __init__(self, master, tm, app_state, db_session, *args, **kwargs) -> None:
         super().__init__(master, fg_color="transparent", *args, **kwargs)
         self.tm = tm
         self.fee_service = FeeService(db_session)
@@ -24,10 +24,10 @@ class FeeManagement(ctk.CTkFrame):
 
         self._load_data()
 
-    def _load_data(self):
+    def _load_data(self) -> None:
         self.table.show_loading()
 
-        def fetch():
+        def fetch() -> None:
             res = self.fee_service.get_all_fees()
             return [
                 [
@@ -41,7 +41,7 @@ class FeeManagement(ctk.CTkFrame):
                 for f in res
             ]
 
-        def on_success(data):
+        def on_success(data) -> None:
             self.table.update_data(data)
 
         AsyncLoader.run(self, fetch, on_success)

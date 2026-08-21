@@ -9,7 +9,7 @@ TOAST_STYLES = {
 
 
 class ToastInstance:
-    def __init__(self, root, manager, message, type_name="info", duration=3000):
+    def __init__(self, root, manager, message, type_name="info", duration=3000) -> None:
         self.root = root
         self.manager = manager
         self.style = TOAST_STYLES.get(type_name, TOAST_STYLES["info"])
@@ -75,7 +75,7 @@ class ToastInstance:
         self.target_y = 0
         self.current_x = 99999  # Far off-screen initially
 
-    def position_and_slide(self, target_y):
+    def position_and_slide(self, target_y) -> None:
         self.target_y = target_y
 
         # Safely get root window dimensions
@@ -98,7 +98,7 @@ class ToastInstance:
             return
 
         # Slide in animation
-        def slide_step():
+        def slide_step() -> None:
             if not self.toplevel.winfo_exists():
                 return
             if self.current_x > final_x:
@@ -115,7 +115,7 @@ class ToastInstance:
 
         slide_step()
 
-    def animate_progress(self, remaining):
+    def animate_progress(self, remaining) -> None:
         if not self.toplevel.winfo_exists():
             return
         if remaining <= 0:
@@ -129,7 +129,7 @@ class ToastInstance:
                 pass
             self.toplevel.after(50, lambda: self.animate_progress(remaining - 50))
 
-    def dismiss(self):
+    def dismiss(self) -> None:
         try:
             if self.toplevel.winfo_exists():
                 self.toplevel.destroy()
@@ -142,7 +142,7 @@ class ToastManager:
     _instances = []  # type: ignore
 
     @classmethod
-    def show(cls, root, message, type="info", duration=3000):
+    def show(cls, root, message, type="info", duration=3000) -> None:
         # Create a new toast
         toast = ToastInstance(root, cls, message, type, duration)
 
@@ -155,21 +155,21 @@ class ToastManager:
         cls.reposition_all(root)
 
     @classmethod
-    def remove_toast(cls, toast):
+    def remove_toast(cls, toast) -> None:
         if toast in cls._instances:
             cls._instances.remove(toast)
             if len(cls._instances) > 0:
                 cls.reposition_all(toast.root)
 
     @classmethod
-    def reposition_all(cls, root):
+    def reposition_all(cls, root) -> None:
         start_y = root.winfo_rooty() + root.winfo_height() - 80
         for idx, inst in enumerate(reversed(cls._instances)):
             target_y = start_y - (idx * 58)
             inst.position_and_slide(target_y)
 
     @classmethod
-    def clear_all(cls):
+    def clear_all(cls) -> None:
         for inst in list(cls._instances):
             inst.dismiss()
         cls._instances.clear()
