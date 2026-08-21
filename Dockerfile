@@ -25,6 +25,12 @@ FROM dependencies AS app
 COPY . .
 RUN mkdir -p database logs assets/profiles exports/generated
 
+# Create non-root user
+RUN addgroup --system app && adduser --system --ingroup app app \
+    && chown -R app:app /app
+
+USER app
+
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
