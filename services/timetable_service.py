@@ -42,7 +42,7 @@ class TimetableService:
             grouped[course_name].append(self._format_entry(e))
         return grouped
 
-    def auto_generate(self, course_id: int, days: Optional[list[str]] = None) -> dict:
+    def auto_generate(self, course_id: int, days: list[str] | None = None) -> dict:
         """Auto-generate a timetable for a course by distributing subjects across weekdays.
 
         Args:
@@ -157,7 +157,7 @@ class TimetableService:
             "entries": result_entries,
         }
 
-    def _format_entry(self, entry: Optional[Timetable]) -> Optional[dict]:
+    def _format_entry(self, entry: Timetable | None) -> dict | None:
         if not entry:
             return None
         return {

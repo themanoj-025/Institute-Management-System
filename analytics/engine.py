@@ -31,7 +31,7 @@ logger = logging.getLogger("analytics.engine")
 def compute_attendance_summary(
     session: Session,
     days: int = 30,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Aggregate attendance statistics over the last *days*.
 
     Returns
@@ -149,7 +149,7 @@ def compute_student_attendance_rate(
 # ═══════════════════════════════════════════════════════════════════
 
 
-def compute_fee_summary(session: Session) -> Dict[str, Any]:
+def compute_fee_summary(session: Session) -> dict[str, Any]:
     """Aggregate fee collection statistics.
 
     Respects soft-delete (``is_deleted == False``) on Fee records.
@@ -196,7 +196,7 @@ def compute_fee_summary(session: Session) -> Dict[str, Any]:
 def compute_overdue_fees(
     session: Session,
     days_threshold: int = 30,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """List fee records overdue by more than *days_threshold*.
 
     Returns student name, amount, due date, and balance for each.
@@ -232,7 +232,7 @@ def compute_overdue_fees(
 # ═══════════════════════════════════════════════════════════════════
 
 
-def compute_performance_summary(session: Session) -> Dict[str, Any]:
+def compute_performance_summary(session: Session) -> dict[str, Any]:
     """Aggregate result statistics across all students and subjects.
 
     Respects soft-delete (``is_deleted == False``) on Result records.
@@ -272,7 +272,7 @@ def compute_performance_summary(session: Session) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════
 
 
-def compute_placement_summary(session: Session) -> Dict[str, Any]:
+def compute_placement_summary(session: Session) -> dict[str, Any]:
     """Aggregate placement statistics."""
     total = session.query(func.count(Placement.id)).scalar() or 0
     avg_package = session.query(func.avg(Placement.package_lpa)).scalar() or 0.0
@@ -308,7 +308,7 @@ def compute_placement_summary(session: Session) -> Dict[str, Any]:
 def compute_monthly_attendance_trend(
     session: Session,
     months: int = 6,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Compute monthly attendance rates for trend charts."""
     from calendar import monthrange
 
@@ -371,28 +371,28 @@ class AnalyticsEngine:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def attendance_summary(self, days: int = 30) -> Dict[str, Any]:
+    def attendance_summary(self, days: int = 30) -> dict[str, Any]:
         return compute_attendance_summary(self.session, days=days)
 
-    def fee_summary(self) -> Dict[str, Any]:
+    def fee_summary(self) -> dict[str, Any]:
         return compute_fee_summary(self.session)
 
-    def overdue_fees(self, days_threshold: int = 30) -> List[Dict[str, Any]]:
+    def overdue_fees(self, days_threshold: int = 30) -> list[dict[str, Any]]:
         return compute_overdue_fees(self.session, days_threshold=days_threshold)
 
-    def performance_summary(self) -> Dict[str, Any]:
+    def performance_summary(self) -> dict[str, Any]:
         return compute_performance_summary(self.session)
 
-    def placement_summary(self) -> Dict[str, Any]:
+    def placement_summary(self) -> dict[str, Any]:
         return compute_placement_summary(self.session)
 
-    def monthly_attendance_trend(self, months: int = 6) -> List[Dict[str, Any]]:
+    def monthly_attendance_trend(self, months: int = 6) -> list[dict[str, Any]]:
         return compute_monthly_attendance_trend(self.session, months=months)
 
     def student_attendance_rate(self, student_id: int, days: int = 30) -> float:
         return compute_student_attendance_rate(self.session, student_id, days=days)
 
-    def full_summary(self) -> Dict[str, Any]:
+    def full_summary(self) -> dict[str, Any]:
         """Compute all analytics in a single call."""
         return {
             "attendance": self.attendance_summary(),

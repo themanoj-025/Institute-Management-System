@@ -27,7 +27,8 @@ import csv
 import io
 import os
 from dataclasses import dataclass
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
+from collections.abc import Sequence
 
 import openpyxl
 from openpyxl.styles import Font, PatternFill
@@ -68,8 +69,8 @@ class ExportResult:
         MIME content type for the exported file.
     """
 
-    path: Optional[str]
-    bytes_: Optional[bytes]
+    path: str | None
+    bytes_: bytes | None
     filename: str
     mime_type: str
 
@@ -101,7 +102,7 @@ class ExportService:
     MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     MIME_PDF = "application/pdf"
 
-    def __init__(self, export_dir: Optional[str] = None, auto_create: bool = True) -> None:
+    def __init__(self, export_dir: str | None = None, auto_create: bool = True) -> None:
         self.export_dir = export_dir or EXPORT_DIR
         if auto_create:
             os.makedirs(self.export_dir, exist_ok=True)
@@ -112,7 +113,7 @@ class ExportService:
         self,
         filename: str,
         headers: HeaderRow,
-        rows: List[Row],
+        rows: list[Row],
     ) -> ExportResult:
         """Export data as CSV.
 
@@ -152,7 +153,7 @@ class ExportService:
     def to_csv_bytes(
         self,
         headers: HeaderRow,
-        rows: List[Row],
+        rows: list[Row],
     ) -> ExportResult:
         """Export data as CSV in memory.
 
@@ -179,7 +180,7 @@ class ExportService:
         self,
         filename: str,
         headers: HeaderRow,
-        rows: List[Row],
+        rows: list[Row],
         sheet_name: str = "Sheet1",
     ) -> ExportResult:
         """Export data as Excel (``.xlsx``).
@@ -232,7 +233,7 @@ class ExportService:
     def to_excel_bytes(
         self,
         headers: HeaderRow,
-        rows: List[Row],
+        rows: list[Row],
         sheet_name: str = "Sheet1",
     ) -> ExportResult:
         """Export data as Excel in memory.
@@ -268,8 +269,8 @@ class ExportService:
         filename: str,
         title: str,
         headers: HeaderRow,
-        rows: List[Row],
-        page_size: Tuple[float, float] = A4,
+        rows: list[Row],
+        page_size: tuple[float, float] = A4,
         landscape: bool = False,
     ) -> ExportResult:
         """Export data as PDF with a styled table.
@@ -318,8 +319,8 @@ class ExportService:
         self,
         title: str,
         headers: HeaderRow,
-        rows: List[Row],
-        page_size: Tuple[float, float] = A4,
+        rows: list[Row],
+        page_size: tuple[float, float] = A4,
         landscape: bool = False,
     ) -> ExportResult:
         """Export data as PDF in memory.
@@ -347,7 +348,7 @@ class ExportService:
         self,
         filename: str,
         headers: HeaderRow,
-        rows: List[Row],
+        rows: list[Row],
         **kwargs: Any,
     ) -> ExportResult:
         """Auto-detect format from *filename* extension and export.
@@ -415,11 +416,11 @@ class ExportService:
 
     def _build_pdf(
         self,
-        destination: Union[str, io.BytesIO],
+        destination: str | io.BytesIO,
         title: str,
         headers: HeaderRow,
-        rows: List[Row],
-        page_size: Tuple[float, float],
+        rows: list[Row],
+        page_size: tuple[float, float],
     ) -> None:
         """Build a PDF document with title and data table.
 
@@ -444,14 +445,14 @@ class ExportService:
             rightMargin=15 * mm,
         )
 
-        elements: List[Any] = []
+        elements: list[Any] = []
 
         # Title
         elements.append(Paragraph(title, title_style))
         elements.append(Spacer(1, 6 * mm))
 
         # Build table data
-        table_data: List[List[Any]] = [list(headers)]
+        table_data: list[list[Any]] = [list(headers)]
         for row in rows:
             table_data.append([str(cell) if cell is not None else "" for cell in row])
 

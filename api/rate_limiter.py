@@ -52,7 +52,7 @@ RATE_LIMITED_ERROR_CODE = "rate_limited"
 # (max_requests, window_seconds) per path prefix.
 # These can be overridden via the ``rate_limits`` constructor argument.
 
-DEFAULT_RATE_LIMITS: Dict[str, Tuple[int, int]] = {
+DEFAULT_RATE_LIMITS: dict[str, tuple[int, int]] = {
     "/v1/auth/login": (10, 60),  # 10 POST/min per IP
     "/v1/auth/refresh": (20, 60),  # 20 POST/min per IP
     "/v1/students": (30, 60),  # 30 (create-student) POST/min per IP
@@ -89,7 +89,7 @@ class SlidingWindowCounter:
     def __init__(self, max_requests: int, window_seconds: int) -> None:
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self._store: Dict[str, List[float]] = defaultdict(list)
+        self._store: dict[str, list[float]] = defaultdict(list)
         self._lock = threading.Lock()
 
     def _prune(self, key: str, now: float) -> None:
@@ -97,7 +97,7 @@ class SlidingWindowCounter:
         cutoff = now - self.window_seconds
         self._store[key] = [t for t in self._store[key] if t > cutoff]
 
-    def allow(self, key: str) -> Tuple[bool, int, float]:
+    def allow(self, key: str) -> tuple[bool, int, float]:
         """Check whether *key* is allowed through.
 
         Returns
@@ -144,11 +144,11 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app: ASGIApp,
-        rate_limits: Optional[Dict[str, Tuple[int, int]]] = None,
+        rate_limits: dict[str, tuple[int, int]] | None = None,
     ):
         super().__init__(app)
         self._limits = rate_limits or DEFAULT_RATE_LIMITS.copy()
-        self._counters: Dict[str, SlidingWindowCounter] = {}
+        self._counters: dict[str, SlidingWindowCounter] = {}
         self._lock = threading.Lock()
 
     # ── public helper for testability ───────────────────────────────
@@ -158,9 +158,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         with self._lock:
             self._counters.clear()
 
-    def _get_counter(self, path: str) -> Optional[SlidingWindowCounter]:
+    def _get_counter(self, path: str) -> SlidingWindowCounter | None:
         """Return the counter for the longest matching path prefix, or ``None``."""
-        matched: Optional[str] = None
+        matched: str | None = None
         matched_len = 0
 
         for prefix in self._limits:

@@ -61,7 +61,7 @@ def _classification_metrics_dict(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     y_proba: np.ndarray,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Compute a comprehensive set of classification metrics.
 
     Parameters
@@ -79,7 +79,7 @@ def _classification_metrics_dict(
         Keys include accuracy, f1, precision, recall, auroc, and
         per-class metrics.
     """
-    metrics: Dict[str, Any] = {}
+    metrics: dict[str, Any] = {}
 
     # Global metrics
     metrics["accuracy"] = round(float(accuracy_score(y_true, y_pred)), 4)
@@ -117,7 +117,7 @@ def _classification_metrics_dict(
 def _confusion_matrix_data(
     y_true: np.ndarray,
     y_pred: np.ndarray,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Compute confusion matrix and return as structured data.
 
     Returns
@@ -138,8 +138,8 @@ def _confusion_matrix_data(
 def _threshold_analysis(
     y_true: np.ndarray,
     y_proba: np.ndarray,
-    thresholds: Optional[List[float]] = None,
-) -> List[Dict[str, Any]]:
+    thresholds: list[float] | None = None,
+) -> list[dict[str, Any]]:
     """Compute precision/recall/f1 at multiple decision thresholds.
 
     Parameters
@@ -178,7 +178,7 @@ def _roc_curve_data(
     y_true: np.ndarray,
     y_proba: np.ndarray,
     max_points: int = 100,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Compute ROC curve points, sampling to *max_points* for charting.
 
     Returns
@@ -212,9 +212,9 @@ def _roc_curve_data(
 
 def _feature_importance_analysis(
     model: Any,
-    feature_names: List[str],
+    feature_names: list[str],
     top_n: int = 15,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Extract feature importance from the trained model.
 
     Supports XGBoost ``feature_importances_`` (``weight``, ``gain``,
@@ -291,9 +291,9 @@ def _generate_report_data(
     X_test: pd.DataFrame,
     y_test: pd.Series,
     model_name: str,
-    cv_metrics: Optional[Dict[str, float]] = None,
-    train_samples: Optional[int] = None,
-) -> Dict[str, Any]:
+    cv_metrics: dict[str, float] | None = None,
+    train_samples: int | None = None,
+) -> dict[str, Any]:
     """Generate the full evaluation report as a dictionary.
 
     Parameters
@@ -339,7 +339,7 @@ def _generate_report_data(
     # Feature importance
     feature_importance = _feature_importance_analysis(model, list(X_test.columns))
 
-    report: Dict[str, Any] = {
+    report: dict[str, Any] = {
         "report_metadata": {
             "model_name": model_name,
             "generated_at": utc_now().isoformat(),
@@ -362,9 +362,9 @@ def _generate_report_data(
     return report
 
 
-def _report_to_markdown(report: Dict[str, Any]) -> str:
+def _report_to_markdown(report: dict[str, Any]) -> str:
     """Convert a report dict to a formatted Markdown string."""
-    lines: List[str] = []
+    lines: list[str] = []
     meta = report["report_metadata"]
     metrics = report["metrics"]
     confusion = report["confusion_matrix"]
@@ -487,10 +487,10 @@ def generate_evaluation_report(
     X_test: pd.DataFrame,
     y_test: pd.Series,
     model_name: str,
-    cv_metrics: Optional[Dict[str, float]] = None,
-    train_samples: Optional[int] = None,
+    cv_metrics: dict[str, float] | None = None,
+    train_samples: int | None = None,
     save: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Generate a comprehensive evaluation report for a trained model.
 
     Parameters
@@ -544,9 +544,9 @@ def generate_evaluation_report(
 
 def load_and_evaluate(
     session,
-    model_name: Optional[str] = None,
+    model_name: str | None = None,
     save: bool = True,
-) -> Optional[Dict[str, Any]]:
+) -> dict[str, Any] | None:
     """Load a model from the registry and evaluate it against current data.
 
     Uses the latest model if *model_name* is not specified.
@@ -632,7 +632,7 @@ def load_and_evaluate(
     )
 
 
-def list_evaluation_reports() -> List[Dict[str, Any]]:
+def list_evaluation_reports() -> list[dict[str, Any]]:
     """List all available evaluation reports in the registry.
 
     Returns
@@ -644,7 +644,7 @@ def list_evaluation_reports() -> List[Dict[str, Any]]:
     for f in sorted(MODELS_DIR.iterdir()):
         if f.name.endswith("_eval.json"):
             try:
-                with open(f, "r", encoding="utf-8") as fh:
+                with open(f, encoding="utf-8") as fh:
                     data = json.load(fh)
                 meta = data.get("report_metadata", {})
                 metrics = data.get("metrics", {})

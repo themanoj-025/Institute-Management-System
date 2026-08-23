@@ -118,7 +118,7 @@ def send_email_task(
     to_email: str,
     subject: str,
     body: str,
-    html_body: Optional[str] = None,
+    html_body: str | None = None,
 ):
     """Send an email via SMTP as a background task.
 
@@ -423,8 +423,8 @@ def generate_export_task(
     self,
     export_type: str,
     filename: str,
-    headers: List[str],
-    rows: List[List[Any]],
+    headers: list[str],
+    rows: list[list[Any]],
     **kwargs,
 ):
     """Generate an export file as a background task.

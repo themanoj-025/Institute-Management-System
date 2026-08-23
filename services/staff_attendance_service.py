@@ -10,7 +10,7 @@ class StaffAttendanceService:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_staff_attendance(self, staff_id: int, month: Optional[int] = None, year: Optional[int] = None) -> list[dict]:
+    def get_staff_attendance(self, staff_id: int, month: int | None = None, year: int | None = None) -> list[dict]:
         query = self.db.query(StaffAttendance).filter(StaffAttendance.staff_id == staff_id)
         if month and year:
             from calendar import monthrange
@@ -23,7 +23,7 @@ class StaffAttendanceService:
         records = query.order_by(StaffAttendance.date.desc()).all()
         return [self._format_attendance(r) for r in records]
 
-    def mark_attendance(self, staff_id: int, date: date, status: str, in_time: Optional[datetime] = None, out_time: Optional[datetime] = None) -> dict:
+    def mark_attendance(self, staff_id: int, date: date, status: str, in_time: datetime | None = None, out_time: datetime | None = None) -> dict:
         record = (
             self.db.query(StaffAttendance)
             .filter(StaffAttendance.staff_id == staff_id, StaffAttendance.date == date)

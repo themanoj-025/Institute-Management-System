@@ -185,7 +185,7 @@ class ViewAttendance(ctk.CTkFrame):
         ).pack(pady=10, padx=15)
 
         # Subject cards
-        for idx, subj in enumerate(data["subjects"]):
+        for _idx, subj in enumerate(data["subjects"]):
             subj_pct = subj["pct"]
             subj_color = (
                 self.tm.success_color

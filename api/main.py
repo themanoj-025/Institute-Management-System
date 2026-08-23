@@ -305,7 +305,7 @@ class ErrorCode(str, Enum):
     INTERNAL_SERVER_ERROR = "internal_server_error"
 
 
-_STATUS_TO_ERROR_CODE: Dict[int, str] = {
+_STATUS_TO_ERROR_CODE: dict[int, str] = {
     400: ErrorCode.BAD_REQUEST.value,
     401: ErrorCode.UNAUTHORIZED.value,
     403: ErrorCode.FORBIDDEN.value,
@@ -465,14 +465,14 @@ class StudentCreate(BaseModel):
 
 
 class StudentPatch(BaseModel):
-    first_name: Optional[str] = Field(None, min_length=1, max_length=50)
-    last_name: Optional[str] = Field(None, min_length=1, max_length=50)
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = Field(None, min_length=10, max_length=15)
-    dob: Optional[str] = Field(None, min_length=10, max_length=10)
-    gender: Optional[str] = Field(None, min_length=1, max_length=20)
-    course_id: Optional[int] = None
-    session_id: Optional[int] = None
+    first_name: str | None = Field(None, min_length=1, max_length=50)
+    last_name: str | None = Field(None, min_length=1, max_length=50)
+    email: EmailStr | None = None
+    phone: str | None = Field(None, min_length=10, max_length=15)
+    dob: str | None = Field(None, min_length=10, max_length=10)
+    gender: str | None = Field(None, min_length=1, max_length=20)
+    course_id: int | None = None
+    session_id: int | None = None
 
 
 class StudentResponse(BaseModel):
@@ -526,15 +526,15 @@ class CourseCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100, description="Course name")
     duration_months: int
     fee: float
-    description: Optional[str] = Field(None, max_length=1000, description="Course description")
+    description: str | None = Field(None, max_length=1000, description="Course description")
 
 
 class CoursePatch(BaseModel):
-    code: Optional[str] = Field(None, min_length=1, max_length=20)
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    duration_months: Optional[int] = None
-    fee: Optional[float] = None
-    description: Optional[str] = Field(None, max_length=1000)
+    code: str | None = Field(None, min_length=1, max_length=20)
+    name: str | None = Field(None, min_length=1, max_length=100)
+    duration_months: int | None = None
+    fee: float | None = None
+    description: str | None = Field(None, max_length=1000)
 
 
 class CourseResponse(BaseModel):
@@ -543,7 +543,7 @@ class CourseResponse(BaseModel):
     name: str
     duration_months: int
     fee: float
-    description: Optional[str] = None
+    description: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -555,34 +555,34 @@ class StaffCreate(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=50, description="Staff first name")
     last_name: str = Field(..., min_length=1, max_length=50, description="Staff last name")
     email: EmailStr
-    phone: Optional[str] = Field(None, min_length=10, max_length=15)
-    department: Optional[str] = Field(None, min_length=1, max_length=50)
-    designation: Optional[str] = Field(None, min_length=1, max_length=50)
+    phone: str | None = Field(None, min_length=10, max_length=15)
+    department: str | None = Field(None, min_length=1, max_length=50)
+    designation: str | None = Field(None, min_length=1, max_length=50)
     join_date: str = Field(
         ..., min_length=10, max_length=10, description="Joining date (YYYY-MM-DD)"
     )
-    salary: Optional[float] = 0.0
+    salary: float | None = 0.0
 
 
 class StaffPatch(BaseModel):
-    first_name: Optional[str] = Field(None, min_length=1, max_length=50)
-    last_name: Optional[str] = Field(None, min_length=1, max_length=50)
-    email: Optional[EmailStr] = None
-    phone: Optional[str] = Field(None, min_length=10, max_length=15)
-    department: Optional[str] = Field(None, min_length=1, max_length=50)
-    designation: Optional[str] = Field(None, min_length=1, max_length=50)
-    join_date: Optional[str] = Field(None, min_length=10, max_length=10)
-    salary: Optional[float] = None
+    first_name: str | None = Field(None, min_length=1, max_length=50)
+    last_name: str | None = Field(None, min_length=1, max_length=50)
+    email: EmailStr | None = None
+    phone: str | None = Field(None, min_length=10, max_length=15)
+    department: str | None = Field(None, min_length=1, max_length=50)
+    designation: str | None = Field(None, min_length=1, max_length=50)
+    join_date: str | None = Field(None, min_length=10, max_length=10)
+    salary: float | None = None
 
 
 class StaffResponse(BaseModel):
     id: int
     first_name: str
     last_name: str
-    department: Optional[str] = None
-    designation: Optional[str] = None
-    join_date: Optional[str] = None
-    email: Optional[str] = None
+    department: str | None = None
+    designation: str | None = None
+    join_date: str | None = None
+    email: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -596,7 +596,7 @@ class FeeResponse(BaseModel):
     total_amount: float
     paid_amount: float
     balance: float
-    due_date: Optional[str] = None
+    due_date: str | None = None
     status: str
 
 
@@ -609,7 +609,7 @@ class PaymentCreate(BaseModel):
         max_length=20,
         description="Payment mode (Cash/Card/UPI/NetBanking)",
     )
-    transaction_id: Optional[str] = Field(
+    transaction_id: str | None = Field(
         None, max_length=100, description="External transaction reference"
     )
 
@@ -628,10 +628,10 @@ class PlacementCreate(BaseModel):
 
 
 class PlacementPatch(BaseModel):
-    company_name: Optional[str] = Field(None, min_length=1, max_length=100)
-    job_title: Optional[str] = Field(None, min_length=1, max_length=100)
-    package_lpa: Optional[float] = None
-    offer_date: Optional[str] = Field(None, min_length=10, max_length=10)
+    company_name: str | None = Field(None, min_length=1, max_length=100)
+    job_title: str | None = Field(None, min_length=1, max_length=100)
+    package_lpa: float | None = None
+    offer_date: str | None = Field(None, min_length=10, max_length=10)
 
 
 class PlacementResponse(BaseModel):
@@ -647,11 +647,11 @@ class PlacementResponse(BaseModel):
 
 
 class RiskThresholdResponse(BaseModel):
-    thresholds: Dict[str, Any]
+    thresholds: dict[str, Any]
 
 
 class RiskThresholdUpdate(BaseModel):
-    thresholds: Dict[str, Any]
+    thresholds: dict[str, Any]
 
 
 # Risk Explanation
@@ -662,9 +662,9 @@ class RiskExplanationResponse(BaseModel):
     name: str
     risk_score: float
     risk_level: str
-    model: Optional[str] = None
-    model_version: Optional[str] = None
-    explanations: List[Dict[str, Any]]
+    model: str | None = None
+    model_version: str | None = None
+    explanations: list[dict[str, Any]]
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -703,7 +703,7 @@ def _check_token_blacklist(jti: str) -> bool:
         session.close()
 
 
-def _blacklist_token(jti: str, expires_at: datetime, user_id: Optional[int] = None) -> None:
+def _blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) -> None:
     """Add a token's JTI to the blacklist.
 
     Writes to both Redis (primary, with TTL matching token expiry) and
@@ -826,7 +826,7 @@ def get_current_user(
         raise credentials_exception
 
 
-def require_role(allowed_roles: List[str]) -> dict:
+def require_role(allowed_roles: list[str]) -> dict:
     """Dependency: require the authenticated user to have one of the allowed roles."""
 
     def dependency(user: dict = Depends(get_current_user)) -> dict:
@@ -1341,7 +1341,7 @@ def reset_password(req: ResetPasswordRequest) -> dict:
 def get_students(
     page: int = 1,
     per_page: int = 25,
-    course_id: Optional[int] = None,
+    course_id: int | None = None,
     user: dict = Depends(get_current_user),
 ):
     with get_session() as session:
@@ -1494,7 +1494,7 @@ def delete_student(student_id: int) -> dict:
     response_description="Confirmation with count of records entered",
     tags=["Attendance"],
 )
-def bulk_attendance(records: List[AttendanceRecord]) -> dict:
+def bulk_attendance(records: list[AttendanceRecord]) -> dict:
     with get_session() as session:
         for r in records:
             att = Attendance(
@@ -1519,7 +1519,7 @@ def bulk_attendance(records: List[AttendanceRecord]) -> dict:
     response_description="Confirmation with count of results registered",
     tags=["Results"],
 )
-def bulk_results(records: List[ResultRecord]) -> dict:
+def bulk_results(records: list[ResultRecord]) -> dict:
     with get_session() as session:
         for r in records:
             res = Result(
@@ -1684,7 +1684,7 @@ def delete_course(course_id: int) -> dict:
 def get_staff(
     page: int = 1,
     per_page: int = 25,
-    department: Optional[str] = None,
+    department: str | None = None,
     user: dict = Depends(get_current_user),
 ):
     with get_session() as session:
@@ -1834,8 +1834,8 @@ def delete_staff(staff_id: int) -> dict:
 def get_fees(
     page: int = 1,
     per_page: int = 25,
-    student_id: Optional[int] = None,
-    status: Optional[str] = None,
+    student_id: int | None = None,
+    status: str | None = None,
     include_deleted: bool = False,
     user: dict = Depends(get_current_user),
 ):
@@ -2182,7 +2182,7 @@ def _get_system_config_value(session, key: str, default: Any = None) -> Any:
 
 
 def _set_system_config_value(
-    session, key: str, value: Any, description: str = "", user_id: Optional[int] = None
+    session, key: str, value: Any, description: str = "", user_id: int | None = None
 ):
     """Set a typed value in SystemConfig, creating or updating as needed."""
     entry = session.query(SystemConfig).filter(SystemConfig.key == key).first()

@@ -246,7 +246,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
         header.pack(fill="x", pady=(0, 5))
         headers = ["Name", "Department", "Present", "Absent", "Days", "%"]
         widths = [180, 120, 70, 70, 60, 60]
-        for i, (h, w) in enumerate(zip(headers, widths)):
+        for h, w in zip(headers, widths):
             ctk.CTkLabel(
                 header,
                 text=h,

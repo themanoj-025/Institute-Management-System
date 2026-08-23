@@ -151,7 +151,7 @@ class TestRateLimitsExtended:
         client = TestClient(app)
 
         # Exhaust the limit
-        for i in range(limit):
+        for _i in range(limit):
             resp = client.post(path, json={"email": "test@bb.edu.in"})
             assert resp.status_code == 200 or resp.status_code == 429
 

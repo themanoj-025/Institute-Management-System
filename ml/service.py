@@ -54,7 +54,7 @@ class MLService:
 
     def __init__(self) -> None:
         self._model: Any = None
-        self._model_name: Optional[str] = None
+        self._model_name: str | None = None
 
     def _ensure_model(self, session) -> bool:
         """Load the risk model, training it if none exists.
@@ -79,7 +79,7 @@ class MLService:
 
     # ── Public API ─────────────────────────────────────────────────
 
-    def train(self, session, force: bool = False) -> Tuple[bool, Dict]:
+    def train(self, session, force: bool = False) -> tuple[bool, dict]:
         """Explicitly trigger model training.
 
         Parameters
@@ -101,7 +101,7 @@ class MLService:
 
     def get_at_risk_students(
         self, session, threshold: float = 0.5, top_n: int = 20
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Return the top-N most at-risk students.
 
         Uses batch feature computation to avoid N+1 query explosion.
@@ -181,7 +181,7 @@ class MLService:
         results.sort(key=lambda r: r["risk_score"], reverse=True)
         return results[:top_n]
 
-    def predict_student_risk(self, session, student_id: int) -> Optional[Dict[str, Any]]:
+    def predict_student_risk(self, session, student_id: int) -> dict[str, Any] | None:
         """Predict risk for a single student with full explanation.
 
         Parameters
@@ -241,7 +241,7 @@ class MLService:
             logger.error("Risk prediction failed for student %d: %s", student_id, e)
             return self._heuristic_single_risk(session, student_id)
 
-    def predict_attendance_trend(self, session, student_id: int) -> Dict[str, Any]:
+    def predict_attendance_trend(self, session, student_id: int) -> dict[str, Any]:
         """Predict the attendance trend for a student over the next 4 weeks.
 
         Uses linear regression on recent attendance records.
@@ -315,7 +315,7 @@ class MLService:
             "slope": round(slope, 4),
         }
 
-    def get_dashboard_kpis(self, session) -> Dict[str, Any]:
+    def get_dashboard_kpis(self, session) -> dict[str, Any]:
         """Compute dynamic dashboard KPIs from the database.
 
         Replaces the previous approach of loading entire tables into
@@ -385,7 +385,7 @@ class MLService:
 
     # ── Fallback heuristic methods (when ML model is unavailable) ──
 
-    def _get_heuristic_at_risk(self, session, top_n: int = 20) -> List[Dict[str, Any]]:
+    def _get_heuristic_at_risk(self, session, top_n: int = 20) -> list[dict[str, Any]]:
         """Fallback: identify at-risk students using attendance thresholds.
 
         Uses a single batch query with GROUP BY instead of per-student loops.
@@ -463,7 +463,7 @@ class MLService:
         results.sort(key=lambda r: r["risk_score"], reverse=True)
         return results[:top_n]
 
-    def _heuristic_single_risk(self, session, student_id: int) -> Optional[Dict[str, Any]]:
+    def _heuristic_single_risk(self, session, student_id: int) -> dict[str, Any] | None:
         """Fallback: heuristic risk assessment for a single student."""
         from utils.config import get_config_float
 

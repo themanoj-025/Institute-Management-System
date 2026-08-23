@@ -243,7 +243,7 @@ def compute_all_features(session: Session) -> pd.DataFrame:
     Used for batch model training.
     """
     student_ids = [s.id for s in session.query(Student.id).all()]
-    rows: List[pd.Series] = []
+    rows: list[pd.Series] = []
 
     for sid in student_ids:
         try:
@@ -284,7 +284,7 @@ def compute_target(session: Session) -> pd.Series:
     )
 
     student_ids = [s.id for s in session.query(Student.id).all()]
-    targets: Dict[int, int] = {}
+    targets: dict[int, int] = {}
 
     for sid in student_ids:
         try:

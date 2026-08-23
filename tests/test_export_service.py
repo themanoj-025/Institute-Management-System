@@ -39,7 +39,7 @@ class TestCsvExport:
 
     def test_to_csv_content(self, export_service):
         result = export_service.to_csv("content.csv", SAMPLE_HEADERS, SAMPLE_ROWS)
-        with open(result.path, "r", encoding="utf-8") as f:
+        with open(result.path, encoding="utf-8") as f:
             content = f.read()
         assert "Name,Grade,Subject" in content
         assert "Alice,A,Mathematics" in content
@@ -54,7 +54,7 @@ class TestCsvExport:
 
     def test_to_csv_empty_rows(self, export_service):
         result = export_service.to_csv("empty.csv", SAMPLE_HEADERS, [])
-        with open(result.path, "r", encoding="utf-8") as f:
+        with open(result.path, encoding="utf-8") as f:
             content = f.read()
         # Accept both Windows (CRLF) and Unix (LF) line endings
         assert content in ("Name,Grade,Subject\r\n", "Name,Grade,Subject\n")

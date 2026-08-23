@@ -136,7 +136,7 @@ class Sidebar(ctk.CTkFrame):
         )
         if os.path.exists(settings_path):
             try:
-                with open(settings_path, "r") as f:
+                with open(settings_path) as f:
                     settings = json.load(f)
                     self._collapsed = settings.get("sidebar_collapsed", False)
                     if self._collapsed:
@@ -155,7 +155,7 @@ class Sidebar(ctk.CTkFrame):
         try:
             settings = {}
             if os.path.exists(settings_path):
-                with open(settings_path, "r") as f:
+                with open(settings_path) as f:
                     settings = json.load(f)
             settings["sidebar_collapsed"] = self._collapsed
             with open(settings_path, "w") as f:

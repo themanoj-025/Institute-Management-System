@@ -66,7 +66,7 @@ class MyAttendance(ctk.CTkFrame):
             ("Excused", "—", self.tm.info_color),
         ]
         self._stat_labels = {}
-        for i, (title, val, color) in enumerate(stats):
+        for _i, (title, val, color) in enumerate(stats):
             f = ctk.CTkFrame(stats_frame, corner_radius=6, border_width=1, border_color=color)
             f.pack(side="left", padx=10, fill="x", expand=True)
             ctk.CTkLabel(f, text=title, font=ctk.CTkFont(size=11), text_color="gray").pack(

@@ -40,7 +40,7 @@ class JSONFormatter(logging.Formatter):
     """
 
     def format(self, record: logging.LogRecord) -> str:
-        base: Dict[str, Any] = {
+        base: dict[str, Any] = {
             "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
@@ -104,7 +104,7 @@ def _console_formatter() -> logging.Formatter:
 def setup_logger(
     name: str,
     level: int = logging.DEBUG,
-    context: Optional[Dict[str, Any]] = None,
+    context: dict[str, Any] | None = None,
 ) -> logging.Logger:
     """
     Get or create a logger with both JSON file and console handlers.

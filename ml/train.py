@@ -47,7 +47,7 @@ def _evaluate_model(
     model: XGBClassifier,
     X_test: pd.DataFrame,
     y_test: pd.Series,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Compute evaluation metrics for the model on test data."""
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)[:, 1]
@@ -76,10 +76,10 @@ def _cross_validate(
     X: pd.DataFrame,
     y: pd.Series,
     n_splits: int = 5,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Run stratified k-fold cross-validation and return average metrics."""
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-    fold_metrics: Dict[str, list] = {
+    fold_metrics: dict[str, list] = {
         "accuracy": [],
         "f1": [],
         "precision": [],
@@ -123,7 +123,7 @@ def train_risk_model(
     session,
     force_retrain: bool = False,
     test_size: float = 0.2,
-) -> Tuple[bool, Dict[str, float]]:
+) -> tuple[bool, dict[str, float]]:
     """Train or retrain the at-risk student prediction model.
 
     Parameters

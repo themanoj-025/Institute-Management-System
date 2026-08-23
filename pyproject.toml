@@ -4,15 +4,44 @@ target-version = ["py310"]
 exclude = "(venv|alembic)"
 
 [tool.ruff]
-# Pin the lint rule contract explicitly: newer ruff releases keep expanding
-# their default rule selection (e.g. UP006/UP035/BLE001), which silently
-# breaks CI on pre-existing code. Selecting the classic default set
-# (E4/E7/E9/F) keeps the gate deterministic across ruff versions.
+line-length = 100
+target-version = "py310"
 exclude = ["venv", "alembic"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F"]
-ignore = ["E501", "F401", "E402", "E731", "E712"]
+select = ["E4", "E7", "E9", "F", "BLE", "S", "DTZ", "UP", "B", "SIM"]
+ignore = [
+    "E501",    # line too long — style preference
+    "F401",    # unused import — re-export pattern
+    "E402",    # module-import-not-at-top — Flask/app pattern
+    "E731",    # lambda assignment — legacy code
+    "E712",    # comparison to True/False
+    "BLE001",  # blind except — defensive coding in GUI/API
+    "S110",    # try-except-pass — defensive coding in GUI routes
+    "S101",    # assert — normal in tests
+    "S105",    # hardcoded password — test fixtures
+    "S106",    # hardcoded password func arg — test fixtures
+    "S310",    # suspicious url open — intended file access
+    "S311",    # suspicious random — non-crypto use
+    "S608",    # hardcoded SQL — ORM queries
+    "DTZ001",  # datetime() without tz — Flask/CLI app
+    "DTZ007",  # strptime without tz — acceptable
+    "DTZ011",  # date.today() — acceptable in CLI/GUI app
+    "UP031",   # printf formatting — legacy code
+    "UP035",   # deprecated typing imports — kept for Python 3.9 compat
+    "B008",    # function-call-in-default — FastAPI/Kivy pattern
+    "B026",    # star-arg-unpacking — legacy code
+    "B904",    # raise-without-from — legacy code
+    "B905",    # zip-without-strict — legacy code
+    "B018",    # useless expression — side-effect imports
+    "SIM105",  # suppressible-exception — legacy pattern
+    "SIM101",  # duplicate isinstance — intentional
+    "SIM108",  # if-else → ternary — readability preference
+    "SIM103",  # needless bool — readability preference
+    "SIM114",  # if with same arms — intentional
+    "SIM117",  # multiple with — readability preference
+    "SIM118",  # in dict keys — intentional
+]
 
 [tool.isort]
 profile = "black"
