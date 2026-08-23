@@ -92,7 +92,7 @@ class ThemeManager:
         )
         try:
             if os.path.exists(settings_path):
-                with open(settings_path, "r") as f:
+                with open(settings_path) as f:
                     settings = json.load(f)
                     theme = settings.get("theme", "dark")
                     accent = settings.get("accent", "blue")

@@ -127,7 +127,7 @@ class ViewResult(ctk.CTkFrame):
         header.pack(fill="x", pady=(0, 5))
         cols = ["Subject", "Exam Type", "Marks", "Total", "%", "Grade"]
         widths = [160, 110, 70, 70, 60, 60]
-        for i, (h, w) in enumerate(zip(cols, widths)):
+        for h, w in zip(cols, widths):
             ctk.CTkLabel(
                 header,
                 text=h,

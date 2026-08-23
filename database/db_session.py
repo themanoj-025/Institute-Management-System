@@ -40,7 +40,7 @@ class Base(DeclarativeBase):
 
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Iterator
+from collections.abc import Iterator
 
 
 def get_db() -> Generator:

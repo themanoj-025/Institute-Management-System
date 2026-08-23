@@ -286,7 +286,7 @@ def _is_feature_categorical(col_name: str, values: np.ndarray) -> bool:
 def _save_reference_distributions(
     X: pd.DataFrame,
     model_name: str,
-    metrics: Optional[Dict[str, Any]] = None,
+    metrics: dict[str, Any] | None = None,
 ) -> str:
     """Save per-feature reference distributions to a JSON file.
 
@@ -308,7 +308,7 @@ def _save_reference_distributions(
     str
         Path to the saved reference file.
     """
-    reference: Dict[str, Any] = {
+    reference: dict[str, Any] = {
         "model_name": model_name,
         "feature_order": list(X.columns),
         "n_samples": len(X),
@@ -322,7 +322,7 @@ def _save_reference_distributions(
         values = X[col].dropna().values
         unique_vals = np.unique(values)
 
-        feature_info: Dict[str, Any] = {
+        feature_info: dict[str, Any] = {
             "mean": float(np.mean(values)) if len(values) > 0 else 0.0,
             "std": float(np.std(values)) if len(values) > 0 else 0.0,
             "min": float(np.min(values)) if len(values) > 0 else 0.0,
@@ -337,7 +337,7 @@ def _save_reference_distributions(
 
         # For categorical features, also store category proportions
         if feature_info["is_categorical"] and len(values) > 0:
-            cat_counts: Dict[str, float] = {}
+            cat_counts: dict[str, float] = {}
             for cat_val in unique_vals:
                 proportion = float(np.sum(values == cat_val) / len(values))
                 cat_counts[str(cat_val)] = round(proportion, 4)
@@ -358,7 +358,7 @@ def _save_reference_distributions(
     return str(REFERENCE_FILE)
 
 
-def load_reference_distributions() -> Optional[Dict[str, Any]]:
+def load_reference_distributions() -> dict[str, Any] | None:
     """Load the saved reference distributions from disk.
 
     Returns
@@ -372,7 +372,7 @@ def load_reference_distributions() -> Optional[Dict[str, Any]]:
         return None
 
     try:
-        with open(REFERENCE_FILE, "r", encoding="utf-8") as f:
+        with open(REFERENCE_FILE, encoding="utf-8") as f:
             return json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         logger.warning("Failed to load reference distributions: %s", e)
@@ -385,7 +385,7 @@ def compute_drift_report(
     high_psi_threshold: float = DEFAULT_HIGH_PSI_THRESHOLD,
     wasserstein_threshold: float = DEFAULT_WASSERSTEIN_THRESHOLD,
     binning_strategy: BinningStrategy = BinningStrategy.DECILE,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Compare current feature distributions against saved reference.
 
     Computes PSI (or CPSI for categorical features) for each feature and
@@ -482,10 +482,10 @@ def compute_drift_report(
     reference_features = reference.get("features", {})
     feature_order = reference.get("feature_order", FEATURE_NAMES)
 
-    psi_scores: Dict[str, float] = {}
-    feature_stats: Dict[str, Dict[str, Any]] = {}
-    feature_details: Dict[str, Dict[str, Any]] = {}
-    wasserstein_scores: Dict[str, float] = {}
+    psi_scores: dict[str, float] = {}
+    feature_stats: dict[str, dict[str, Any]] = {}
+    feature_details: dict[str, dict[str, Any]] = {}
+    wasserstein_scores: dict[str, float] = {}
     max_psi = 0.0
     max_psi_feature = ""
     features_drifted = 0

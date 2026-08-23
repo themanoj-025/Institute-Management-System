@@ -28,7 +28,7 @@ def _metadata_path(name: str) -> Path:
     return MODELS_DIR / f"{name}_meta.json"
 
 
-def save_model(model_json: str, name: str, metrics: Optional[Dict] = None) -> str:
+def save_model(model_json: str, name: str, metrics: dict | None = None) -> str:
     """Save an XGBoost model (as JSON string) to the registry.
 
     Parameters
@@ -62,7 +62,7 @@ def save_model(model_json: str, name: str, metrics: Optional[Dict] = None) -> st
     return name
 
 
-def load_model(name: str) -> Optional[str]:
+def load_model(name: str) -> str | None:
     """Load an XGBoost model (JSON string) from the registry.
 
     Returns ``None`` if the model does not exist.
@@ -70,20 +70,20 @@ def load_model(name: str) -> Optional[str]:
     mp = _model_path(name)
     if not mp.exists():
         return None
-    with open(mp, "r", encoding="utf-8") as f:
+    with open(mp, encoding="utf-8") as f:
         return f.read()
 
 
-def load_metadata(name: str) -> Optional[Dict]:
+def load_metadata(name: str) -> dict | None:
     """Load metadata for a registered model."""
     mp = _metadata_path(name)
     if not mp.exists():
         return None
-    with open(mp, "r", encoding="utf-8") as f:
+    with open(mp, encoding="utf-8") as f:
         return json.load(f)
 
 
-def list_models() -> List[Dict]:
+def list_models() -> list[dict]:
     """List all registered models with their metadata."""
     models = []
     seen = set()
@@ -113,7 +113,7 @@ def delete_model(name: str) -> bool:
     return found
 
 
-def get_latest_model() -> Optional[str]:
+def get_latest_model() -> str | None:
     """Get the name of the most recently saved model.
 
     Returns ``None`` if no models are registered.

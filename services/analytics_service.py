@@ -43,7 +43,7 @@ class AnalyticsService:
 
     # ── Core KPIs ──────────────────────────────────────────────────
 
-    def get_dashboard_kpis(self) -> Dict[str, Any]:
+    def get_dashboard_kpis(self) -> dict[str, Any]:
         """Return key performance indicators for the admin dashboard.
 
         Uses SQL aggregates (via MLService) instead of loading entire
@@ -51,7 +51,7 @@ class AnalyticsService:
         """
         return self._ml.get_dashboard_kpis(self.db)
 
-    def get_advanced_kpis(self) -> Dict[str, Any]:
+    def get_advanced_kpis(self) -> dict[str, Any]:
         """Return advanced KPIs with ML-driven insights.
 
         Combines course-wise performance, attendance anomaly detection,
@@ -66,7 +66,7 @@ class AnalyticsService:
             "comparative": self.get_comparative_analytics(),
         }
 
-    def predict_attendance_trend(self, student_id: int) -> Dict[str, Any]:
+    def predict_attendance_trend(self, student_id: int) -> dict[str, Any]:
         """Predict the attendance trend for a student over the next 4 weeks.
 
         Delegates to ``MLService.predict_attendance_trend()`` which uses
@@ -74,7 +74,7 @@ class AnalyticsService:
         """
         return self._ml.predict_attendance_trend(self.db, student_id)
 
-    def get_at_risk_students(self, threshold: float = 0.5, top_n: int = 20) -> List[Dict[str, Any]]:
+    def get_at_risk_students(self, threshold: float = 0.5, top_n: int = 20) -> list[dict[str, Any]]:
         """Return the top-N most at-risk students.
 
         Uses the XGBoost risk model if available, falling back to a
@@ -96,7 +96,7 @@ class AnalyticsService:
         """
         return self._ml.get_at_risk_students(self.db, threshold=threshold, top_n=top_n)
 
-    def predict_student_risk(self, student_id: int) -> Optional[Dict[str, Any]]:
+    def predict_student_risk(self, student_id: int) -> dict[str, Any] | None:
         """Predict risk for a single student with full SHAP explanation.
 
         Returns a dict with risk_score, risk_level, and explanations
@@ -124,7 +124,7 @@ class AnalyticsService:
 
     # ── Advanced KPIs ──────────────────────────────────────────────
 
-    def get_course_performance_breakdown(self) -> List[Dict[str, Any]]:
+    def get_course_performance_breakdown(self) -> list[dict[str, Any]]:
         """Compute per-course performance metrics.
 
         For each course, returns average attendance rate, average marks,
@@ -229,7 +229,7 @@ class AnalyticsService:
 
         return results
 
-    def get_attendance_anomalies(self, days: int = 14) -> List[Dict[str, Any]]:
+    def get_attendance_anomalies(self, days: int = 14) -> list[dict[str, Any]]:
         """Detect anomalous attendance patterns.
 
         Flags students whose attendance rate drops more than 30%
@@ -321,7 +321,7 @@ class AnalyticsService:
         )
         return anomalies[:20]
 
-    def _compute_fee_forecast(self) -> Dict[str, Any]:
+    def _compute_fee_forecast(self) -> dict[str, Any]:
         """Forecast fee collection for the next 30 days.
 
         Uses historical collection rates and pending amounts to estimate
@@ -402,7 +402,7 @@ class AnalyticsService:
             "at_risk_courses": at_risk_courses,
         }
 
-    def get_retention_risk_signals(self) -> List[Dict[str, Any]]:
+    def get_retention_risk_signals(self) -> list[dict[str, Any]]:
         """Identify retention risk signals across the institute.
 
         Flags students or cohorts showing multiple warning signs:
@@ -521,7 +521,7 @@ class AnalyticsService:
 
         return signals
 
-    def get_comparative_analytics(self) -> Dict[str, Any]:
+    def get_comparative_analytics(self) -> dict[str, Any]:
         """Compare performance across courses and sessions.
 
         Returns best/worst performing courses by attendance, marks,

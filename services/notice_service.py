@@ -10,7 +10,7 @@ class NoticeService:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_all_notices(self, target_role: Optional[str] = None) -> list[dict]:
+    def get_all_notices(self, target_role: str | None = None) -> list[dict]:
         query = self.db.query(Notice)
         if target_role:
             query = query.filter(Notice.target_role.in_(["all", target_role]))

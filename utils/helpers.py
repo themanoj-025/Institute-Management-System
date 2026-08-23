@@ -48,7 +48,7 @@ class Helpers:
     def upload_file(
         allowed_extensions: set[str],
         max_size_mb: float,
-    ) -> tuple[Optional[str], Optional[str]]:
+    ) -> tuple[str | None, str | None]:
         """Open a file dialog and validate the selected file.
 
         Returns

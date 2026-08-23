@@ -24,11 +24,11 @@ logger = logging.getLogger("ml.explain")
 # prediction call. The cache is invalidated when the active model
 # version changes.
 
-_explainer_cache: Dict[str, Any] = {}
+_explainer_cache: dict[str, Any] = {}
 _explainer_cache_lock = Lock()
 
 
-def _get_cached_explainer(model, model_version: Optional[str] = None) -> Optional[Any]:
+def _get_cached_explainer(model, model_version: str | None = None) -> Any | None:
     """Return a cached SHAP TreeExplainer or create and cache one.
 
     Parameters
@@ -60,7 +60,7 @@ def _get_cached_explainer(model, model_version: Optional[str] = None) -> Optiona
         return explainer
 
 
-def _build_explainer(model) -> Optional[Any]:
+def _build_explainer(model) -> Any | None:
     """Build a SHAP TreeExplainer for the given model."""
     try:
         import shap
@@ -71,7 +71,7 @@ def _build_explainer(model) -> Optional[Any]:
         return None
 
 
-def invalidate_explainer_cache(model_version: Optional[str] = None) -> None:
+def invalidate_explainer_cache(model_version: str | None = None) -> None:
     """Invalidate the SHAP explainer cache.
 
     If ``model_version`` is provided, only that version's entry is
@@ -113,11 +113,11 @@ def _feature_label(name: str) -> str:
 def explain_prediction(
     model: Any,
     features: pd.Series,
-    shap_values: Optional[np.ndarray] = None,
+    shap_values: np.ndarray | None = None,
     top_n: int = 3,
     threshold: float = 0.01,
-    model_version: Optional[str] = None,
-) -> List[Dict[str, Any]]:
+    model_version: str | None = None,
+) -> list[dict[str, Any]]:
     """Generate a human-readable explanation for a single prediction.
 
     Uses SHAP values to identify the top-N features that most influenced
@@ -148,7 +148,7 @@ def explain_prediction(
         ``value`` (feature value), ``importance`` (SHAP value or feature importance),
         ``direction`` ("increases" or "decreases" risk).
     """
-    importances: Optional[np.ndarray] = None
+    importances: np.ndarray | None = None
 
     # Try SHAP first (using cached explainer when model_version is provided)
     if shap_values is not None:

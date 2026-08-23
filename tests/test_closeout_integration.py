@@ -120,7 +120,7 @@ class TestExportOutputValidity:
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
             svc = ExportService(export_dir=tmpdir, auto_create=True)
             result = svc.to_csv("test_output.csv", self.HEADERS, self.ROWS)
-            with open(result.path, "r", encoding="utf-8") as f:
+            with open(result.path, encoding="utf-8") as f:
                 reader = csv.reader(f)
                 rows = list(reader)
             # Header + 3 data rows

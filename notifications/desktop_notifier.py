@@ -11,7 +11,7 @@ from typing import Optional
 class DesktopNotifier:
     def __init__(self) -> None:
         # Path to app icon if any
-        self.icon_path: Optional[str] = None
+        self.icon_path: str | None = None
         # Could point to an .ico file in assets/icons/ if needed
 
     def notify(self, title: str, message: str, timeout: int = 5) -> None:

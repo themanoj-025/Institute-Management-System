@@ -1,5 +1,6 @@
 import threading
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 
 class AsyncLoader:
@@ -10,7 +11,7 @@ class AsyncLoader:
         root: Any,
         task_func: Callable[[], Any],
         on_success: Callable[[Any], None],
-        on_error: Optional[Callable[[Exception], None]] = None,
+        on_error: Callable[[Exception], None] | None = None,
     ) -> None:
         def worker() -> None:
             try:

@@ -39,10 +39,10 @@ class SessionTracker:
         self.last_activity = utc_now()
         self.is_active = False
         self._timer_id = None
-        self._access_token: Optional[str] = None
-        self._token_expiry: Optional[datetime] = None
+        self._access_token: str | None = None
+        self._token_expiry: datetime | None = None
 
-    def set_token(self, access_token: str, expires_at: Optional[datetime] = None) -> None:
+    def set_token(self, access_token: str, expires_at: datetime | None = None) -> None:
         """Store the JWT for this session.
 
         Parameters
@@ -56,7 +56,7 @@ class SessionTracker:
         self._access_token = access_token
         self._token_expiry = expires_at
 
-    def get_token(self) -> Optional[str]:
+    def get_token(self) -> str | None:
         """Return the stored JWT, or None if expired."""
         if self._access_token is None:
             return None

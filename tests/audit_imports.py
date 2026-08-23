@@ -43,7 +43,7 @@ def compute_module_name(rel_path):
 def safe_py_compile(filepath):
     """Try to compile a .py file and return (success, error_msg)."""
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             source = f.read()
         compile(source, filepath, "exec")
         return True, None

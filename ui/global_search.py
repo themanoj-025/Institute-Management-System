@@ -91,7 +91,7 @@ class GlobalSearch(ctk.CTkToplevel):
         )
         if os.path.exists(settings_path):
             try:
-                with open(settings_path, "r") as f:
+                with open(settings_path) as f:
                     self.recent_items = json.load(f).get("recent_searches", [])
             except Exception:
                 pass
@@ -110,7 +110,7 @@ class GlobalSearch(ctk.CTkToplevel):
         try:
             settings = {}
             if os.path.exists(settings_path):
-                with open(settings_path, "r") as f:
+                with open(settings_path) as f:
                     settings = json.load(f)
             settings["recent_searches"] = self.recent_items
             with open(settings_path, "w") as f:

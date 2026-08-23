@@ -170,7 +170,7 @@ def test_search_service_uses_parameterized_queries():
         "services",
         "search_service.py",
     )
-    with open(search_path, "r", encoding="utf-8") as f:
+    with open(search_path, encoding="utf-8") as f:
         content = f.read()
     tree = ast.parse(content)
     for node in ast.walk(tree):
@@ -251,10 +251,10 @@ def test_rate_limits_configured_for_critical_endpoints():
         "api",
         "main.py",
     )
-    with open(main_path, "r", encoding="utf-8") as f:
+    with open(main_path, encoding="utf-8") as f:
         content = f.read()
     for endpoint in required_limits:
-        assert endpoint in content, "Rate limit for %s not found in main.py!" % endpoint
+        assert endpoint in content, f"Rate limit for {endpoint} not found in main.py!"
 
 
 # --- HEALTH CHECK TEST -----------------------------------------------------
@@ -319,7 +319,7 @@ def test_every_token_has_unique_jti():
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         jti = payload.get("jti")
         assert jti is not None
-        assert jti not in jtis, "Duplicate jti: %s" % jti
+        assert jti not in jtis, f"Duplicate jti: {jti}"
         jtis.add(jti)
     assert len(jtis) == 100
 
@@ -334,11 +334,11 @@ def test_env_file_exists():
         ".env.example",
     )
     assert os.path.exists(env_example_path)
-    with open(env_example_path, "r") as f:
+    with open(env_example_path) as f:
         content = f.read()
     assert "SECRET_KEY" in content, ".env.example must document SECRET_KEY"
     for pattern in ["sk-live-", "sk-proj-", "admin@123", "password123"]:
-        assert pattern not in content.lower(), "Suspicious pattern found: %s" % pattern
+        assert pattern not in content.lower(), f"Suspicious pattern found: {pattern}"
 
 
 # --- CORRECT LOGIN RESETS FAILED ATTEMPTS ---------------------------------

@@ -326,7 +326,7 @@ class TestEndToEndJourney:
             assert os.path.getsize(csv_result.path) > 10
 
             # Verify CSV contains expected student data
-            with open(csv_result.path, "r", encoding="utf-8") as f:
+            with open(csv_result.path, encoding="utf-8") as f:
                 content = f.read()
             assert "E2E Student" in content
             assert "25000.0" in content or "25000" in content

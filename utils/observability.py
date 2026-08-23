@@ -81,7 +81,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         endpoint = request.url.path
         ACTIVE_REQUESTS.inc()  # type: ignore[name-defined]
         start = time.monotonic()
-        response: Optional[Response] = None
+        response: Response | None = None
 
         try:
             response = await call_next(request)
@@ -131,7 +131,7 @@ class HealthChecker:
         self._db_session_factory = session_factory
         return self
 
-    def check(self) -> Dict[str, Any]:
+    def check(self) -> dict[str, Any]:
         """Run all health checks and return a dict.
 
         Schema::
@@ -147,7 +147,7 @@ class HealthChecker:
                 \"version\": \"1.0.0\"
             }
         """
-        checks: Dict[str, Dict[str, Any]] = {}
+        checks: dict[str, dict[str, Any]] = {}
         overall = "ok"
 
         # Database check
