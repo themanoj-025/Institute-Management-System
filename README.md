@@ -27,7 +27,15 @@ A comprehensive educational institute management platform for small-to-medium co
 
 ---
 
-> 📸 **Screenshot placeholder:** Add screenshots of the desktop client and the web dashboard.
+## 📸 Screenshots
+
+> _To add screenshots: run `python main.py` for desktop or `npm run dev` for web, capture your screen, save images to `docs/assets/`, and reference them below._
+>
+> **Suggested screenshots:**
+> - Desktop client dashboard with KPIs
+> - React web dashboard (dark mode)
+> - Student attendance management
+> - Analytics dashboard with SHAP risk cards
 
 ---
 
