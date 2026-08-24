@@ -23,8 +23,34 @@ import sys
 from datetime import date, datetime
 from decimal import Decimal
 
+import re
+
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import Session
+
+# Valid table names (hardcoded whitelist — prevents SQL injection)
+_VALID_TABLES = frozenset({
+    "users", "courses", "course_modules", "sessions", "staff",
+    "subjects", "students", "attendances", "staff_attendances",
+    "results", "leaves", "feedbacks", "fees", "fee_payments",
+    "notices", "timetables", "activity_logs", "enquiries",
+    "placements", "system_config", "otp_codes", "revoked_tokens",
+})
+
+
+def _quote_identifier(name: str) -> str:
+    """Double-quote a PostgreSQL identifier after validating against the whitelist.
+
+    This prevents SQL injection by ensuring only known-safe table/column names
+    are interpolated into SQL strings. The double-quoting protects against
+    PostgreSQL reserved words and special characters.
+    """
+    if name not in _VALID_TABLES:
+        raise ValueError(f"Table name '{name}' is not in the allowed whitelist")
+    # Additional sanity: only allow alphanumeric + underscore
+    if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", name):
+        raise ValueError(f"Table name '{name}' contains invalid characters")
+    return f'"{name}"'
 
 
 def main() -> None:
@@ -77,6 +103,7 @@ def main() -> None:
 
     # Order tables by dependency (parents first, children last)
     # Hard-code a reasonable order based on the schema
+    # Order tables by dependency (parents first, children last)
     ordered_tables = [
         "users",
         "courses",
@@ -101,6 +128,10 @@ def main() -> None:
         "otp_codes",
         "revoked_tokens",
     ]
+    # Safety: ensure all ordered tables are in the whitelist
+    assert set(ordered_tables) <= _VALID_TABLES, (
+        f"ordered_tables contains unknown tables: {set(ordered_tables) - _VALID_TABLES}"
+    )
 
     # Filter to only common tables, preserving order
     ordered_common = [t for t in ordered_tables if t in common_tables]
@@ -171,7 +202,6 @@ def main() -> None:
 
             # Reset sequences for auto-increment IDs
             print("\n🔄 Resetting sequences...")
-            _VALID_TABLES = set(ordered_tables)
             for table_name in ordered_common:
                 pg_table = pg_meta.tables.get(table_name)
                 if pg_table is None:
@@ -179,13 +209,19 @@ def main() -> None:
                 # Check if there's an 'id' column with autoincrement
                 id_col = pg_table.columns.get("id")
                 if id_col is not None and id_col.autoincrement:
-                    # Validate table name against whitelist before interpolation
-                    assert table_name in _VALID_TABLES, f"Unknown table: {table_name}"
+                    quoted_table = _quote_identifier(table_name)
+                    # Use SQLAlchemy text() with quoted identifier (not parameterized —
+                    # identifiers can't be parameterized in SQL, but the whitelist
+                    # validation in _quote_identifier prevents injection)
                     max_id = pg_session.execute(
-                        text(f"SELECT COALESCE(MAX(id), 0) FROM {table_name}")
+                        text(f"SELECT COALESCE(MAX(id), 0) FROM {quoted_table}")
                     ).scalar()
-                    seq_name = f"{table_name}_id_seq"
-                    pg_session.execute(text(f"ALTER SEQUENCE {seq_name} RESTART WITH {max_id + 1}"))
+                    seq_name = _quote_identifier(f"{table_name}_id_seq")
+                    next_val = (max_id or 0) + 1
+                    pg_session.execute(
+                        text(f"ALTER SEQUENCE {seq_name} RESTART WITH :next_val"),
+                        {"next_val": next_val},
+                    )
             pg_session.commit()
 
     print(f"\n{'=' * 60}")
