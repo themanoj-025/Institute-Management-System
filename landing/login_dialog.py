@@ -11,8 +11,15 @@ The API base URL is read from the ``API_BASE_URL`` environment variable
 
 import os
 import traceback
+import urllib.error
 
 import customtkinter as ctk
+from tkinter import TclError
+
+try:
+    from sqlalchemy.exc import SQLAlchemyError
+except ImportError:
+    SQLAlchemyError = Exception
 
 # Use httpx if available, fall back to urllib.request
 try:
@@ -76,7 +83,7 @@ def _api_login(username: str, password: str) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -120,7 +127,7 @@ def _api_verify_otp(user_id: int, otp: str) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -166,7 +173,7 @@ def _api_send_verification_email(user_id: int) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -207,7 +214,7 @@ def _api_confirm_verification(user_id: int, token: str) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -227,7 +234,7 @@ def _api_logout(token: str) -> bool:
             with httpx.Client(timeout=10.0) as client:
                 resp = client.post(url, headers=headers)
             return resp.status_code == 200
-        except Exception:
+        except (httpx.RequestError, OSError):
             return False
     else:
         import urllib.request
@@ -236,7 +243,7 @@ def _api_logout(token: str) -> bool:
         try:
             with urllib.request.urlopen(req, timeout=10):
                 return True
-        except Exception:
+        except (urllib.error.URLError, OSError):
             return False
 
 
@@ -282,7 +289,7 @@ def _api_forgot_password(email: str) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -333,7 +340,7 @@ def _api_reset_password(user_id: int, token: str, new_password: str) -> dict:
             body = e.read().decode("utf-8", errors="replace")
             try:
                 msg = _json.loads(body).get("error", {}).get("message", str(e))
-            except Exception:
+            except (ValueError, KeyError, TypeError):
                 msg = str(e)
             raise ApiAuthError(msg)
         except urllib.error.URLError as e:
@@ -731,7 +738,7 @@ class LoginDialog(ctk.CTkToplevel):
                 user = self.db_session.query(User).filter(User.username == username).first()
                 if user:
                     user_id = user.id
-            except Exception:
+            except (SQLAlchemyError, OSError):
                 pass  # Non-blocking — user can still go back
         self._user_id = user_id or None
         self._username = username
@@ -797,7 +804,7 @@ class LoginDialog(ctk.CTkToplevel):
         finally:
             try:
                 self.btn_login.configure(state="normal", text="Login")
-            except Exception:
+            except (TclError, RuntimeError):
                 pass
 
     # ── OTP Verification Step ─────────────────────────────────────
@@ -850,7 +857,7 @@ class LoginDialog(ctk.CTkToplevel):
         finally:
             try:
                 self._otp_btn.configure(state="normal", text="Verify OTP")
-            except Exception:
+            except (TclError, RuntimeError):
                 pass
 
     # ── Email Verification Step ───────────────────────────────────
@@ -1068,7 +1075,7 @@ class LoginDialog(ctk.CTkToplevel):
                     user = self.db_session.query(User).filter(User.username == username).first()
                     if user:
                         user_id = user.id
-                except Exception:
+                except (SQLAlchemyError, OSError):
                     pass
 
         if not user_id:
