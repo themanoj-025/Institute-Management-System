@@ -171,6 +171,7 @@ def main() -> None:
 
             # Reset sequences for auto-increment IDs
             print("\n🔄 Resetting sequences...")
+            _VALID_TABLES = set(ordered_tables)
             for table_name in ordered_common:
                 pg_table = pg_meta.tables.get(table_name)
                 if pg_table is None:
@@ -178,6 +179,8 @@ def main() -> None:
                 # Check if there's an 'id' column with autoincrement
                 id_col = pg_table.columns.get("id")
                 if id_col is not None and id_col.autoincrement:
+                    # Validate table name against whitelist before interpolation
+                    assert table_name in _VALID_TABLES, f"Unknown table: {table_name}"
                     max_id = pg_session.execute(
                         text(f"SELECT COALESCE(MAX(id), 0) FROM {table_name}")
                     ).scalar()
