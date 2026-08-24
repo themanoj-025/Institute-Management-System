@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import customtkinter as ctk
+from tkinter import TclError
 
 from database.models import Session as AcadSession
 from services.course_service import CourseService
@@ -77,7 +78,7 @@ class ManageStudents(ctk.CTkFrame):
             x = self.winfo_rootx() + (self.winfo_width() - 520) // 2
             y = self.winfo_rooty() + (self.winfo_height() - 620) // 2
             dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         frame = ctk.CTkFrame(dialog, fg_color="transparent")

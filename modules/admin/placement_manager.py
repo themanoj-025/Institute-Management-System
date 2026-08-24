@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 import customtkinter as ctk
+from tkinter import TclError
 
 from services.placement_service import PlacementService
 from services.student_service import StudentService
@@ -86,7 +87,7 @@ class PlacementManager(ctk.CTkFrame):
             x = self.winfo_rootx() + (self.winfo_width() - 480) // 2
             y = self.winfo_rooty() + (self.winfo_height() - 540) // 2
             dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         frame = ctk.CTkFrame(dialog, fg_color="transparent")

@@ -151,7 +151,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
                 f"Failed to refresh analytics: {error}",
                 "error",
             )
-        except Exception:
+        except (OSError, ValueError):
             pass
 
     def _fetch_all(self) -> None:

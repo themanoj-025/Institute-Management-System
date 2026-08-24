@@ -11,6 +11,7 @@ the web dashboard), so both surfaces share the same JWT session.
 
 import logging
 from datetime import datetime
+from tkinter import TclError
 from typing import Optional
 
 from utils.time import utc_now
@@ -89,7 +90,7 @@ class SessionTracker:
         if self._timer_id:
             try:
                 self.root.after_cancel(self._timer_id)
-            except Exception:
+            except (TclError, OSError):
                 pass
             self._timer_id = None
 

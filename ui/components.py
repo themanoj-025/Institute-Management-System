@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import TclError
 
 
 class KPICard(ctk.CTkFrame):
@@ -57,7 +58,7 @@ class SkeletonLoader(ctk.CTkFrame):
                 self.configure(fg_color=("gray75", "gray25"))
             else:
                 self.configure(fg_color=("gray80", "gray20"))
-        except Exception:
+        except (TclError, ValueError, TypeError):
             pass
         self.after(500, self._animate)
 

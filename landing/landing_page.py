@@ -483,7 +483,7 @@ class LandingPage(ctk.CTkFrame):
                 from landing.login_dialog import _api_logout
 
                 _api_logout(token)
-            except Exception:
+            except (OSError, ConnectionError, ValueError):
                 pass  # Non-blocking — best-effort token blacklisting
 
         # Clear session state

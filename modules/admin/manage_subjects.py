@@ -33,11 +33,11 @@ class ManageSubjects(ctk.CTkFrame):
                     staff_name = (
                         f"{s.staff.first_name} {s.staff.last_name}" if s.staff else "Unassigned"
                     )
-                except Exception:
+                except (AttributeError, TypeError):
                     staff_name = "Unassigned"
                 try:
                     course_code = s.course.code if s.course else "Unknown"
-                except Exception:
+                except (AttributeError, TypeError):
                     course_code = "Unknown"
                 data.append([s.id, s.code, s.name, course_code, staff_name])
             return data

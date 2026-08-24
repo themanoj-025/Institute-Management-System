@@ -2,6 +2,7 @@ import os
 import sys
 
 import customtkinter as ctk
+from tkinter import TclError
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -281,7 +282,7 @@ class BBIMS_App(ctk.CTk):
             # Show friendly dialog on the main thread
             try:
                 app.after(0, lambda: app.show_error_dialog(str(exc_value), full_tb))
-            except Exception:
+            except (TclError, RuntimeError):
                 pass  # Give up — nothing else we can do
 
         # Catch exceptions raised inside Tkinter callbacks (button clicks, bindings)
@@ -306,7 +307,7 @@ class BBIMS_App(ctk.CTk):
             x = self.winfo_rootx() + (self.winfo_width() - 520) // 2
             y = self.winfo_rooty() + (self.winfo_height() - 320) // 2
             dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         frame = ctk.CTkFrame(dialog, fg_color="transparent")
@@ -401,7 +402,7 @@ class BBIMS_App(ctk.CTk):
         if hasattr(self, "session_tracker"):
             try:
                 self.session_tracker.stop()
-            except Exception:
+            except (OSError, RuntimeError):
                 pass
         self.app_state.current_user = None
         self.app_state.current_route = None

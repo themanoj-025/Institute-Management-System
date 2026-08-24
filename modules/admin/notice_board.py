@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import TclError
 
 from services.notice_service import NoticeService
 from ui.data_table import DataTable
@@ -69,7 +70,7 @@ class NoticeBoard(ctk.CTkFrame):
             x = self.winfo_rootx() + (self.winfo_width() - 500) // 2
             y = self.winfo_rooty() + (self.winfo_height() - 520) // 2
             dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         frame = ctk.CTkFrame(dialog, fg_color="transparent")

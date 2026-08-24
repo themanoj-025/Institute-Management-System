@@ -92,7 +92,7 @@ def _classification_metrics_dict(
     if len(unique) >= 2:
         try:
             metrics["auroc"] = round(float(roc_auc_score(y_true, y_proba)), 4)
-        except Exception:
+        except (ValueError, TypeError):
             metrics["auroc"] = 0.0
     else:
         metrics["auroc"] = 0.0

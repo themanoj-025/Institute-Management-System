@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import TclError
 
 
 class HoverEffect:
@@ -36,7 +37,7 @@ class CounterAnimation:
                     label.after(step_ms, lambda: tick(current_step + 1))
                 else:
                     label.configure(text=f"{prefix}{target:,}{suffix}")
-            except Exception:
+            except (TclError, ValueError, TypeError):
                 pass
 
         tick(0)
@@ -64,7 +65,7 @@ class SlideTransition:
         try:
             bg_rgb = hex_to_rgb(bg_hex)
             fg_rgb = hex_to_rgb(fg_hex)
-        except Exception:
+        except (ValueError, TypeError, AttributeError):
             # Fallback
             return
 

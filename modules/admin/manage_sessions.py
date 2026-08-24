@@ -40,7 +40,7 @@ class ManageSessions(ctk.CTkFrame):
                             status,
                         ]
                     )
-                except Exception:
+                except (AttributeError, TypeError):
                     data.append([s.id, "N/A", "N/A", "N/A", "N/A"])
             return data
 

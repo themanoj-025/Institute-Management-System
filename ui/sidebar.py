@@ -2,6 +2,7 @@ import json
 import os
 
 import customtkinter as ctk
+from tkinter import TclError
 
 ROUTE_ICONS = {
     "dashboard": "📊",
@@ -143,7 +144,7 @@ class Sidebar(ctk.CTkFrame):
                         self.configure(width=64)
                     else:
                         self.configure(width=220)
-            except Exception:
+            except (TclError, RuntimeError):
                 pass
 
     def save_settings(self) -> None:
@@ -160,7 +161,7 @@ class Sidebar(ctk.CTkFrame):
             settings["sidebar_collapsed"] = self._collapsed
             with open(settings_path, "w") as f:
                 json.dump(settings, f, indent=4)
-        except Exception:
+        except (OSError, json.JSONDecodeError):
             pass
 
     def build_menu(self) -> None:
@@ -246,7 +247,7 @@ class Sidebar(ctk.CTkFrame):
         if self._tooltip:
             try:
                 self._tooltip.destroy()
-            except Exception:
+            except (TclError, RuntimeError):
                 pass
             self._tooltip = None
 
