@@ -93,7 +93,7 @@ class GlobalSearch(ctk.CTkToplevel):
             try:
                 with open(settings_path) as f:
                     self.recent_items = json.load(f).get("recent_searches", [])
-            except Exception:
+            except (OSError, json.JSONDecodeError):
                 pass
 
     def save_recent(self, item) -> None:
@@ -115,7 +115,7 @@ class GlobalSearch(ctk.CTkToplevel):
             settings["recent_searches"] = self.recent_items
             with open(settings_path, "w") as f:
                 json.dump(settings, f, indent=4)
-        except Exception:
+        except (OSError, TypeError):
             pass
 
     def _on_key_release(self, event) -> None:

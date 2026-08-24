@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 import customtkinter as ctk
+from tkinter import TclError
 
 from services.staff_service import StaffService
 from ui.data_table import DataTable
@@ -73,7 +74,7 @@ class ManageStaff(ctk.CTkFrame):
             x = self.winfo_rootx() + (self.winfo_width() - 480) // 2
             y = self.winfo_rooty() + (self.winfo_height() - 560) // 2
             dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         frame = ctk.CTkFrame(dialog, fg_color="transparent")

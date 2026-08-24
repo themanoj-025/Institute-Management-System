@@ -690,7 +690,7 @@ def _check_token_blacklist(jti: str) -> bool:
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         if r.get(f"bl:{jti}") is not None:
             return True
-    except Exception:
+    except (OSError, ConnectionError):
         pass
 
     # Always check DB as the authoritative source

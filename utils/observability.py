@@ -173,7 +173,7 @@ class HealthChecker:
         if _metrics_enabled:
             try:
                 DB_CONNECTION_STATUS.set(1 if db_ok else 0)  # type: ignore[name-defined]
-            except Exception:
+            except (OSError, ValueError):
                 pass
 
         return {

@@ -1,6 +1,7 @@
 import time
 
 import customtkinter as ctk
+from tkinter import TclError
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
@@ -101,7 +102,7 @@ class ChartFactory:
                     ax.plot(x_new, y_smooth, label=label, color=color, linewidth=2)
                     ax.set_xticks(x_indices)
                     ax.set_xticklabels(x)
-                except Exception:
+                except (ValueError, TypeError):
                     ax.plot(x, y, marker="o", label=label, color=color, linewidth=2)
             else:
                 ax.plot(x, y, marker="o", label=label, color=color, linewidth=2)
@@ -175,7 +176,7 @@ class ChartFactory:
             def on_add(sel) -> None:
                 sel.annotation.set_text(labels[sel.index])
 
-        except Exception:
+        except (ValueError, TypeError, AttributeError):
             pass
 
     @classmethod
@@ -207,7 +208,7 @@ class ChartFactory:
             try:
                 fig.tight_layout()
                 canvas.draw_idle()
-            except Exception:
+            except (TclError, RuntimeError, OSError):
                 pass
 
         parent.bind("<Configure>", on_resize)

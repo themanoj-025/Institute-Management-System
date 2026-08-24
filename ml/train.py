@@ -64,7 +64,7 @@ def _evaluate_model(
     if unique_classes >= 2:
         try:
             metrics["auroc"] = round(float(roc_auc_score(y_test, y_proba)), 4)
-        except Exception:
+        except (ValueError, TypeError):
             metrics["auroc"] = 0.0
     else:
         metrics["auroc"] = 0.0
@@ -111,7 +111,7 @@ def _cross_validate(
         if y_val_fold.nunique() >= 2:
             try:
                 fold_metrics["auroc"].append(roc_auc_score(y_val_fold, y_proba))
-            except Exception:
+            except (ValueError, TypeError):
                 fold_metrics["auroc"].append(0.0)
         else:
             fold_metrics["auroc"].append(0.0)
