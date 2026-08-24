@@ -1,5 +1,6 @@
 import json
 import os
+from tkinter import TclError
 
 import customtkinter as ctk
 
@@ -109,7 +110,7 @@ class ThemeManager:
                     self.set_font_size(font_size, save=False)
             else:
                 self.apply("dark", save=False)
-        except Exception:
+        except (TclError, OSError, KeyError, ValueError):
             self.apply("dark", save=False)
 
     def save_settings(self) -> None:
@@ -127,7 +128,7 @@ class ThemeManager:
         try:
             with open(settings_path, "w") as f:
                 json.dump(settings, f, indent=4)
-        except Exception:
+        except OSError:
             pass
 
     def apply(self, theme_name: str, save: bool = True) -> None:
@@ -201,14 +202,14 @@ class ThemeManager:
                 widget.configure(fg_color=theme["surface"], selected_color=theme["accent"])
             elif isinstance(widget, ctk.CTkSwitch):
                 widget.configure(progress_color=theme["accent"])
-        except Exception:
+        except (TclError, TypeError, ValueError):
             pass
 
         # Walk children
         try:
             for child in widget.winfo_children():
                 self._recursive_recolor(child, theme)
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
     def _recursive_resize(self, widget) -> None:
@@ -224,13 +225,13 @@ class ThemeManager:
                             widget.configure(font=self.header_font)
                         else:
                             widget.configure(font=self.main_font)
-                except Exception:
+                except (TclError, TypeError, ValueError):
                     pass
-        except Exception:
+        except (TclError, RuntimeError):
             pass
 
         try:
             for child in widget.winfo_children():
                 self._recursive_resize(child)
-        except Exception:
+        except (TclError, RuntimeError):
             pass

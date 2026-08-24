@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from tkinter import TclError
 
 TOAST_STYLES = {
     "success": {"bg": "#a6e3a1", "text": "#1e1e2e", "icon": "✔", "border": "#50fa7b"},
@@ -86,14 +87,14 @@ class ToastInstance:
             final_x = self.root.winfo_rootx() + self.root.winfo_width() - self.width - 20
             if self.current_x == 99999:
                 self.current_x = final_x + 300  # Start off-screen right
-        except Exception:
+        except (TclError, RuntimeError):
             final_x = 100
             if self.current_x == 99999:
                 self.current_x = final_x + 300
 
         try:
             self.toplevel.geometry(f"{self.width}x{self.height}+{self.current_x}+{self.target_y}")
-        except Exception:
+        except (TclError, RuntimeError):
             self.dismiss()
             return
 
@@ -107,7 +108,7 @@ class ToastInstance:
                     self.current_x = final_x
                 try:
                     self.toplevel.geometry(f"+{int(self.current_x)}+{int(self.target_y)}")
-                except Exception:
+                except (TclError, RuntimeError):
                     pass
                 self.toplevel.after(10, slide_step)
             else:
@@ -125,7 +126,7 @@ class ToastInstance:
             new_width = int(self.width * fraction)
             try:
                 self.progress_frame.configure(width=new_width)
-            except Exception:
+            except (TclError, RuntimeError):
                 pass
             self.toplevel.after(50, lambda: self.animate_progress(remaining - 50))
 
@@ -133,7 +134,7 @@ class ToastInstance:
         try:
             if self.toplevel.winfo_exists():
                 self.toplevel.destroy()
-        except Exception:
+        except (TclError, RuntimeError):
             pass
         self.manager.remove_toast(self)
 
