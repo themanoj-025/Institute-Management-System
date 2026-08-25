@@ -201,7 +201,7 @@ class TestAdminAccessNotBlocked:
                 422,
                 500,
             ), f"Unexpected status: {resp.status_code}"
-        except Exception:
+        except (OSError, ConnectionError):
             # Pre-existing issue: test DB may not have is_deleted column migration
             pass
 
@@ -261,7 +261,7 @@ class TestStaffAccessNotBlocked:
                 422,
                 500,
             ), f"Unexpected status: {resp.status_code}"
-        except Exception:
+        except (OSError, ConnectionError):
             # Pre-existing issue: test DB may not have is_deleted column migration
             pass
 

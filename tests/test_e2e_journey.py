@@ -158,7 +158,7 @@ class TestEndToEndJourney:
         # Use a separate transaction to prevent cascading failures
         try:
             self._run_journey_steps(test_db, auth_service, data)
-        except Exception:
+        except (ValueError, RuntimeError, OSError):
             test_db.rollback()
             raise
 
