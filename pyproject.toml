@@ -54,6 +54,10 @@ ignore_missing_imports = true
 warn_return_any = true
 strict_optional = true
 
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
 [[tool.mypy.overrides]]
 module = "database.models"
 disable_error_code = ["var-annotated"]
