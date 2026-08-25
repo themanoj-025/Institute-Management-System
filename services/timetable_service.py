@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from database.models import Subject, Timetable
 
 
-from typing import Optional
 
 
 class TimetableService:

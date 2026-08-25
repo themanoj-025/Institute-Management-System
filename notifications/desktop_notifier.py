@@ -5,7 +5,6 @@ from plyer import notification
 from config.constants import APP_NAME
 
 
-from typing import Optional
 
 
 class DesktopNotifier:

@@ -19,7 +19,7 @@ Usage (api/main.py)::
 
 import os
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware

@@ -5,7 +5,7 @@ Provides a single source of truth for reading admin-configurable values
 (risk thresholds, feature flags, etc.) across all modules.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from sqlalchemy.orm import Session
 

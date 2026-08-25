@@ -37,7 +37,6 @@ in ``api/main.py`` for the full list).
 import threading
 import time
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
 
 from fastapi import Request
 from fastapi.responses import JSONResponse

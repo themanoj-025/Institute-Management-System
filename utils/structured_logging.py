@@ -24,7 +24,7 @@ from contextvars import ContextVar
 from datetime import datetime, timezone
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 # Context variable for request ID tracking (works with async)
 request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)

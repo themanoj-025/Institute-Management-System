@@ -11,7 +11,6 @@ Models directory: ``ml/models/``
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
 
 from utils.time import utc_now
 

@@ -9,7 +9,7 @@ from database.models import Student, User, UserRole
 from utils.time import utc_now
 
 
-from typing import Any, Optional
+from typing import Any
 
 
 class StudentService:
