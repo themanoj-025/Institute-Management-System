@@ -148,7 +148,7 @@ class TestOtpFlow:
         try:
             resp = client.post("/v1/auth/verify-otp", json={"user_id": 1, "otp": "000000"})
             assert resp.status_code in (401, 422, 500)
-        except Exception:
+        except (ConnectionError, OSError):
             # Even a connection/DB error proves the route was registered
             pass
 
