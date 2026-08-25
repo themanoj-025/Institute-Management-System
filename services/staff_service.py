@@ -8,7 +8,6 @@ from config.settings import BCRYPT_COST
 from database.models import Staff, User, UserRole
 
 
-from typing import Optional
 
 
 class StaffService:

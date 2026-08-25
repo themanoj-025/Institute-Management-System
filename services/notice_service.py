@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from database.models import Notice
 
 
-from typing import Optional
 
 
 class NoticeService:

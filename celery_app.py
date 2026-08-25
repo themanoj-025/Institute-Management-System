@@ -20,7 +20,7 @@ Usage:
 """
 
 import json
-from typing import Any, List, Optional
+from typing import Any
 
 from celery import Celery, Task
 from celery.exceptions import MaxRetriesExceededError

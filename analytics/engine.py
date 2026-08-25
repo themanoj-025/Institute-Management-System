@@ -13,7 +13,7 @@ at-risk student modelling.
 
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, List
+from typing import Any
 
 from sqlalchemy import case as sql_case
 from sqlalchemy import func

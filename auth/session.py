@@ -12,7 +12,6 @@ the web dashboard), so both surfaces share the same JWT session.
 import logging
 from datetime import datetime
 from tkinter import TclError
-from typing import Optional
 
 from utils.time import utc_now
 

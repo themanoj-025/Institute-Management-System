@@ -1,6 +1,5 @@
 import os
 from tkinter import filedialog
-from typing import Optional
 
 # MIME-type magic bytes (content sniffing)
 # Maps common file extensions to their expected magic byte signatures.
@@ -53,7 +52,7 @@ class Helpers:
 
         Returns
         -------
-        tuple[Optional[str], Optional[str]]
+        tuple[str | None, str | None]
             ``(file_path, error_message)`` — exactly one is non-None.
         """
         file_path = filedialog.askopenfilename(

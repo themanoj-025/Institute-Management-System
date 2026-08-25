@@ -17,7 +17,7 @@ Advanced KPIs include:
 
 import logging
 from datetime import date, timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from sqlalchemy import case as sql_case
 from sqlalchemy import func
