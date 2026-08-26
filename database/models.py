@@ -53,7 +53,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    role = Column(Enum(UserRole), nullable=False)  # type: ignore[call-overload]
+    role = Column(Enum(UserRole, native_enum=False), nullable=False)
     email = Column(String(100), unique=True, index=True)
     phone = Column(String(20))
     is_active = Column(Boolean, default=True)
@@ -274,7 +274,7 @@ class Attendance(Base):
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
     session_id = Column(Integer, ForeignKey("sessions.id"), nullable=False)
     date = Column(Date, nullable=False)
-    status = Column(Enum(AttendanceStatus), nullable=False)  # type: ignore[call-overload]
+    status = Column(Enum(AttendanceStatus, native_enum=False), nullable=False)
     remarks = Column(String(255))
 
     student = relationship("Student", back_populates="attendances")
@@ -301,7 +301,7 @@ class StaffAttendance(Base):
     id = Column(Integer, primary_key=True, index=True)
     staff_id = Column(Integer, ForeignKey("staff.id"), nullable=False)
     date = Column(Date, nullable=False)
-    status = Column(Enum(AttendanceStatus), nullable=False)  # type: ignore[call-overload]
+    status = Column(Enum(AttendanceStatus, native_enum=False), nullable=False)
     in_time = Column(Time)
     out_time = Column(Time)
 
@@ -350,7 +350,7 @@ class Leave(Base):
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
     reason = Column(Text, nullable=False)
-    status = Column(Enum(LeaveStatus), default=LeaveStatus.pending)  # type: ignore[call-overload]
+    status = Column(Enum(LeaveStatus, native_enum=False), default=LeaveStatus.pending)
     applied_on = Column(DateTime(timezone=True), default=utc_now)
     reviewed_by = Column(Integer, ForeignKey("users.id"), nullable=True)
     reviewed_on = Column(DateTime(timezone=True), nullable=True)
@@ -390,7 +390,7 @@ class Fee(Base):
     total_amount = Column(Float, nullable=False)
     paid_amount = Column(Float, default=0.0)
     due_date = Column(Date, nullable=False)
-    status = Column(Enum(FeeStatus), default=FeeStatus.unpaid)  # type: ignore[call-overload]
+    status = Column(Enum(FeeStatus, native_enum=False), default=FeeStatus.unpaid)
     scholarship_amount = Column(Float, default=0.0)
     fine_amount = Column(Float, default=0.0)
     is_deleted = Column(Boolean, default=False)
