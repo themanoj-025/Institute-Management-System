@@ -128,10 +128,10 @@ print("SUMMARY")
 print("=" * 70)
 print(f"\nTotal files checked: {len(files)}")
 print(f"  Syntax OK:          {results['compile_ok']}")
-print(f"  Syntax FAILED:      {len(results['compile_fail'])}")  # type: ignore
+print(f"  Syntax FAILED:      {len(results['compile_fail'])}")
 print(f"  Imported OK:        {results['import_ok']}")
-print(f"  Bypassed (Tk/UI):   {len(results['bypass_import'])}")  # type: ignore
-print(f"  Import FAILED:      {len(results['import_fail'])}")  # type: ignore
+print(f"  Bypassed (Tk/UI):   {len(results['bypass_import'])}")
+print(f"  Import FAILED:      {len(results['import_fail'])}")
 
 if results["compile_fail"]:
     print("\n--- SYNTAX ERRORS ---")
