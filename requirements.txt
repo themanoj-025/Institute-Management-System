@@ -36,6 +36,6 @@ opentelemetry-exporter-otlp>=1.25.0
 psycopg2-binary>=2.9.9
 celery>=5.4.0
 redis>=8.1.0
-ruff>=0.4.0
+ruff>=0.16.4
 bandit>=1.9.4
 coverage>=7.0.0
