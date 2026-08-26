@@ -105,7 +105,7 @@ def setup_logger(
     name: str,
     level: int = logging.DEBUG,
     context: dict[str, Any] | None = None,
-) -> logging.Logger:
+) -> logging.Logger | ContextLogger:
     """
     Get or create a logger with both JSON file and console handlers.
 
@@ -166,7 +166,7 @@ def setup_logger(
     )
 
     if context:
-        return ContextLogger(logger, context)  # type: ignore[return-value]
+        return ContextLogger(logger, context)
 
     return logger
 

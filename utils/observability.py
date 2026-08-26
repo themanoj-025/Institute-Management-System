@@ -79,7 +79,8 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
         method = request.method
         endpoint = request.url.path
-        ACTIVE_REQUESTS.inc()  # type: ignore[name-defined]
+        assert ACTIVE_REQUESTS is not None
+        ACTIVE_REQUESTS.inc()
         start = time.monotonic()
         response: Response | None = None
 
@@ -89,9 +90,10 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         finally:
             duration = time.monotonic() - start
             status = getattr(response, "status_code", 500) if response is not None else 500
-            REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()  # type: ignore[name-defined]
-            REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(duration)  # type: ignore[name-defined]
-            ACTIVE_REQUESTS.dec()  # type: ignore[name-defined]
+            assert REQUEST_COUNT is not None and REQUEST_LATENCY is not None and ACTIVE_REQUESTS is not None
+            REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
+            REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(duration)
+            ACTIVE_REQUESTS.dec()
 
 
 def metrics_endpoint() -> None:
@@ -108,7 +110,8 @@ def metrics_endpoint() -> None:
     """
     if not _metrics_enabled:
         return "# prometheus_client not installed — no metrics available\n"
-    return generate_latest().decode("utf-8")  # type: ignore[name-defined]
+    assert generate_latest is not None
+    return generate_latest().decode("utf-8")
 
 
 # Health Checks
@@ -172,7 +175,8 @@ class HealthChecker:
         # Update Prometheus gauge for DB status
         if _metrics_enabled:
             try:
-                DB_CONNECTION_STATUS.set(1 if db_ok else 0)  # type: ignore[name-defined]
+                assert DB_CONNECTION_STATUS is not None
+                DB_CONNECTION_STATUS.set(1 if db_ok else 0)
             except (OSError, ValueError):
                 pass
 
