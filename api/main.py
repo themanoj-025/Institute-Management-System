@@ -54,7 +54,7 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from math import ceil
-from typing import Any, List
+from typing import Any
 
 import bcrypt
 import jwt
