@@ -12,8 +12,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 # access to the values within the .ini file in use.
 config = context.config
 
-# Inject the real database URL from project config
 from config.settings import DATABASE_URL
+from database.db_session import Base
 
 if DATABASE_URL:
     config.set_main_option("sqlalchemy.url", DATABASE_URL)
@@ -22,9 +22,6 @@ if DATABASE_URL:
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
-
-# Import Base metadata for autogenerate support
-from database.db_session import Base  # noqa: E402
 
 target_metadata = Base.metadata
 
