@@ -77,9 +77,9 @@ class ContextLogger(logging.LoggerAdapter):
     """
 
     def process(self, msg: str, kwargs: Any) -> tuple:
-        extra = kwargs.get("extra", {})
+        extra: dict[str, Any] = kwargs.get("extra", {})
         extra.setdefault("extra_fields", {})
-        extra["extra_fields"].update(self.extra)  # type: ignore[attr-defined]
+        extra["extra_fields"].update(self.extra)
         kwargs["extra"] = extra
         return msg, kwargs
 

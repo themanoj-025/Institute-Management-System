@@ -218,7 +218,7 @@ def seed_database(db: Session) -> None:
         # 5. Students (5000 total, first 5 fixed) — password is random per seed run
         student_pw_raw = _generate_password()
         student_pw = hash_password(student_pw_raw)
-        fixed_students = [
+        fixed_students: list[dict[str, str | int]] = [
             {
                 "user": "rahul.verma",
                 "fn": "Rahul",
@@ -260,7 +260,7 @@ def seed_database(db: Session) -> None:
 
         # Pre-generate standard users/students in batch using execute(insert)
         users_list = []
-        for fs in fixed_students:  # type: ignore
+        for fs in fixed_students:
             users_list.append(
                 {
                     "username": fs["user"],
@@ -297,7 +297,7 @@ def seed_database(db: Session) -> None:
         students_list = []
         for idx, u in enumerate(saved_student_users):
             if idx < 5:
-                fs = fixed_students[idx]  # type: ignore
+                fs = fixed_students[idx]
                 students_list.append(
                     {
                         "user_id": u.id,

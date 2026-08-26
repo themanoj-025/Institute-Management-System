@@ -7,6 +7,7 @@ checks for syntax validity, then attempts to import each module.
 import importlib
 import os
 import sys
+from typing import TypedDict
 
 # Ensure project root is on path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,12 +54,19 @@ def safe_py_compile(filepath):
         return False, f"CompileError: {e}"
 
 
-results = {
+class AuditResults(TypedDict):
+    compile_ok: int
+    compile_fail: list[tuple[str, str | None]]
+    import_ok: int
+    import_fail: list[tuple[str, str, str]]
+    bypass_import: list[tuple[str, str, str]]
+
+results: AuditResults = {
     "compile_ok": 0,
     "compile_fail": [],
     "import_ok": 0,
     "import_fail": [],
-    "bypass_import": [],  # Modules that can't be imported outside Tkinter context
+    "bypass_import": [],
 }
 
 print("=" * 70)
@@ -74,10 +82,10 @@ for rel_path, full_path in files:
     # --- Step 1: Syntax check ---
     ok, err = safe_py_compile(full_path)
     if not ok:
-        results["compile_fail"].append((rel_path, err))  # type: ignore
+        results["compile_fail"].append((rel_path, err))
         print(f"  [COMPILE FAIL] {rel_path}: {err}")
         continue
-    results["compile_ok"] += 1  # type: ignore
+    results["compile_ok"] += 1
 
     # --- Step 2: Try to import the module ---
     # Skip modules that require Tkinter root window, matplotlib backend, etc.
@@ -94,24 +102,24 @@ for rel_path, full_path in files:
                 importlib.import_module(parent)
                 results["bypass_import"].append(
                     (rel_path, mod_name, "OK (parent valid)")
-                )  # type: ignore
+                )
             except ImportError as e:
                 results["import_fail"].append(
                     (rel_path, mod_name, f"Parent import failed: {e}")
-                )  # type: ignore
+                )
         else:
             results["bypass_import"].append(
                 (rel_path, mod_name, "OK (SKIP - needs Tk)")
-            )  # type: ignore
+            )
         continue
 
     try:
         importlib.import_module(mod_name)
-        results["import_ok"] += 1  # type: ignore
+        results["import_ok"] += 1
     except ImportError as e:
-        results["import_fail"].append((rel_path, mod_name, str(e)))  # type: ignore
+        results["import_fail"].append((rel_path, mod_name, str(e)))
     except Exception as e:
-        results["import_fail"].append((rel_path, mod_name, f"{type(e).__name__}: {e}"))  # type: ignore
+        results["import_fail"].append((rel_path, mod_name, f"{type(e).__name__}: {e}"))
 
 # --- Summary ---
 print()
@@ -127,17 +135,17 @@ print(f"  Import FAILED:      {len(results['import_fail'])}")  # type: ignore
 
 if results["compile_fail"]:
     print("\n--- SYNTAX ERRORS ---")
-    for path, err in results["compile_fail"]:  # type: ignore
+    for path, err in results["compile_fail"]:
         print(f"  {path}: {err}")
 
 if results["import_fail"]:
     print("\n--- IMPORT ERRORS ---")
-    for path, mod, err in results["import_fail"]:  # type: ignore
+    for path, mod, err in results["import_fail"]:
         print(f"  {path} ({mod}): {err}")
 
 if results["bypass_import"]:
     print("\n--- BYPASSED (needs Tkinter runtime) ---")
-    for path, mod, reason in results["bypass_import"]:  # type: ignore
+    for path, mod, reason in results["bypass_import"]:
         print(f"  {path} ({mod}): {reason}")
 
 # Overall status
@@ -145,5 +153,5 @@ if not results["compile_fail"] and not results["import_fail"]:
     print("\n[PASS] No syntax or import errors found!")
 else:
     print(
-        f"\n[WARN] {len(results['compile_fail'])} syntax error(s), {len(results['import_fail'])} import error(s)"  # type: ignore
+        f"\n[WARN] {len(results['compile_fail'])} syntax error(s), {len(results['import_fail'])} import error(s)"
     )

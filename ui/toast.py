@@ -140,7 +140,7 @@ class ToastInstance:
 
 
 class ToastManager:
-    _instances = []  # type: ignore
+    _instances: list["ToastInstance"] = []
 
     @classmethod
     def show(cls, root, message, type="info", duration=3000) -> None:
