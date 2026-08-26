@@ -192,7 +192,7 @@ print("=" * 60)
 print("STEP 4: Verifying Service & Utility Imports")
 print("=" * 60)
 
-service_imports = [
+service_imports: list[tuple[str, str | None]] = [
     ("services.activity_service", "ActivityService"),
     ("services.analytics_service", "AnalyticsService"),
     ("services.attendance_service", "AttendanceService"),
@@ -221,7 +221,7 @@ service_imports = [
 ]
 
 svc_failed = []
-for mod_path, cls_name in service_imports:  # type: ignore
+for mod_path, cls_name in service_imports:
     try:
         mod = __import__(mod_path, fromlist=[cls_name] if cls_name else [])
         if cls_name:
