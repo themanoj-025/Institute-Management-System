@@ -72,8 +72,8 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
         ttl_seconds = max(1, int(math.ceil((expires_at - now).total_seconds())))
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         r.setex(f"bl:{jti}", ttl_seconds, "1")
-    except Exception:
-        pass
+    except (OSError, ConnectionError):
+        pass  # Redis failure must not block logout
 
     session = SessionLocal()
     try:
@@ -86,8 +86,8 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
         )
         session.add(entry)
         session.commit()
-    except Exception:
-        session.rollback()
+    except (OSError, ConnectionError):
+        session.rollback()  # DB failure during token revocation
     finally:
         session.close()
 

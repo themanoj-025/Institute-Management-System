@@ -57,7 +57,7 @@ def get_session() -> Iterator:
     try:
         yield session
         session.commit()
-    except Exception:
+    except (OSError, ConnectionError):
         session.rollback()
         raise
     finally:
