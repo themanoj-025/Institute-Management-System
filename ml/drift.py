@@ -446,7 +446,7 @@ def compute_drift_report(
     # Compute current features
     try:
         X_current = compute_all_features(session)
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error("Failed to compute current features for drift: %s", e)
         return {
             "drift_detected": False,

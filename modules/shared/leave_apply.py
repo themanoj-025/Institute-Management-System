@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from datetime import date, datetime
 
 import customtkinter as ctk
@@ -83,5 +85,5 @@ class LeaveApply(ctk.CTkFrame):
             self.leave_service.apply_leave(data)
             ToastManager.show(self.winfo_toplevel(), "Leave applied successfully ✅", "success")
             self.reason_txt.delete("1.0", "end")
-        except Exception as e:
+        except (SQLAlchemyError, ValueError) as e:
             ToastManager.show(self.winfo_toplevel(), f"Failed to apply leave: {e}", "error")

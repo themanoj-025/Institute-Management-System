@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import customtkinter as ctk
 
 from services.feedback_service import FeedbackService
@@ -58,5 +60,5 @@ class FeedbackSender(ctk.CTkFrame):
                 self.winfo_toplevel(), "Feedback submitted successfully ✅", "success"
             )
             self.msg_txt.delete("1.0", "end")
-        except Exception as e:
+        except (SQLAlchemyError, ValueError) as e:
             ToastManager.show(self.winfo_toplevel(), f"Failed to submit: {e}", "error")

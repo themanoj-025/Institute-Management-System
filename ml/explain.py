@@ -66,7 +66,7 @@ def _build_explainer(model) -> Any | None:
         import shap
 
         return shap.TreeExplainer(model)
-    except Exception as e:
+    except (RuntimeError, ValueError, ImportError) as e:
         logger.debug("SHAP TreeExplainer construction failed: %s", e)
         return None
 
@@ -166,7 +166,7 @@ def explain_prediction(
             shap_vals = explainer.shap_values(X_df)
             # For binary classification, shap_values shape is (1, n_features)
             importances = shap_vals[0] if shap_vals.ndim > 1 else shap_vals
-        except Exception as e:
+        except (RuntimeError, ValueError, ImportError) as e:
             logger.debug("SHAP explainer failed, falling back to feature_importances_: %s", e)
 
     # Fallback: use model's built-in feature importances

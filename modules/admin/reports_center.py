@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import os
 from datetime import timedelta
 
@@ -76,7 +78,7 @@ class ReportsCenter(ctk.CTkFrame):
                 f"{title} saved → {os.path.basename(result.path)}",
                 "success",
             )
-        except Exception as exc:
+        except (SQLAlchemyError, ValueError, OSError) as exc:
             ToastManager.show(self.winfo_toplevel(), f"{title} failed: {exc}", "error")
 
     # ── 1. Attendance Report (PDF) ─────────────────────────────────

@@ -43,7 +43,7 @@ class EmailNotifier:
                 server.send_message(msg)
                 server.quit()
                 print(f"Email sent to {to_email}")
-            except Exception as e:
+            except (smtplib.SMTPException, OSError) as e:
                 print(f"Failed to send email to {to_email}: {e}")
 
         threading.Thread(target=task, daemon=True).start()

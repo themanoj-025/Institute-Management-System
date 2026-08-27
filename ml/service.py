@@ -237,7 +237,7 @@ class MLService:
                 "model_version": self._model_name or "",
                 "explanations": explanation,
             }
-        except Exception as e:
+        except (RuntimeError, ValueError, OSError) as e:
             logger.error("Risk prediction failed for student %d: %s", student_id, e)
             return self._heuristic_single_risk(session, student_id)
 
@@ -340,7 +340,7 @@ class MLService:
         try:
             at_risk = self.get_at_risk_students(session, threshold=0.5, top_n=1000)
             at_risk_count = len(at_risk)
-        except Exception as ml_err:
+        except (RuntimeError, ValueError, OSError) as ml_err:
             logger.warning("ML risk assessment failed, falling back to heuristic: %s", ml_err)
             try:
                 from utils.config import get_config_float
@@ -367,7 +367,7 @@ class MLService:
                     )
                     .count()
                 )
-            except Exception as heur_err:
+            except (RuntimeError, ValueError, OSError) as heur_err:
                 logger.error("Heuristic fallback also failed: %s", heur_err)
                 at_risk_count = 0
 

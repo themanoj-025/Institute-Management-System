@@ -248,7 +248,7 @@ def train_risk_model(
     try:
         _save_reference_distributions(X_train, RISK_MODEL_NAME, metrics=metrics)
         logger.info("Reference distributions saved for drift monitoring.")
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.warning("Failed to save reference distributions (non-fatal): %s", e)
 
     # ── Persist promotion decision to DB ──────────────────────────────────
@@ -278,7 +278,7 @@ def train_risk_model(
         )
         session.add(ph)
         session.commit()
-    except Exception as persist_err:
+    except (OSError, ValueError) as persist_err:
         logger.warning("Failed to persist promotion decision (non-fatal): %s", persist_err)
         session.rollback()
 

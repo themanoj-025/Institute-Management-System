@@ -196,7 +196,7 @@ class HealthChecker:
             with self._db_session_factory() as session:
                 session.execute(text("SELECT 1"))
             return True, "Connected"
-        except Exception as exc:
+        except (OSError, ValueError) as exc:
             return False, str(exc)
 
     def _check_ml(self) -> tuple:
@@ -228,7 +228,7 @@ class HealthChecker:
             if free_gb < 0.1:
                 return False, f"Low disk space: {free_gb:.2f} GB free"
             return True, f"{free_gb:.2f} GB free"
-        except Exception as exc:
+        except (OSError, ValueError) as exc:
             return False, str(exc)
 
 
@@ -276,6 +276,6 @@ def setup_tracing(service_name: str = "bb-ims-api") -> bool:
             exc,
         )
         return False
-    except Exception as exc:
+    except (OSError, ValueError) as exc:
         logger.error("Failed to initialise OpenTelemetry: %s", exc)
         return False

@@ -797,7 +797,7 @@ class LoginDialog(ctk.CTkToplevel):
             else:
                 self.err_lbl.configure(text=error_text, text_color="red")
                 self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self.err_lbl.configure(text=f"Connection error: {e}", text_color="red")
             self._shake()
@@ -850,7 +850,7 @@ class LoginDialog(ctk.CTkToplevel):
         except ApiAuthError as e:
             self._otp_err.configure(text=str(e), text_color="red")
             self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self._otp_err.configure(text=f"Error: {e}", text_color="red")
             self._shake()
@@ -908,7 +908,7 @@ class LoginDialog(ctk.CTkToplevel):
             self._verify_status.configure(text=str(e), text_color="red")
             self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
             self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self._verify_status.configure(text=f"Error: {e}", text_color="red")
             self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
@@ -961,7 +961,7 @@ class LoginDialog(ctk.CTkToplevel):
             self._verify_status.configure(text=str(e), text_color="red")
             self._verify_confirm_btn.configure(state="normal", text="Confirm Verification")
             self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self._verify_status.configure(text=f"Error: {e}", text_color="red")
             self._verify_confirm_btn.configure(state="normal", text="Confirm Verification")
@@ -1004,7 +1004,7 @@ class LoginDialog(ctk.CTkToplevel):
             self._forgot_status.configure(text=str(e), text_color="red")
             self._forgot_send_btn.configure(state="normal", text="📧 Send Reset Link")
             self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self._forgot_status.configure(text=f"Error: {e}", text_color="red")
             self._forgot_send_btn.configure(state="normal", text="📧 Send Reset Link")
@@ -1119,7 +1119,7 @@ class LoginDialog(ctk.CTkToplevel):
             self._reset_status.configure(text=str(e), text_color="red")
             self._reset_btn.configure(state="normal", text="🔑 Reset Password")
             self._shake()
-        except Exception as e:
+        except (ValueError, KeyError, OSError) as e:
             traceback.print_exc()
             self._reset_status.configure(text=f"Error: {e}", text_color="red")
             self._reset_btn.configure(state="normal", text="🔑 Reset Password")

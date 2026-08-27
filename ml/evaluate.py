@@ -266,7 +266,7 @@ def _feature_importance_analysis(
                 if name not in results:
                     results[name] = {}
                 results[name][imp_type] = round(score / total, 4)
-        except Exception as exc:
+        except (RuntimeError, ValueError, OSError) as exc:
             logger.debug("get_score(%s) failed: %s", imp_type, exc)
             continue
 

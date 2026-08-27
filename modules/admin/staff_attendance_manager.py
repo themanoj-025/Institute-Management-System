@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from calendar import monthrange
 from datetime import date, datetime
 
@@ -337,7 +339,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
                     f"{r['date']:<15}{r['status'].capitalize():<12}"
                     f"{r.get('in_time', '—'):<10}{r.get('out_time', '—'):<10}\n",
                 )
-        except Exception as e:
+        except (SQLAlchemyError, ValueError) as e:
             text_area.insert("end", f"Error loading records: {e}\n")
 
         text_area.configure(state="disabled")

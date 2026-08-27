@@ -114,7 +114,7 @@ if _otel_ok:
 
         FastAPIInstrumentor.instrument_app(app)
         logger.info("OpenTelemetry FastAPI instrumentation applied")
-    except Exception as exc:
+    except (OSError, ValueError) as exc:
         logger.warning("OpenTelemetry instrumentation failed: %s", exc)
 
 # Rate Limiting

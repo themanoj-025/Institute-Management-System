@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from datetime import date
 
 import customtkinter as ctk
@@ -213,5 +215,5 @@ class AttendanceTaker(ctk.CTkFrame):
                 f"Attendance saved for {len(records)} students ✅",
                 "success",
             )
-        except Exception as e:
+        except (SQLAlchemyError, ValueError) as e:
             ToastManager.show(self.winfo_toplevel(), f"Failed to save: {e}", "error")
