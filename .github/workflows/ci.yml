@@ -29,8 +29,8 @@ jobs:
       - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v7
-          cache: pip
         with:
+          cache: pip
           python-version: "3.11"
 
       - name: Run pre-commit hooks
@@ -251,8 +251,8 @@ jobs:
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v7
-          cache: pip
         with:
+          cache: pip
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install security tools
@@ -336,8 +336,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
-          cache: pip
         with:
+          cache: pip
           python-version: "3.11"
       - name: Install dependencies
         run: |
