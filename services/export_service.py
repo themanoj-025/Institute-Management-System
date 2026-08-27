@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 """
 Unified export service — CSV, Excel, and PDF generation.
 
@@ -303,7 +305,7 @@ class ExportService:
 
         try:
             self._build_pdf(path, title, headers, rows, page_size)
-        except Exception as exc:
+        except (SQLAlchemyError, OSError, ValueError) as exc:
             logger.error("PDF export failed: %s", exc)
             raise ExportError(f"Could not write PDF to {path}: {exc}") from exc
 

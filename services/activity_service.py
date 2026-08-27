@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import json
 import socket
 
@@ -48,7 +50,7 @@ class ActivityService:
             )
             self.session.add(entry)
             self.session.commit()
-        except Exception as e:
+        except (SQLAlchemyError, AttributeError) as e:
             self.session.rollback()
             logger.error(
                 f"DB Logging failed: {str(e)}",

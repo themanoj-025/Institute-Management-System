@@ -400,7 +400,7 @@ class LandingPage(ctk.CTkFrame):
                     "success",
                 )
                 dialog.destroy()
-            except Exception as e:
+            except (ValueError, KeyError, OSError) as e:
                 self.db_session.rollback()
                 from ui.toast import ToastManager
 
@@ -554,7 +554,7 @@ class LandingPage(ctk.CTkFrame):
                     )
                     self.contact_name.delete(0, "end")
                     self.contact_email.delete(0, "end")
-                except Exception as e:
+                except (ValueError, KeyError, OSError) as e:
                     self.db_session.rollback()
                     from ui.toast import ToastManager
 

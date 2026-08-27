@@ -173,7 +173,7 @@ class AuthService:
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(SMTP_USER, to_email, msg.as_string())
             server.quit()
-        except Exception as e:
+        except (smtplib.SMTPException, OSError) as e:
             logger.error("Failed to send password reset email to %s: %s", to_email, e)
 
     @staticmethod
@@ -346,7 +346,7 @@ class AuthService:
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(SMTP_USER, to_email, msg.as_string())
             server.quit()
-        except Exception as e:
+        except (smtplib.SMTPException, OSError) as e:
             logger.error("Failed to send verification email to %s: %s", to_email, e)
 
     # ── OTP Rate Limiting ──────────────────────────────────────────
@@ -459,7 +459,7 @@ class AuthService:
             server.login(SMTP_USER, SMTP_PASSWORD)
             server.sendmail(SMTP_USER, to_email, msg.as_string())
             server.quit()
-        except Exception as e:
+        except (smtplib.SMTPException, OSError) as e:
             logger.error(f"Failed to send email to {to_email}: {e}")
 
     def verify_otp(self, user_id: int, submitted_otp: str) -> dict:

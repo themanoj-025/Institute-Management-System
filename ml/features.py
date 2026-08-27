@@ -247,7 +247,7 @@ def compute_all_features(session: Session) -> pd.DataFrame:
     for sid in student_ids:
         try:
             rows.append(compute_student_features(session, sid))
-        except Exception as e:
+        except (RuntimeError, ValueError, KeyError) as e:
             logger.debug("Skipping student %d during batch feature computation: %s", sid, e)
             continue
 
@@ -296,7 +296,7 @@ def compute_target(session: Session) -> pd.Series:
             # A student is at risk if attendance < threshold OR marks < threshold
             is_at_risk = 1 if (overall_att < att_threshold or avg_marks < marks_threshold) else 0
             targets[sid] = is_at_risk
-        except Exception as e:
+        except (RuntimeError, ValueError, KeyError) as e:
             logger.debug("Skipping target computation for student %d: %s", sid, e)
             targets[sid] = 0
 

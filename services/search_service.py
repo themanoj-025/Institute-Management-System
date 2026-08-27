@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 """Global search service with FTS5 and LIKE fallback.
 
 Uses parameterized queries throughout (no raw f-string SQL injection risk).
@@ -20,7 +22,7 @@ class SearchService:
         self.db = db
         try:
             self._init_fts()
-        except Exception as exc:
+        except (SQLAlchemyError, AttributeError) as exc:
             logger.warning("FTS5 init failed (SQLite may lack FTS5 support): %s", exc)
 
     def _init_fts(self) -> None:
@@ -93,7 +95,7 @@ class SearchService:
                             "route": "manage_students",
                         }
                     )
-            except Exception as exc:
+            except (SQLAlchemyError, AttributeError) as exc:
                 logger.error("Student search failed: %s", exc)
                 errors.append(("students", str(exc)))
 
@@ -120,7 +122,7 @@ class SearchService:
                             "route": "manage_staff",
                         }
                     )
-            except Exception as exc:
+            except (SQLAlchemyError, AttributeError) as exc:
                 logger.error("Staff search failed: %s", exc)
                 errors.append(("staff", str(exc)))
 
@@ -147,7 +149,7 @@ class SearchService:
                             "route": "manage_courses",
                         }
                     )
-            except Exception as exc:
+            except (SQLAlchemyError, AttributeError) as exc:
                 logger.error("Course search failed: %s", exc)
                 errors.append(("courses", str(exc)))
 
@@ -181,7 +183,7 @@ class SearchService:
                             "route": "notice_board",
                         }
                     )
-            except Exception as exc:
+            except (SQLAlchemyError, AttributeError) as exc:
                 logger.error("Notice search failed: %s", exc)
                 errors.append(("notices", str(exc)))
 
@@ -207,7 +209,7 @@ class SearchService:
                             "route": "manage_subjects",
                         }
                     )
-            except Exception as exc:
+            except (SQLAlchemyError, AttributeError) as exc:
                 logger.error("Subject search failed: %s", exc)
                 errors.append(("subjects", str(exc)))
 
@@ -242,7 +244,7 @@ def sync_student_fts_insert(mapper, connection, target) -> None:
                 "roll": target.enrollment_no,
             },
         )
-    except Exception as exc:
+    except (SQLAlchemyError, AttributeError) as exc:
         logger.error("FTS sync failed for student %d: %s", target.id, exc)
 
 
@@ -253,5 +255,5 @@ def sync_notice_fts_insert(mapper, connection, target) -> None:
             text("INSERT INTO notices_fts(rowid, title, body) VALUES (:id, :title, :body)"),
             {"id": target.id, "title": target.title, "body": target.content},
         )
-    except Exception as exc:
+    except (SQLAlchemyError, AttributeError) as exc:
         logger.error("FTS sync failed for notice %d: %s", target.id, exc)

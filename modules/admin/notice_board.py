@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import customtkinter as ctk
 from tkinter import TclError
 
@@ -148,7 +150,7 @@ class NoticeBoard(ctk.CTkFrame):
                     "success",
                 )
                 self._load_data()
-            except Exception as e:
+            except (SQLAlchemyError, ValueError) as e:
                 error_lbl.configure(text=f"Failed to create notice: {e}")
 
         ctk.CTkButton(

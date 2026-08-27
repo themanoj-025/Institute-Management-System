@@ -76,7 +76,7 @@ class BBIMS_App(ctk.CTk):
         def _seed_task() -> None:
             try:
                 seed_database(self.db_session)
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 log.error("Seeding failed: %s", e)
 
         t = threading.Thread(target=_seed_task, daemon=True)
@@ -155,7 +155,7 @@ class BBIMS_App(ctk.CTk):
                     self.content_area, self.tm, self.app_state, self.db_session
                 )
                 module_instance.pack(fill="both", expand=True)
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 import traceback as tb_mod
 
                 full_tb = tb_mod.format_exc()
@@ -175,7 +175,7 @@ class BBIMS_App(ctk.CTk):
         try:
             mod = importlib.import_module(module_path)
             return getattr(mod, class_name)
-        except Exception as e:
+        except (OSError, ValueError) as e:
             full_tb = tb_mod.format_exc()
             log.error("Failed to import %s.%s: %s\n%s", module_path, class_name, e, full_tb)
             self.after(

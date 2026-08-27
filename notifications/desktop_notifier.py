@@ -23,7 +23,7 @@ class DesktopNotifier:
                     app_icon=self.icon_path,  # Must be .ico on Windows
                     timeout=timeout,
                 )
-            except Exception as e:
+            except OSError as e:
                 print(f"Desktop notification failed: {e}")
 
         threading.Thread(target=task, daemon=True).start()

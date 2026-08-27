@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import customtkinter as ctk
 
 from database.models import Student
@@ -266,5 +268,5 @@ class ResultManager(ctk.CTkFrame):
                 f"Results saved for {len(records)} students ✅",
                 "success",
             )
-        except Exception as e:
+        except (SQLAlchemyError, ValueError) as e:
             ToastManager.show(self.winfo_toplevel(), f"Failed to save: {e}", "error")

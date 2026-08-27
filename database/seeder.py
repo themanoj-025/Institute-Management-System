@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 import os
 import random
 import secrets
@@ -444,7 +446,7 @@ def seed_database(db: Session) -> None:
         print(f"  Student: rahul.verma / {student_pw_raw}")
         print("=" * 60)
 
-    except Exception as e:
+    except (SQLAlchemyError, OSError, ValueError) as e:
         db.rollback()
         print(f"Seeding FAILED: {e}. Database rolled back.")
         raise

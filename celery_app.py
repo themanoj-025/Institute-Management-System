@@ -153,7 +153,7 @@ def send_email_task(
 
         logger.info("Email sent to %s: %s", to_email, subject)
         return {"status": "sent", "to": to_email}
-    except Exception as exc:
+    except (smtplib.SMTPException, OSError) as exc:
         logger.error("Failed to send email to %s: %s", to_email, exc)
         try:
             raise self.retry(exc=exc, countdown=2 ** (self.request.retries) * 60)
@@ -288,7 +288,7 @@ def check_ml_drift_task(self) -> None:
             return {"status": "ok", "drift_detected": report.get("drift_detected")}
         finally:
             session.close()
-    except Exception as exc:
+    except (RuntimeError, ValueError, OSError) as exc:
         logger.error("ML drift check failed: %s", exc)
         try:
             raise self.retry(exc=exc, countdown=300)
@@ -325,7 +325,7 @@ def retrain_ml_model_task(self, force: bool = False) -> None:
                         drift_report.get("max_psi", 0.0),
                         drift_report.get("feature_count", 0),
                     )
-                except Exception as drift_err:
+                except (RuntimeError, ValueError, OSError) as drift_err:
                     logger.warning("Post-retrain drift baseline failed (non-fatal): %s", drift_err)
             else:
                 logger.info("ML model retrain skipped: %s", metrics)
@@ -339,7 +339,7 @@ def retrain_ml_model_task(self, force: bool = False) -> None:
                             drift_report.get("max_psi", 0.0),
                             drift_report.get("max_psi_feature", ""),
                         )
-                except Exception as drift_err:
+                except (RuntimeError, ValueError, OSError) as drift_err:
                     logger.warning(
                         "Drift check during retrain skip failed (non-fatal): %s",
                         drift_err,
@@ -347,7 +347,7 @@ def retrain_ml_model_task(self, force: bool = False) -> None:
             return {"status": "ok" if trained else "skipped", "metrics": metrics}
         finally:
             session.close()
-    except Exception as exc:
+    except (RuntimeError, ValueError, OSError) as exc:
         logger.error("ML model retrain failed: %s", exc)
         try:
             raise self.retry(exc=exc, countdown=300)
@@ -382,7 +382,7 @@ def cleanup_expired_otps_task() -> None:
             return {"status": "ok", "cleaned": result}
         finally:
             session.close()
-    except Exception as exc:
+    except (sqlalchemy.exc.SQLAlchemyError, OSError) as exc:
         logger.error("OTP cleanup failed: %s", exc)
         return {"status": "failed", "error": str(exc)}
 
@@ -410,7 +410,7 @@ def cleanup_revoked_tokens_task() -> None:
             return {"status": "ok", "cleaned": result}
         finally:
             session.close()
-    except Exception as exc:
+    except (sqlalchemy.exc.SQLAlchemyError, OSError) as exc:
         logger.error("Token cleanup failed: %s", exc)
         return {"status": "failed", "error": str(exc)}
 
@@ -451,7 +451,7 @@ def generate_export_task(
 
         logger.info("Export generated: %s", result.path)
         return {"status": "ok", "path": result.path, "filename": result.filename}
-    except Exception as exc:
+    except (OSError, ValueError) as exc:
         logger.error("Export generation failed: %s", exc)
         try:
             raise self.retry(exc=exc, countdown=60)

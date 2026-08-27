@@ -1,3 +1,5 @@
+from sqlalchemy.exc import SQLAlchemyError
+
 from datetime import date, datetime
 
 import customtkinter as ctk
@@ -205,7 +207,7 @@ class PlacementManager(ctk.CTkFrame):
                     "success",
                 )
                 self._load_data()
-            except Exception as e:
+            except (SQLAlchemyError, ValueError) as e:
                 error_lbl.configure(text=f"Failed to create: {e}")
 
         ctk.CTkButton(

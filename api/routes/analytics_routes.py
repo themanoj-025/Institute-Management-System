@@ -32,7 +32,7 @@ def get_student_risk_explanation(student_id: int, user: dict = Depends(get_curre
         try:
             svc = MLService()
             result = svc.predict_student_risk(session, student_id=student_id)
-        except Exception as exc:
+        except (RuntimeError, ValueError, OSError) as exc:
             logger.error("ML risk prediction failed for student %d: %s", student_id, exc)
             result = None
 
@@ -90,7 +90,7 @@ def get_at_risk_students(
         try:
             svc = MLService()
             results = svc.get_at_risk_students(session, threshold=threshold, top_n=top_n)
-        except Exception as exc:
+        except (RuntimeError, ValueError, OSError) as exc:
             logger.error("ML get_at_risk_students failed: %s", exc)
             return {"students": [], "count": 0, "error": "ML prediction temporarily unavailable"}
         return {"students": results, "count": len(results)}

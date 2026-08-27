@@ -17,7 +17,7 @@ class AsyncLoader:
             try:
                 result = task_func()
                 root.after(0, lambda: on_success(result))
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 import traceback
 
                 traceback.print_exc()
