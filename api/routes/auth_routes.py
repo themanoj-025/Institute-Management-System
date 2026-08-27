@@ -179,8 +179,8 @@ def forgot_password(req: ForgotPasswordRequest) -> dict:
             auth_svc = AuthService(session)
             try:
                 auth_svc.send_password_reset_email(user)
-            except Exception:
-                pass
+            except (OSError, ValueError):
+                pass  # Email failure must not leak whether the account exists
 
         return {
             "status": "sent",
@@ -204,10 +204,10 @@ def reset_password(req: ResetPasswordRequest) -> dict:
             auth_svc.invalidate_user_sessions(req.user_id)
         except AuthError as e:
             raise HTTPException(status_code=400, detail=str(e))
-        except Exception:
+        except (ValueError, OSError) as e:
             raise HTTPException(
                 status_code=500,
-                detail="An error occurred while resetting the password.",
+                detail=f"An error occurred while resetting the password: {e}",
             )
 
         return {
