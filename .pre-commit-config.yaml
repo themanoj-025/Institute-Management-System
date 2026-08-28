@@ -25,7 +25,7 @@ repos:
         additional_dependencies:
           - sqlalchemy>=2.0.30
           - pydantic>=2.0.0
-          - fastapi>=0.100.0
+          - fastapi>=0.141.1
         entry: mypy analytics api auth config database ml services utils
         language: python
         pass_filenames: false
