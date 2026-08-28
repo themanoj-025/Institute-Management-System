@@ -1,0 +1,12 @@
+Institute-Management-System - PR #56 - Merge Failed: X Pull request themanoj-025/Institute-Management-System#56 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 56 && git fetch origin main && git merge origin/main
+Institute-Management-System - PR #55 - Merge Failed: X Pull request themanoj-025/Institute-Management-System#55 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 55 && git fetch origin main && git merge origin/main
+Institute-Management-System - PR #54 - Merged
+Institute-Management-System - PR #53 - Merge Failed: GraphQL: Pull Request has merge conflicts (mergePullRequest)
+Institute-Management-System - PR #52 - Merge Failed: X Pull request themanoj-025/Institute-Management-System#52 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 52 && git fetch origin main && git merge origin/main
+Institute-Management-System - PR #51 - Merged
+Institute-Management-System - PR #50 - Merge Failed: GraphQL: Pull Request has merge conflicts (mergePullRequest)
+Institute-Management-System - PR #48 - Merged
+Institute-Management-System - PR #46 - Merged
+Institute-Management-System - PR #40 - Merged
+Institute-Management-System - PR #36 - Merge Failed: X Pull request themanoj-025/Institute-Management-System#36 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 36 && git fetch origin main && git merge origin/main
+Institute-Management-System - PR #31 - Merge Failed: X Pull request themanoj-025/Institute-Management-System#31 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 31 && git fetch origin main && git merge origin/main
