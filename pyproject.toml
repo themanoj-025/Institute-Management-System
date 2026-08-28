@@ -73,3 +73,8 @@ addopts = "-v --tb=short"
 [tool.bandit]
 exclude_dirs = ["venv", "alembic", "tests"]
 skips = ["B101"]  # allow assert in tests
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+skip_empty = true
