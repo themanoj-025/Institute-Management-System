@@ -1,0 +1,432 @@
+"""Login dialog for the Institute Management System.
+
+UI-focused module that handles the login flow, OTP verification,
+email verification, and password reset dialogs.
+"""
+
+"""
+Desktop login dialog — authenticates against the shared API endpoint.
+
+Replaces the previous local-SQLite authentication with a call to
+``POST /v1/auth/login`` over HTTP, so the desktop client and web
+dashboard share the same JWT session.
+
+The API base URL is read from the ``API_BASE_URL`` environment variable
+(defaults to ``http://localhost:8000`` for local development).
+"""
+
+import os
+import traceback
+import urllib.error
+
+import customtkinter as ctk
+from tkinter import TclError
+
+try:
+    from sqlalchemy.exc import SQLAlchemyError
+except ImportError:
+    SQLAlchemyError = Exception
+
+# Use httpx if available, fall back to urllib.request
+try:
+    import httpx
+
+    _HTTPX_AVAILABLE = True
+except ImportError:
+    _HTTPX_AVAILABLE = False
+
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
+
+
+from landing.api_auth import (
+    ApiAuthError,
+    _api_login,
+    _api_verify_otp,
+    _api_send_verification_email,
+    _api_confirm_verification,
+    _api_logout,
+    _api_forgot_password,
+    _api_reset_password,
+)
+class LoginDialog(ctk.CTkToplevel):
+
+
+"""
+actions.py — Action handler methods for LoginDialog.
+"""
+
+    def _do_login(self) -> None:
+        """Authenticate via the shared API endpoint."""
+        username = self.user_entry.get().strip()
+        password = self.pass_entry.get().strip()
+
+        if not username or not password:
+            self.err_lbl.configure(text="Please enter username and password", text_color="red")
+            self._shake()
+            return
+
+        try:
+            self.btn_login.configure(state="disabled", text="Authenticating...")
+            self.err_lbl.configure(text="", text_color="")
+
+            result = _api_login(username, password)
+            api_role = result.get("role", "")
+            user_id = result.get("user_id")
+
+            if api_role and api_role != self.role:
+                self.btn_login.configure(state="normal", text="Login")
+                self.err_lbl.configure(
+                    text=f"User is not a {self.role}",
+                    text_color="red",
+                )
+                self._shake()
+                return
+
+            # Login succeeded — show OTP verification
+            if user_id:
+                self._show_otp_verify(user_id, username)
+            else:
+                self.err_lbl.configure(text="Unexpected server response", text_color="red")
+                self._shake()
+
+        except ApiAuthError as e:
+            error_text = str(e)
+            self.btn_login.configure(state="normal", text="Login")
+
+            # Check if the error message indicates unverified email
+            if "verify your email" in error_text.lower():
+                self._show_verification_prompt(None, username)
+            else:
+                self.err_lbl.configure(text=error_text, text_color="red")
+                self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self.err_lbl.configure(text=f"Connection error: {e}", text_color="red")
+            self._shake()
+        finally:
+            try:
+                self.btn_login.configure(state="normal", text="Login")
+            except (TclError, RuntimeError):
+                pass
+
+    # ── OTP Verification Step ─────────────────────────────────────
+
+    def _do_verify_otp(self) -> None:
+        """Verify the OTP and receive the JWT."""
+        otp = self._otp_entry.get().strip()
+
+        if not otp or not otp.isdigit() or len(otp) != 6:
+            self._otp_err.configure(text="Please enter a 6-digit OTP code", text_color="red")
+            self._shake()
+            return
+
+        try:
+            self._otp_btn.configure(state="disabled", text="Verifying...")
+            self._otp_err.configure(text="", text_color="")
+
+            result = _api_verify_otp(self._user_id, otp)
+
+            access_token = result.get("access_token", "")
+            api_role = result.get("role", "")
+
+            if not access_token:
+                self._otp_err.configure(text="Server did not return a token", text_color="red")
+                self._shake()
+                return
+
+            # Store JWT in app state
+            self.app_state.current_user = {
+                "username": self._username,
+                "role": api_role,
+                "access_token": access_token,
+            }
+
+            # Attach token to the master's session tracker
+            master = self.winfo_toplevel()
+            if hasattr(master, "session_tracker"):
+                master.session_tracker.set_token(access_token)
+
+            self.destroy()
+            self.success_cb()
+
+        except ApiAuthError as e:
+            self._otp_err.configure(text=str(e), text_color="red")
+            self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self._otp_err.configure(text=f"Error: {e}", text_color="red")
+            self._shake()
+        finally:
+            try:
+                self._otp_btn.configure(state="normal", text="Verify OTP")
+            except (TclError, RuntimeError):
+                pass
+
+    # ── Email Verification Step ───────────────────────────────────
+
+    def _do_send_verification(self) -> None:
+        """Send a verification email to the user."""
+        if not self._user_id:
+            # We don't have user_id from the failed login — can't send
+            self._verify_status.configure(
+                text="Could not determine user ID. Please contact support.",
+                text_color="red",
+            )
+            return
+
+        try:
+            self._verify_send_btn.configure(state="disabled", text="Sending...")
+            self._verify_status.configure(text="", text_color="")
+
+            result = _api_send_verification_email(self._user_id)
+
+            status = result.get("status", "")
+            if status == "already_verified":
+                self._verify_status.configure(
+                    text="✅ Your email is already verified! You can now log in.",
+                    text_color="green",
+                )
+                self._verify_send_btn.configure(state="disabled", text="Already Verified")
+                # Enable back to login
+                self._verify_back_btn.configure(
+                    text="← Back to Login (try again)",
+                    fg_color=self._accent_color,
+                )
+            elif status == "sent":
+                self._verify_status.configure(
+                    text="✅ Verification email sent!\nCheck your inbox and enter the code below.",
+                    text_color="green",
+                )
+                self._verify_send_btn.configure(state="normal", text="📧 Resend Email")
+                self._verify_token_entry.focus()
+            else:
+                self._verify_status.configure(
+                    text=f"Unexpected response: {result.get('message', '')}",
+                    text_color="orange",
+                )
+                self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
+
+        except ApiAuthError as e:
+            self._verify_status.configure(text=str(e), text_color="red")
+            self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
+            self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self._verify_status.configure(text=f"Error: {e}", text_color="red")
+            self._verify_send_btn.configure(state="normal", text="📧 Send Verification Email")
+            self._shake()
+
+    def _do_confirm_verification(self) -> None:
+        """Confirm the email verification token."""
+        token = self._verify_token_entry.get().strip()
+
+        if not token or len(token) < 6:
+            self._verify_status.configure(
+                text="Please enter the verification token from your email.",
+                text_color="red",
+            )
+            self._shake()
+            return
+
+        if not self._user_id:
+            self._verify_status.configure(
+                text="Could not determine user ID. Please go back and log in again.",
+                text_color="red",
+            )
+            return
+
+        try:
+            self._verify_confirm_btn.configure(state="disabled", text="Verifying...")
+            self._verify_status.configure(text="", text_color="")
+
+            result = _api_confirm_verification(self._user_id, token)
+
+            if result.get("status") == "verified":
+                self._verify_status.configure(
+                    text="✅ Email verified successfully!\nClick 'Back to Login' to sign in.",
+                    text_color="green",
+                )
+                self._verify_confirm_btn.configure(state="disabled", text="✅ Verified")
+                self._verify_send_btn.configure(state="disabled")
+                self._verify_back_btn.configure(
+                    text="← Back to Login (verified)",
+                    fg_color=self._accent_color,
+                )
+            else:
+                self._verify_status.configure(
+                    text=f"Verification failed: {result.get('message', '')}",
+                    text_color="red",
+                )
+                self._verify_confirm_btn.configure(state="normal", text="Confirm Verification")
+
+        except ApiAuthError as e:
+            self._verify_status.configure(text=str(e), text_color="red")
+            self._verify_confirm_btn.configure(state="normal", text="Confirm Verification")
+            self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self._verify_status.configure(text=f"Error: {e}", text_color="red")
+            self._verify_confirm_btn.configure(state="normal", text="Confirm Verification")
+            self._shake()
+
+    # ── Forgot Password Step ──────────────────────────────────────
+
+    def _do_forgot_password(self) -> None:
+        """Request a password reset email."""
+        email = self._forgot_email_entry.get().strip()
+
+        if not email or "@" not in email:
+            self._forgot_status.configure(
+                text="Please enter a valid email address.", text_color="red"
+            )
+            self._shake()
+            return
+
+        try:
+            self._forgot_send_btn.configure(state="disabled", text="Sending...")
+            self._forgot_status.configure(text="", text_color="")
+
+            result = _api_forgot_password(email)
+
+            message = result.get(
+                "message",
+                "If an account with that email exists, a reset link has been sent.",
+            )
+            self._forgot_status.configure(text=f"✅ {message}", text_color="green")
+            self._forgot_send_btn.configure(state="normal", text="📧 Resend Reset Link")
+
+            # Show hint label and goto-reset button (pre-created in __init__)
+            self._forgot_hint_label.configure(
+                text="\nCheck your email for the reset token,\nthen click below to reset your password."
+            )
+            self._forgot_hint_label.pack(pady=(5, 2))
+            self._forgot_goto_reset_btn.pack(pady=5)
+
+        except ApiAuthError as e:
+            self._forgot_status.configure(text=str(e), text_color="red")
+            self._forgot_send_btn.configure(state="normal", text="📧 Send Reset Link")
+            self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self._forgot_status.configure(text=f"Error: {e}", text_color="red")
+            self._forgot_send_btn.configure(state="normal", text="📧 Send Reset Link")
+            self._shake()
+
+    # ── Reset Password Step ────────────────────────────────────────
+
+    def _do_reset_password(self) -> None:
+        """Complete the password reset with token + new password."""
+        token = self._reset_token_entry.get().strip()
+        new_password = self._reset_pass_entry.get()
+        confirm_password = self._reset_confirm_entry.get()
+
+        if not token:
+            self._reset_status.configure(
+                text="Please enter the reset token from your email.", text_color="red"
+            )
+            self._shake()
+            return
+
+        if len(new_password) < 8:
+            self._reset_status.configure(
+                text="Password must be at least 8 characters.", text_color="red"
+            )
+            self._shake()
+            return
+
+        if new_password != confirm_password:
+            self._reset_status.configure(text="Passwords do not match.", text_color="red")
+            self._shake()
+            return
+
+        # Validate password strength (matches backend policy)
+        import re
+
+        if not re.search(r"[A-Z]", new_password):
+            self._reset_status.configure(
+                text="Password must contain an uppercase letter.", text_color="red"
+            )
+            self._shake()
+            return
+        if not re.search(r"[a-z]", new_password):
+            self._reset_status.configure(
+                text="Password must contain a lowercase letter.", text_color="red"
+            )
+            self._shake()
+            return
+        if not re.search(r"[0-9]", new_password):
+            self._reset_status.configure(text="Password must contain a digit.", text_color="red")
+            self._shake()
+            return
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>_\-]", new_password):
+            self._reset_status.configure(
+                text="Password must contain a special character.", text_color="red"
+            )
+            self._shake()
+            return
+
+        # Try to resolve user_id from the local database using the logged-in
+        # user's email if available, or prompt the user to enter it
+        user_id = None
+        if hasattr(self.app_state, "current_user") and self.app_state.current_user:
+            username = self.app_state.current_user.get("username")
+            if username:
+                try:
+                    from database.models import User
+
+                    user = self.db_session.query(User).filter(User.username == username).first()
+                    if user:
+                        user_id = user.id
+                except (SQLAlchemyError, OSError):
+                    pass
+
+        if not user_id:
+            # Ask the user for their user ID via a simple prompt
+            from customtkinter import CTkInputDialog
+
+            id_dialog = CTkInputDialog(
+                text="Enter your User ID (the number from your reset email):",
+                title="User ID Required",
+            )
+            id_input = id_dialog.get_input()
+            if not id_input or not id_input.strip().isdigit():
+                self._reset_status.configure(
+                    text="A valid User ID is required. Check your reset email.",
+                    text_color="red",
+                )
+                self._shake()
+                return
+            user_id = int(id_input.strip())
+
+        try:
+            self._reset_btn.configure(state="disabled", text="Resetting...")
+            self._reset_status.configure(text="", text_color="")
+
+            result = _api_reset_password(user_id, token, new_password)
+
+            message = result.get("message", "Password reset successfully!")
+            self._reset_status.configure(
+                text=f"✅ {message}\nYou can now log in with your new password.",
+                text_color="green",
+            )
+            self._reset_btn.configure(state="disabled", text="✅ Done")
+
+            # Show a button to go back to login
+            self._reset_back_btn.configure(
+                text="← Back to Login (sign in)",
+                fg_color=self._accent_color,
+            )
+
+        except ApiAuthError as e:
+            self._reset_status.configure(text=str(e), text_color="red")
+            self._reset_btn.configure(state="normal", text="🔑 Reset Password")
+            self._shake()
+        except (ValueError, KeyError, OSError) as e:
+            traceback.print_exc()
+            self._reset_status.configure(text=f"Error: {e}", text_color="red")
+            self._reset_btn.configure(state="normal", text="🔑 Reset Password")
+            self._shake()
+
+    # ── Shake Animation ───────────────────────────────────────────
+
+    def _shake(self) -> None:
