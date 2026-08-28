@@ -7,6 +7,6 @@ This file re-exports ``LoginDialog`` so existing
 continues to work unchanged.
 """
 
-from landing.login_pkg.dialog import LoginDialog  # noqa: F401
+from landing.login_pkg.dialog import LoginDialog
 
 __all__ = ["LoginDialog"]
