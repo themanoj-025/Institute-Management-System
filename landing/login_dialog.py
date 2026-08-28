@@ -9,6 +9,6 @@ login_dialog.py — Login dialog for Institute Management System
    imports continue to work unchanged.
 """
 
-from landing.login_pkg import LoginDialog  # noqa: F401
+from landing.login_pkg import LoginDialog
 
 __all__ = ["LoginDialog"]
