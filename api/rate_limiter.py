@@ -83,7 +83,7 @@ class SlidingWindowCounter:
         Duration of the sliding window in seconds.
     """
 
-    __slots__ = ("max_requests", "window_seconds", "_store", "_lock")
+    __slots__ = ("_lock", "_store", "max_requests", "window_seconds")
 
     def __init__(self, max_requests: int, window_seconds: int) -> None:
         self.max_requests = max_requests

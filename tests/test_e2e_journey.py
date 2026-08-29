@@ -21,9 +21,20 @@ from datetime import datetime, timedelta
 import bcrypt
 import pytest
 
-from database.models import Attendance, AttendanceStatus, Course, Fee, FeeStatus, Result
+from database.models import (
+    Attendance,
+    AttendanceStatus,
+    Course,
+    Fee,
+    FeeStatus,
+    Result,
+    Staff,
+    Student,
+    Subject,
+    User,
+    UserRole,
+)
 from database.models import Session as AcadSession
-from database.models import Staff, Student, Subject, User, UserRole
 from utils.time import utc_now
 
 

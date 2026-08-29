@@ -1,8 +1,8 @@
 import os
 import sys
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

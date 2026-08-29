@@ -28,9 +28,9 @@ Usage
 import csv
 import io
 import os
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
-from collections.abc import Sequence
 
 import openpyxl
 from openpyxl.styles import Font, PatternFill

@@ -1,6 +1,7 @@
 """Placement routes."""
 
 from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from api.deps import get_current_user, require_role, serialize_placement

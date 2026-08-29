@@ -1,5 +1,6 @@
-import customtkinter as ctk
 from tkinter import TclError
+
+import customtkinter as ctk
 
 TOAST_STYLES = {
     "success": {"bg": "#a6e3a1", "text": "#1e1e2e", "icon": "✔", "border": "#50fa7b"},

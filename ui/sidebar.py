@@ -1,8 +1,8 @@
 import json
 import os
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
 
 ROUTE_ICONS = {
     "dashboard": "📊",

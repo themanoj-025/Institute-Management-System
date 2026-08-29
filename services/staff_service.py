@@ -8,8 +8,6 @@ from config.settings import BCRYPT_COST
 from database.models import Staff, User, UserRole
 
 
-
-
 class StaffService:
     def __init__(self, db: Session) -> None:
         self.db = db

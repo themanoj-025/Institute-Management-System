@@ -7,8 +7,6 @@ from sqlalchemy.orm import Session
 from database.models import Subject, Timetable
 
 
-
-
 class TimetableService:
     def __init__(self, db: Session) -> None:
         self.db = db
