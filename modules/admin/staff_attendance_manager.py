@@ -1,9 +1,8 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from calendar import monthrange
 from datetime import date, datetime
 
 import customtkinter as ctk
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import Staff
 from services.staff_attendance_service import StaffAttendanceService

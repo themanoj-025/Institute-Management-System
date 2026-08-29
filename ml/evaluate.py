@@ -107,7 +107,7 @@ def _classification_metrics_dict(
             metrics[f"class_{label}_support"] = int(report_dict[label]["support"])
 
     # Support
-    metrics["total_samples"] = int(len(y_true))
+    metrics["total_samples"] = len(y_true)
     metrics["positive_samples"] = int(y_true.sum())
     metrics["negative_samples"] = int(len(y_true) - y_true.sum())
 

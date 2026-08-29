@@ -3,8 +3,6 @@ from sqlalchemy.orm import Session
 from database.models import Notice
 
 
-
-
 class NoticeService:
     def __init__(self, db: Session) -> None:
         self.db = db

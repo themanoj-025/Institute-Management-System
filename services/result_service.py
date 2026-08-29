@@ -4,12 +4,11 @@ All queries against Result filter ``is_deleted == False``
 by default, so soft-deleted records are excluded from normal operations.
 """
 
+from typing import Any
+
 from sqlalchemy.orm import Session as DbSession
 
 from database.models import Result
-
-
-from typing import Any
 
 
 class ResultService:

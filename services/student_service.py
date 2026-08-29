@@ -1,4 +1,5 @@
 import secrets
+from typing import Any
 
 import bcrypt
 from sqlalchemy import or_
@@ -7,9 +8,6 @@ from sqlalchemy.orm import Session
 from config.settings import BCRYPT_COST
 from database.models import Student, User, UserRole
 from utils.time import utc_now
-
-
-from typing import Any
 
 
 class StudentService:

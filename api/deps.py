@@ -42,6 +42,7 @@ def check_token_blacklist(jti: str) -> bool:
     """Check if a JWT ID has been revoked."""
     try:
         import redis as _redis
+
         from config.settings import REDIS_URL
 
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
@@ -65,7 +66,9 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
 
     try:
         import math
+
         import redis as _redis
+
         from config.settings import REDIS_URL
 
         now = datetime.now(timezone.utc)

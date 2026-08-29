@@ -1,8 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 import json
 import socket
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from database.models import ActivityLog
@@ -53,7 +52,7 @@ class ActivityService:
         except (SQLAlchemyError, AttributeError) as e:
             self.session.rollback()
             logger.error(
-                f"DB Logging failed: {str(e)}",
+                f"DB Logging failed: {e!s}",
                 extra={"extra_fields": {**extra, "db_error": str(e)}},
             )
 

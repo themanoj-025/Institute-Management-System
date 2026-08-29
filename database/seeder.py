@@ -1,5 +1,3 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 import os
 import random
 import secrets
@@ -11,6 +9,7 @@ import bcrypt
 import numpy as np
 from faker import Faker
 from sqlalchemy import insert, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from tqdm import tqdm
 
@@ -30,9 +29,13 @@ from database.models import (
     Notice,
     Placement,
     Result,
+    Staff,
+    Student,
+    Subject,
+    User,
+    UserRole,
 )
 from database.models import Session as AcadSession
-from database.models import Staff, Student, Subject, User, UserRole
 
 fake = Faker("en_IN")
 

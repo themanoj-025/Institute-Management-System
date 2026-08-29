@@ -1,7 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
+from sqlalchemy.exc import SQLAlchemyError
 
 from services.notice_service import NoticeService
 from ui.data_table import DataTable

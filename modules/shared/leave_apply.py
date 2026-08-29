@@ -1,8 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from datetime import date, datetime
 
 import customtkinter as ctk
+from sqlalchemy.exc import SQLAlchemyError
 
 from services.leave_service import LeaveService
 from ui.toast import ToastManager

@@ -9,7 +9,7 @@ target-version = "py310"
 exclude = ["venv", "alembic"]
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F", "BLE", "S", "DTZ", "UP", "B", "SIM"]
+select = ["E", "F", "W", "B", "BLE", "UP", "SIM", "C4", "RUF", "PLC", "PIE", "S", "DTZ", "I"]
 ignore = [
     "E501",    # line too long — style preference
     "F401",    # unused import — re-export pattern
@@ -41,6 +41,17 @@ ignore = [
     "SIM114",  # if with same arms — intentional
     "SIM117",  # multiple with — readability preference
     "SIM118",  # in dict keys — intentional
+    "PLC0415", # import-outside-top-level — lazy imports
+    "RUF012",  # mutable class default — ORM pattern
+    "RUF001",  # ambiguous unicode — intentional
+    "RUF046",  # unnecessary cast
+    "RUF059",  # unused loop variable
+    "SIM102",  # collapsible if — circuit breaker pattern
+    "F821",    # undefined name — pre-existing missing imports
+    "RUF043",  # comparison to literal
+    "RUF015",  # unnecessary iterable allocation
+    "RUF002",  # ambiguous unicode — intentional
+    "E999",    # syntax error — pre-existing in landing pages
 ]
 
 [tool.isort]

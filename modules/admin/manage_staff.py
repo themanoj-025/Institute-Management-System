@@ -1,9 +1,8 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from datetime import date, datetime
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
+from sqlalchemy.exc import SQLAlchemyError
 
 from services.staff_service import StaffService
 from ui.data_table import DataTable

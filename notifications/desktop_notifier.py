@@ -5,8 +5,6 @@ from plyer import notification
 from config.constants import APP_NAME
 
 
-
-
 class DesktopNotifier:
     def __init__(self) -> None:
         # Path to app icon if any

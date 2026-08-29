@@ -579,7 +579,7 @@ def compute_drift_report(
             "std": round(float(np.std(current_values)), 4),
             "min": round(float(np.min(current_values)), 4),
             "max": round(float(np.max(current_values)), 4),
-            "n": int(len(current_values)),
+            "n": len(current_values),
             "severity": severity,
         }
 

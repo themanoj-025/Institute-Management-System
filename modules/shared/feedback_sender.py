@@ -1,6 +1,5 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 import customtkinter as ctk
+from sqlalchemy.exc import SQLAlchemyError
 
 from services.feedback_service import FeedbackService
 from ui.toast import ToastManager

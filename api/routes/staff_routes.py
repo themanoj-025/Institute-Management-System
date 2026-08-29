@@ -1,7 +1,8 @@
 """Staff CRUD routes."""
 
-import bcrypt
 from datetime import datetime
+
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
 
 from api.deps import get_current_user, require_role, serialize_staff

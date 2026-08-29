@@ -1,5 +1,6 @@
-import customtkinter as ctk
 from tkinter import TclError
+
+import customtkinter as ctk
 
 
 class KPICard(ctk.CTkFrame):

@@ -377,7 +377,6 @@ class LandingPage(ctk.CTkFrame):
                 return
 
             try:
-                pass
 
                 from database.models import Enquiry
 
@@ -404,7 +403,7 @@ class LandingPage(ctk.CTkFrame):
                 self.db_session.rollback()
                 from ui.toast import ToastManager
 
-                ToastManager.show(dialog, f"Error submitting: {str(e)}", "error")
+                ToastManager.show(dialog, f"Error submitting: {e!s}", "error")
 
         # Buttons
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
@@ -530,7 +529,6 @@ class LandingPage(ctk.CTkFrame):
                     )
                     return
                 try:
-                    pass
 
                     from database.models import Enquiry
 
@@ -560,7 +558,7 @@ class LandingPage(ctk.CTkFrame):
 
                     ToastManager.show(
                         self.winfo_toplevel(),
-                        f"Error submitting enquiry: {str(e)}",
+                        f"Error submitting enquiry: {e!s}",
                         "error",
                     )
             else:
