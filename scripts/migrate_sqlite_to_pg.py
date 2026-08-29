@@ -19,11 +19,10 @@ Caution:
 """
 
 import argparse
+import re
 import sys
 from datetime import date, datetime
 from decimal import Decimal
-
-import re
 
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import Session

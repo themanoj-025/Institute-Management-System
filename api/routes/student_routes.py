@@ -1,5 +1,7 @@
 """Student CRUD and bulk attendance/results routes."""
 
+from datetime import datetime
+
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -14,8 +16,6 @@ from api.schemas import (
 from database.db_session import get_session
 from database.models import Attendance, Course, Result, Student, User, UserRole
 from utils.time import utc_now
-
-from datetime import datetime
 
 router = APIRouter(tags=["Students", "Attendance", "Results"])
 

@@ -155,7 +155,6 @@ def explain_prediction(
         importances = shap_values
     else:
         try:
-            pass
 
             # Build a small DataFrame for SHAP explainer
             X_df = pd.DataFrame([features.values], columns=features.index)

@@ -1,10 +1,9 @@
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from database.models import Leave, LeaveStatus
 from utils.time import utc_now
-
-
-from typing import Any
 
 
 class LeaveService:

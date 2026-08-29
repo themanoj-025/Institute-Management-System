@@ -1,9 +1,8 @@
+from datetime import date
+
 from sqlalchemy.orm import Session
 
 from database.models import Placement
-
-
-from datetime import date
 
 
 class PlacementService:

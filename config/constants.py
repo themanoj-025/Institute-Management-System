@@ -1,8 +1,5 @@
 import os
-
 from pathlib import Path
-
-
 
 # App Information
 

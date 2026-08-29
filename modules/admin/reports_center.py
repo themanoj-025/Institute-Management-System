@@ -1,10 +1,9 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 import os
 from datetime import timedelta
 
 import customtkinter as ctk
 from sqlalchemy import case, func
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import (
     Attendance,

@@ -38,9 +38,8 @@ class Base(DeclarativeBase):
     pass
 
 
-from collections.abc import Generator
+from collections.abc import Generator, Iterator
 from contextlib import contextmanager
-from collections.abc import Iterator
 
 
 def get_db() -> Generator:

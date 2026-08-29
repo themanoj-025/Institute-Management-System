@@ -1,7 +1,7 @@
 import time
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns

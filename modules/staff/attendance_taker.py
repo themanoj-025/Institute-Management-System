@@ -1,8 +1,7 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from datetime import date
 
 import customtkinter as ctk
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import Student
 from services.attendance_service import AttendanceService

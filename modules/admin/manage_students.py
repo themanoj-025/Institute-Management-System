@@ -1,9 +1,8 @@
-from sqlalchemy.exc import SQLAlchemyError
-
 from datetime import datetime
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
+from sqlalchemy.exc import SQLAlchemyError
 
 from database.models import Session as AcadSession
 from services.course_service import CourseService

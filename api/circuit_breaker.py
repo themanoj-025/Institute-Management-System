@@ -99,7 +99,7 @@ class CircuitBreaker:
 
         return wrapper
 
-    def __enter__(self) -> "CircuitBreaker":
+    def __enter__(self) -> CircuitBreaker:
         if self.is_open():
             raise CircuitBreakerOpenError(f"Circuit breaker {self.name} is OPEN")
         return self

@@ -255,6 +255,7 @@ def health_check() -> bool:
 )
 def metrics() -> dict:
     from fastapi.responses import PlainTextResponse
+
     from utils.observability import metrics_endpoint as _metrics
 
     return PlainTextResponse(content=_metrics(), media_type="text/plain; version=0.0.4")
@@ -284,14 +285,14 @@ def v1_health_check() -> bool:
 #  INCLUDE ROUTE MODULES
 # ═══════════════════════════════════════════════════════════════════
 
+from api.routes.admin_routes import router as admin_router
+from api.routes.analytics_routes import router as analytics_router
 from api.routes.auth_routes import router as auth_router
-from api.routes.student_routes import router as student_router
 from api.routes.course_routes import router as course_router
-from api.routes.staff_routes import router as staff_router
 from api.routes.fee_routes import router as fee_router
 from api.routes.placement_routes import router as placement_router
-from api.routes.analytics_routes import router as analytics_router
-from api.routes.admin_routes import router as admin_router
+from api.routes.staff_routes import router as staff_router
+from api.routes.student_routes import router as student_router
 
 v1_router.include_router(auth_router)
 v1_router.include_router(student_router)
