@@ -18,9 +18,9 @@ The API base URL is read from the ``API_BASE_URL`` environment variable
 import os
 import traceback
 import urllib.error
+from tkinter import TclError
 
 import customtkinter as ctk
-from tkinter import TclError
 
 try:
     from sqlalchemy.exc import SQLAlchemyError
@@ -40,20 +40,18 @@ API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
 
 from landing.api_auth import (
     ApiAuthError,
-    _api_login,
-    _api_verify_otp,
-    _api_send_verification_email,
     _api_confirm_verification,
-    _api_logout,
     _api_forgot_password,
+    _api_login,
+    _api_logout,
     _api_reset_password,
+    _api_send_verification_email,
+    _api_verify_otp,
 )
+
+
 class LoginDialog(ctk.CTkToplevel):
-
-
-"""
-forms.py — Form display methods for LoginDialog.
-"""
+    """Form display methods for LoginDialog."""
 
     def _show_login_form(self) -> None:
         """Return to the login form, hiding OTP, verification, forgot, and reset frames."""
@@ -139,3 +137,4 @@ forms.py — Form display methods for LoginDialog.
     # ── Login Step ────────────────────────────────────────────────
 
     def _do_login(self) -> None:
+        pass  # Implemented in actions.py
