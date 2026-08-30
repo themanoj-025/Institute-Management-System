@@ -31,7 +31,7 @@ def _get_system_config_value(session, key: str, default: Any = None) -> Any:
 
 def _set_system_config_value(
     session, key: str, value: Any, description: str = "", user_id: int | None = None
-):
+) -> None:
     """Set a typed value in SystemConfig."""
     entry = session.query(SystemConfig).filter(SystemConfig.key == key).first()
     if isinstance(value, bool):
@@ -125,7 +125,7 @@ def get_promotion_history(
     page: int = 1,
     per_page: int = 25,
     user: dict = Depends(require_role(["admin"])),
-):
+) -> dict[str, object]:
     with get_session() as session:
         query = session.query(PromotionHistory).order_by(PromotionHistory.timestamp.desc())
         total = query.count()

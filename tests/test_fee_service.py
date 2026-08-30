@@ -15,7 +15,7 @@ from services.fee_service import FeeService
 
 pytestmark = pytest.mark.slow
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -26,7 +26,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     course = Course(code="CS101", name="CS Basics", duration_months=6, fee=50000)
     db_session.add(course)
     sess = Session(name="2024", start_date=date(2024, 1, 1), end_date=date(2024, 12, 31))
@@ -70,7 +70,7 @@ def seeded_db(db_session):
 
 
 class TestFeeService:
-    def test_get_student_fees(self, seeded_db):
+    def test_get_student_fees(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         fees = service.get_student_fees(student.id)
@@ -78,12 +78,12 @@ class TestFeeService:
         assert fees[0]["total_amount"] == 50000.0
         assert fees[0]["paid_amount"] == 10000.0
 
-    def test_get_student_fees_empty(self, db_session):
+    def test_get_student_fees_empty(self, db_session) -> None:
         service = FeeService(db_session)
         fees = service.get_student_fees(999)
         assert fees == []
 
-    def test_record_payment(self, seeded_db):
+    def test_record_payment(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         receipt = service.record_payment(fee.id, 40000.0, "UPI", "txn_123")
@@ -95,7 +95,7 @@ class TestFeeService:
         assert updated.paid_amount == 50000.0
         assert updated.status == FeeStatus.paid
 
-    def test_record_payment_partial(self, seeded_db):
+    def test_record_payment_partial(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         service.record_payment(fee.id, 5000.0, "Cash")
@@ -103,19 +103,19 @@ class TestFeeService:
         assert updated.paid_amount == 15000.0
         assert updated.status == FeeStatus.partial
 
-    def test_record_payment_not_found(self, seeded_db):
+    def test_record_payment_not_found(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         with pytest.raises(ValueError, match="Fee record not found"):
             service.record_payment(999, 1000.0, "Cash")
 
-    def test_get_all_fees(self, seeded_db):
+    def test_get_all_fees(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         all_fees = service.get_all_fees()
         assert len(all_fees) == 1
 
-    def test_soft_deleted_fees_excluded(self, seeded_db):
+    def test_soft_deleted_fees_excluded(self, seeded_db) -> None:
         """Soft-deleted fees should not appear in queries."""
         db, student, fee, sess = seeded_db
         service = FeeService(db)
@@ -130,7 +130,7 @@ class TestFeeService:
         student_fees = service.get_student_fees(student.id)
         assert student_fees == []
 
-    def test_soft_deleted_payment_rejected(self, seeded_db):
+    def test_soft_deleted_payment_rejected(self, seeded_db) -> None:
         """Recording payment against soft-deleted fee should raise error."""
         db, student, fee, sess = seeded_db
         service = FeeService(db)
@@ -141,7 +141,7 @@ class TestFeeService:
         with pytest.raises(ValueError, match="deleted"):
             service.record_payment(fee.id, 1000.0, "Cash")
 
-    def test_payment_creates_fee_payment_record(self, seeded_db):
+    def test_payment_creates_fee_payment_record(self, seeded_db) -> None:
         db, student, fee, sess = seeded_db
         service = FeeService(db)
         service.record_payment(fee.id, 10000.0, "Bank Transfer")

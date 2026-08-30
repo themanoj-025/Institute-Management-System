@@ -21,13 +21,13 @@ from ml.drift import (
 class TestComputeFeaturePsi:
     """Tests for the _compute_feature_psi function."""
 
-    def test_identical_distributions(self):
+    def test_identical_distributions(self) -> None:
         """PSI should be ~0 when reference and current are identical."""
         a = np.random.RandomState(42).normal(0, 1, 1000)
         psi = _compute_feature_psi(a, a)
         assert psi < 1e-4, f"Expected near-zero PSI for identical dists, got {psi}"
 
-    def test_shifted_distributions(self):
+    def test_shifted_distributions(self) -> None:
         """PSI should be > 0.1 for shifted distributions."""
         ref = np.random.RandomState(42).normal(0, 1, 1000)
         curr = ref + 2.0  # Shift by 2 standard deviations
@@ -35,14 +35,14 @@ class TestComputeFeaturePsi:
         # A shift this large should produce detectable drift
         assert psi > 0.05, f"Expected detectable PSI for shifted dists, got {psi}"
 
-    def test_constant_feature(self):
+    def test_constant_feature(self) -> None:
         """PSI should be 0 for constant features."""
         ref = np.ones(100) * 5.0
         curr = np.ones(100) * 5.0
         psi = _compute_feature_psi(ref, curr)
         assert psi == 0.0, f"Expected 0 PSI for constant feature, got {psi}"
 
-    def test_empty_arrays(self):
+    def test_empty_arrays(self) -> None:
         """PSI should be 0 for empty arrays."""
         psi = _compute_feature_psi(np.array([]), np.array([1.0, 2.0]))
         assert psi == 0.0, "Expected 0 PSI for empty reference"
@@ -50,7 +50,7 @@ class TestComputeFeaturePsi:
         psi = _compute_feature_psi(np.array([1.0, 2.0]), np.array([]))
         assert psi == 0.0, "Expected 0 PSI for empty current"
 
-    def test_single_value_array(self):
+    def test_single_value_array(self) -> None:
         """PSI should handle single-value arrays without crashing."""
         ref = np.array([3.14])
         curr = np.array([3.14])
@@ -62,7 +62,7 @@ class TestComputeFeaturePsi:
 class TestSaveAndLoadReference:
     """Tests for _save_reference_distributions and load_reference_distributions."""
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         self.tmp_dir = tempfile.mkdtemp()
         self._original_dir = REFERENCE_FILE.parent
         # Temporarily redirect REFERENCE_FILE to temp dir
@@ -72,7 +72,7 @@ class TestSaveAndLoadReference:
         )
         self.mock_ref_file = self._patcher.start()
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         self._patcher.stop()
         import shutil
 
@@ -82,7 +82,7 @@ class TestSaveAndLoadReference:
         "ml.drift.REFERENCE_FILE",
         new_callable=lambda: Path(tempfile.mkdtemp()) / "ref.json",
     )
-    def test_save_and_load_roundtrip(self, mock_ref_file):
+    def test_save_and_load_roundtrip(self, mock_ref_file) -> None:
         """Saving then loading should return identical data."""
         X = pd.DataFrame(
             {
@@ -118,7 +118,7 @@ class TestSaveAndLoadReference:
         "ml.drift.REFERENCE_FILE",
         new_callable=lambda: Path(tempfile.mkdtemp()) / "ref.json",
     )
-    def test_load_nonexistent_file(self, mock_ref_file):
+    def test_load_nonexistent_file(self, mock_ref_file) -> None:
         """Loading when no file exists should return None."""
         result = load_reference_distributions()
         assert result is None, "Expected None for missing reference file"
@@ -127,7 +127,7 @@ class TestSaveAndLoadReference:
         "ml.drift.REFERENCE_FILE",
         new_callable=lambda: Path(tempfile.mkdtemp()) / "ref.json",
     )
-    def test_save_empty_dataframe(self, mock_ref_file):
+    def test_save_empty_dataframe(self, mock_ref_file) -> None:
         """Saving with empty DataFrame should not crash."""
         X = pd.DataFrame()
         saved_path = _save_reference_distributions(X, "risk_v1")
@@ -140,7 +140,7 @@ class TestSaveAndLoadReference:
         "ml.drift.REFERENCE_FILE",
         new_callable=lambda: Path(tempfile.mkdtemp()) / "ref.json",
     )
-    def test_save_without_metrics(self, mock_ref_file):
+    def test_save_without_metrics(self, mock_ref_file) -> None:
         """Saving without metrics should still work."""
         X = pd.DataFrame({"attendance_rate_4wk": [80.0, 90.0]})
         saved_path = _save_reference_distributions(X, "risk_v1")
@@ -153,7 +153,7 @@ class TestSaveAndLoadReference:
 class TestComputeDriftReport:
     """Tests for compute_drift_report."""
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         self.tmp_dir = tempfile.mkdtemp()
         self._patcher = patch(
             "ml.drift.REFERENCE_FILE",
@@ -161,13 +161,13 @@ class TestComputeDriftReport:
         )
         self.mock_ref_file = self._patcher.start()
 
-    def teardown_method(self):
+    def teardown_method(self) -> None:
         self._patcher.stop()
         import shutil
 
         shutil.rmtree(self.tmp_dir, ignore_errors=True)
 
-    def test_no_reference_file(self):
+    def test_no_reference_file(self) -> None:
         """When no reference file exists, report should contain error."""
         mock_session = MagicMock()
         report = compute_drift_report(mock_session)
@@ -176,7 +176,7 @@ class TestComputeDriftReport:
         assert "No reference distributions found" in report["error"]
 
     @patch("ml.drift.compute_all_features")
-    def test_drift_report_structure(self, mock_compute_features):
+    def test_drift_report_structure(self, mock_compute_features) -> None:
         """The report dictionary should have all expected keys."""
         # Pre-save a reference distribution
         X_ref = pd.DataFrame(
@@ -221,7 +221,7 @@ class TestComputeDriftReport:
         assert isinstance(report["feature_stats"], dict)
 
     @patch("ml.drift.compute_all_features")
-    def test_drift_detection_flag(self, mock_compute_features):
+    def test_drift_detection_flag(self, mock_compute_features) -> None:
         """If features differ significantly, drift_detected should be True."""
         X_ref = pd.DataFrame(
             {
@@ -268,7 +268,7 @@ class TestComputeDriftReport:
         assert report["feature_count"] >= 2
 
     @patch("ml.drift.compute_all_features")
-    def test_feature_computation_failure(self, mock_compute_features):
+    def test_feature_computation_failure(self, mock_compute_features) -> None:
         """If feature computation fails, report should contain error."""
         X_ref = pd.DataFrame({"attendance_rate_4wk": [80.0, 85.0]})
         _save_reference_distributions(X_ref, "risk_v1")
@@ -283,7 +283,7 @@ class TestComputeDriftReport:
         assert "Feature computation failed" in report["error"]
 
     @patch("ml.drift.compute_all_features")
-    def test_empty_current_features(self, mock_compute_features):
+    def test_empty_current_features(self, mock_compute_features) -> None:
         """If no current features are available, report should contain error."""
         X_ref = pd.DataFrame({"attendance_rate_4wk": [80.0, 85.0]})
         _save_reference_distributions(X_ref, "risk_v1")
@@ -298,7 +298,7 @@ class TestComputeDriftReport:
         assert "No current feature data" in report["error"]
 
     @patch("ml.drift.compute_all_features")
-    def test_default_psi_threshold(self, mock_compute_features):
+    def test_default_psi_threshold(self, mock_compute_features) -> None:
         """Default threshold should be 0.10 unless overridden."""
         X_ref = pd.DataFrame({"attendance_rate_4wk": [80.0, 85.0, 90.0]})
         _save_reference_distributions(X_ref, "risk_v1")
@@ -321,7 +321,7 @@ class TestComputeDriftReport:
 class TestPsiEdgeCases:
     """Edge case tests for the PSI computation."""
 
-    def test_extreme_values(self):
+    def test_extreme_values(self) -> None:
         """PSI should handle extreme values without crashing."""
         ref = np.array([1e10, -1e10, 0.0, 1e-10])
         curr = np.array([1e10 + 1, -1e10 - 1, 1.0, 1e-9])
@@ -329,7 +329,7 @@ class TestPsiEdgeCases:
         assert isinstance(psi, float)
         assert psi >= 0.0
 
-    def test_nan_values(self):
+    def test_nan_values(self) -> None:
         """NaN values should be handled gracefully.
 
         numpy operations with NaN may produce NaN output, which we need to

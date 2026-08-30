@@ -15,7 +15,7 @@ from services.leave_service import LeaveService
 
 pytestmark = pytest.mark.slow
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -26,7 +26,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     # Create admin user
     admin = User(
         username="admin_leave",
@@ -85,7 +85,7 @@ def seeded_db(db_session):
 
 
 class TestLeaveService:
-    def test_apply_student_leave(self, seeded_db):
+    def test_apply_student_leave(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         result = service.apply_leave(
@@ -100,7 +100,7 @@ class TestLeaveService:
         assert result["status"] == "pending"
         assert "Leave Student" in result["applicant"]
 
-    def test_apply_staff_leave(self, seeded_db):
+    def test_apply_staff_leave(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         result = service.apply_leave(
@@ -114,7 +114,7 @@ class TestLeaveService:
         assert result["status"] == "pending"
         assert "Staff Leave" in result["applicant"]
 
-    def test_get_leaves_for_student(self, seeded_db):
+    def test_get_leaves_for_student(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         service.apply_leave(
@@ -129,7 +129,7 @@ class TestLeaveService:
         leaves = service.get_leaves_for_user(student_id=student.id)
         assert len(leaves) == 1
 
-    def test_approve_leave(self, seeded_db):
+    def test_approve_leave(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         result = service.apply_leave(
@@ -144,7 +144,7 @@ class TestLeaveService:
         approved = service.approve_leave(result["id"], admin.id)
         assert approved["status"] == "approved"
 
-    def test_reject_leave(self, seeded_db):
+    def test_reject_leave(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         result = service.apply_leave(
@@ -159,7 +159,7 @@ class TestLeaveService:
         rejected = service.reject_leave(result["id"], admin.id)
         assert rejected["status"] == "rejected"
 
-    def test_get_all_leaves(self, seeded_db):
+    def test_get_all_leaves(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         service.apply_leave(
@@ -174,7 +174,7 @@ class TestLeaveService:
         leaves = service.get_all_leaves()
         assert len(leaves) == 1
 
-    def test_get_all_leaves_by_status(self, seeded_db):
+    def test_get_all_leaves_by_status(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
         service = LeaveService(db)
         _ = service.apply_leave(

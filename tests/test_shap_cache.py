@@ -16,11 +16,11 @@ from ml.explain import _explainer_cache, _get_cached_explainer, invalidate_expla
 class TestShapExplainerCache:
     """Test the SHAP TreeExplainer caching mechanism."""
 
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Clear cache before each test."""
         _explainer_cache.clear()
 
-    def test_cache_returns_same_instance_for_same_version(self):
+    def test_cache_returns_same_instance_for_same_version(self) -> None:
         """The cached explainer should be returned on subsequent calls with same version."""
         mock_explainer = MagicMock()
         mock_explainer.shap_values.return_value = np.array([[0.1, -0.2, 0.3]])
@@ -87,7 +87,7 @@ class TestShapExplainerCache:
 
             assert result1 is not result2
 
-    def test_invalidate_specific_version(self):
+    def test_invalidate_specific_version(self) -> None:
         """Invalidating a specific version should remove only that entry."""
         mock_explainer = MagicMock()
 
@@ -102,7 +102,7 @@ class TestShapExplainerCache:
             assert "risk_v1" not in _explainer_cache
             assert "risk_v2" in _explainer_cache
 
-    def test_invalidate_all_versions(self):
+    def test_invalidate_all_versions(self) -> None:
         """Invalidating without version should clear the entire cache."""
         mock_explainer = MagicMock()
 
@@ -116,7 +116,7 @@ class TestShapExplainerCache:
             invalidate_explainer_cache()
             assert len(_explainer_cache) == 0
 
-    def test_cache_rebuilds_after_invalidation(self):
+    def test_cache_rebuilds_after_invalidation(self) -> None:
         """After invalidation, the next call should rebuild the cache."""
         mock_explainer = MagicMock()
 
@@ -132,7 +132,7 @@ class TestShapExplainerCache:
             _get_cached_explainer(MagicMock(), model_version="risk_v1")
             assert mock_build.call_count == 2
 
-    def test_build_explainer_fails_gracefully(self):
+    def test_build_explainer_fails_gracefully(self) -> None:
         """If _build_explainer fails, it should return None without raising."""
         model = MagicMock()
 
@@ -140,14 +140,14 @@ class TestShapExplainerCache:
             result = _get_cached_explainer(model, model_version="risk_v1")
             assert result is None
 
-    def test_concurrent_access_safety(self):
+    def test_concurrent_access_safety(self) -> None:
         """The cache should be safe for concurrent access from threads."""
         import threading
 
         mock_explainer = MagicMock()
         results = []
 
-        def access_cache(version):
+        def access_cache(version) -> None:
             with patch("ml.explain._build_explainer", return_value=mock_explainer):
                 result = _get_cached_explainer(MagicMock(), model_version=version)
                 results.append(result)

@@ -37,7 +37,7 @@ def make_token(username="admin", role="admin", user_id=1, extra=None):
 
 
 class TestTokenBlacklist:
-    def test_jti_in_response(self):
+    def test_jti_in_response(self) -> None:
         """Verify the JWT returned by login has a jti claim."""
         # We can't test login without a real DB, but we can test the token structure
         token = make_token()
@@ -46,7 +46,7 @@ class TestTokenBlacklist:
         assert "iat" in payload
         assert "exp" in payload
 
-    def test_blacklist_check_rejects_invalid_token(self):
+    def test_blacklist_check_rejects_invalid_token(self) -> None:
         """Invalid JWT should be rejected."""
         resp = client.get(
             "/v1/students",
@@ -56,7 +56,7 @@ class TestTokenBlacklist:
         data = resp.json()
         assert data["error"]["code"] == "unauthorized"
 
-    def test_blacklist_structure(self):
+    def test_blacklist_structure(self) -> None:
         """Verify the database model for revoked tokens has required fields."""
         from database.models import RevokedToken
 
@@ -65,7 +65,7 @@ class TestTokenBlacklist:
         assert hasattr(RevokedToken, "expires_at")
         assert hasattr(RevokedToken, "revoked_at")
 
-    def test_logout_requires_auth(self):
+    def test_logout_requires_auth(self) -> None:
         """Logout should require authentication."""
         resp = client.post("/v1/auth/logout")
         assert resp.status_code == 401
@@ -77,7 +77,7 @@ class TestTokenBlacklist:
 
 
 class TestPatchEndpoints:
-    def test_patch_student_schema(self):
+    def test_patch_student_schema(self) -> None:
         """Verify StudentPatch accepts partial data."""
         from api.main import StudentPatch
 
@@ -89,7 +89,7 @@ class TestPatchEndpoints:
         assert patch.first_name == "Updated"
         assert patch.last_name is None
 
-    def test_patch_course_schema(self):
+    def test_patch_course_schema(self) -> None:
         """Verify CoursePatch accepts partial data."""
         from api.main import CoursePatch
 
@@ -97,7 +97,7 @@ class TestPatchEndpoints:
         assert patch.name == "New Name"
         assert patch.fee is None
 
-    def test_patch_staff_schema(self):
+    def test_patch_staff_schema(self) -> None:
         """Verify StaffPatch accepts partial data."""
         from api.main import StaffPatch
 
@@ -105,7 +105,7 @@ class TestPatchEndpoints:
         assert patch.first_name == "New"
         assert patch.department is None
 
-    def test_patch_placement_schema(self):
+    def test_patch_placement_schema(self) -> None:
         """Verify PlacementPatch accepts partial data."""
         from api.main import PlacementPatch
 
@@ -113,7 +113,7 @@ class TestPatchEndpoints:
         assert patch.company_name == "Google"
         assert patch.job_title is None
 
-    def test_patch_endpoint_requires_auth(self):
+    def test_patch_endpoint_requires_auth(self) -> None:
         """PATCH endpoints should require authentication."""
         resp = client.patch("/v1/students/1", json={"first_name": "Test"})
         assert resp.status_code == 401
@@ -131,7 +131,7 @@ class TestPatchEndpoints:
 
 
 class TestOtpFlow:
-    def test_otp_code_model(self):
+    def test_otp_code_model(self) -> None:
         """Verify the OtpCode model has required fields."""
         from database.models import OtpCode
 
@@ -141,7 +141,7 @@ class TestOtpFlow:
         assert hasattr(OtpCode, "is_used")
         assert hasattr(OtpCode, "max_attempts")
 
-    def test_verify_otp_endpoint_exists(self):
+    def test_verify_otp_endpoint_exists(self) -> None:
         """Verify the OTP endpoint route exists.
 
         The endpoint may fail with 401 (invalid token), 422 (validation error),
@@ -154,7 +154,7 @@ class TestOtpFlow:
             # Even a connection/DB error proves the route was registered
             pass
 
-    def test_otp_never_in_response(self):
+    def test_otp_never_in_response(self) -> None:
         """Verify OTP never appears in login response."""
         # The login response should NOT contain otp_code
         import inspect
@@ -176,17 +176,17 @@ class TestOtpFlow:
 
 
 class TestSoftDeleteFee:
-    def test_soft_delete_endpoint_requires_auth(self):
+    def test_soft_delete_endpoint_requires_auth(self) -> None:
         """DELETE /fees/{id} should require auth."""
         resp = client.delete("/v1/fees/1")
         assert resp.status_code == 401
 
-    def test_restore_endpoint_requires_auth(self):
+    def test_restore_endpoint_requires_auth(self) -> None:
         """POST /fees/{id}/restore should require auth."""
         resp = client.post("/v1/fees/1/restore")
         assert resp.status_code == 401
 
-    def test_fee_model_has_soft_delete_fields(self):
+    def test_fee_model_has_soft_delete_fields(self) -> None:
         """Verify Fee model has soft-delete columns."""
         from database.models import Fee
 
@@ -194,7 +194,7 @@ class TestSoftDeleteFee:
         assert hasattr(Fee, "deleted_at")
         assert hasattr(Fee, "deleted_by")
 
-    def test_fee_payment_model_has_soft_delete(self):
+    def test_fee_payment_model_has_soft_delete(self) -> None:
         """Verify FeePayment model has soft-delete columns."""
         from database.models import FeePayment
 
@@ -208,18 +208,18 @@ class TestSoftDeleteFee:
 
 
 class TestRiskExplanation:
-    def test_risk_explanation_endpoint_exists(self):
+    def test_risk_explanation_endpoint_exists(self) -> None:
         """Verify the risk explanation route exists."""
         resp = client.get("/v1/analytics/students/1/risk-explanation")
         # Should require auth
         assert resp.status_code == 401
 
-    def test_at_risk_endpoint_exists(self):
+    def test_at_risk_endpoint_exists(self) -> None:
         """Verify the at-risk list endpoint exists."""
         resp = client.get("/v1/analytics/at-risk")
         assert resp.status_code == 401
 
-    def test_risk_explanation_response_schema(self):
+    def test_risk_explanation_response_schema(self) -> None:
         """Verify RiskExplanationResponse schema has required fields."""
         from api.main import RiskExplanationResponse
 
@@ -237,12 +237,12 @@ class TestRiskExplanation:
 
 
 class TestAdminConfig:
-    def test_get_config_requires_auth(self):
+    def test_get_config_requires_auth(self) -> None:
         """GET /admin/config/risk-thresholds should require auth."""
         resp = client.get("/v1/admin/config/risk-thresholds")
         assert resp.status_code == 401
 
-    def test_put_config_requires_auth(self):
+    def test_put_config_requires_auth(self) -> None:
         """PUT /admin/config/risk-thresholds should require auth."""
         resp = client.put(
             "/v1/admin/config/risk-thresholds",
@@ -250,7 +250,7 @@ class TestAdminConfig:
         )
         assert resp.status_code == 401
 
-    def test_config_response_schema(self):
+    def test_config_response_schema(self) -> None:
         """Verify RiskThresholdResponse schema."""
         from api.main import RiskThresholdResponse, RiskThresholdUpdate
 
@@ -260,7 +260,7 @@ class TestAdminConfig:
         update_fields = RiskThresholdUpdate.model_fields
         assert "thresholds" in update_fields
 
-    def test_system_config_model(self):
+    def test_system_config_model(self) -> None:
         """Verify SystemConfig model has required fields."""
         from database.models import SystemConfig
 
@@ -374,12 +374,12 @@ class TestConfigUtility:
 
 
 class TestPagination:
-    def test_pagination_helper_shape(self):
+    def test_pagination_helper_shape(self) -> int:
         """Verify paginated_response returns correct shape."""
         from api.main import paginated_response
 
         class MockQuery:
-            def count(self):
+            def count(self) -> int:
                 return 100
 
             def filter(self, *args, **kwargs):
@@ -391,7 +391,7 @@ class TestPagination:
             def limit(self, n):
                 return self
 
-            def all(self):
+            def all(self) -> list[object]:
                 return [{"id": i} for i in range(10)]
 
             @property
@@ -410,12 +410,12 @@ class TestPagination:
         assert result["prev_page"] == 1
         assert len(result["data"]) == 10
 
-    def test_pagination_first_page(self):
+    def test_pagination_first_page(self) -> int:
         """Verify pagination metadata for first page."""
         from api.main import paginated_response
 
         class MockQuery:
-            def count(self):
+            def count(self) -> int:
                 return 5
 
             def filter(self, *args, **kwargs):
@@ -427,7 +427,7 @@ class TestPagination:
             def limit(self, n):
                 return self
 
-            def all(self):
+            def all(self) -> list[object]:
                 return [{"id": i} for i in range(5)]
 
             @property
@@ -449,13 +449,13 @@ class TestPagination:
 
 
 class TestSecurityHeaders:
-    def test_hsts_header_present(self):
+    def test_hsts_header_present(self) -> None:
         """Verify HSTS header is set on responses."""
         resp = client.get("/health")
         assert resp.headers.get("Strict-Transport-Security") is not None
         assert "max-age=31536000" in resp.headers["Strict-Transport-Security"]
 
-    def test_security_headers_present(self):
+    def test_security_headers_present(self) -> None:
         """Verify all security headers are present."""
         resp = client.get("/health")
         assert resp.headers.get("X-Content-Type-Options") == "nosniff"
@@ -472,7 +472,7 @@ class TestSecurityHeaders:
 
 
 class TestCeleryConfiguration:
-    def test_celery_app_importable(self):
+    def test_celery_app_importable(self) -> None:
         """Verify the Celery app module can be imported."""
         try:
             from celery_app import app as celery_app
@@ -486,7 +486,7 @@ class TestCeleryConfiguration:
 
             pytest.skip("celery not installed")
 
-    def test_celery_tasks_exist(self):
+    def test_celery_tasks_exist(self) -> None:
         """Verify expected Celery tasks are registered."""
         try:
             from celery_app import app as celery_app
@@ -533,10 +533,10 @@ class TestSetConfigValue:
 
                 return MockQuery()
 
-            def add(self, obj):
+            def add(self, obj) -> None:
                 calls.append(("add", obj))
 
-            def commit(self):
+            def commit(self) -> None:
                 calls.append(("commit",))
 
         set_config_value(MockSession(), "test_key", 100, "Test description", user_id=1)
@@ -567,7 +567,7 @@ class TestSetConfigValue:
 
                 return MockQuery()
 
-            def commit(self):
+            def commit(self) -> None:
                 calls.append(("commit",))
 
         from utils.config import set_config_value

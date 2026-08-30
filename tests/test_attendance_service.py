@@ -21,7 +21,7 @@ from services.attendance_service import AttendanceService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -32,7 +32,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     """Create minimal seed data for attendance tests."""
     course = Course(code="CS101", name="CS Basics", duration_months=6, fee=10000)
     db_session.add(course)
@@ -71,7 +71,7 @@ def seeded_db(db_session):
 
 
 class TestAttendanceService:
-    def test_get_by_date_subject(self, seeded_db):
+    def test_get_by_date_subject(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db
         service = AttendanceService(db)
 
@@ -93,14 +93,14 @@ class TestAttendanceService:
         assert len(result) == 3
         assert result[students[0].id].value == "present"
 
-    def test_get_by_date_subject_empty(self, seeded_db):
+    def test_get_by_date_subject_empty(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db
         service = AttendanceService(db)
 
         result = service.get_by_date_subject(date(2024, 1, 1), subject.id)
         assert result == {}
 
-    def test_bulk_upsert_create(self, seeded_db):
+    def test_bulk_upsert_create(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db
         service = AttendanceService(db)
 
@@ -119,7 +119,7 @@ class TestAttendanceService:
         count = db.query(Attendance).count()
         assert count == 3
 
-    def test_bulk_upsert_update_existing(self, seeded_db):
+    def test_bulk_upsert_update_existing(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db
         service = AttendanceService(db)
 
@@ -149,7 +149,7 @@ class TestAttendanceService:
         updated = db.query(Attendance).filter(Attendance.student_id == students[0].id).first()
         assert updated.status == AttendanceStatus.absent
 
-    def test_bulk_upsert_duplicate(self, seeded_db):
+    def test_bulk_upsert_duplicate(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db
         service = AttendanceService(db)
 

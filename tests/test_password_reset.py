@@ -21,7 +21,7 @@ from services.auth_service import AuthError
 from utils.time import utc_now
 
 
-def _make_unique_user_data():
+def _make_unique_user_data() -> dict[str, object]:
     """Helper to create unique user credentials for each test."""
     tag = uuid.uuid4().hex[:8]
     return {
@@ -52,7 +52,7 @@ def _create_user(test_db, user_data):
 class TestPasswordReset:
     """Test the password reset flow end-to-end."""
 
-    def test_valid_reset_succeeds(self, test_db, auth_service):
+    def test_valid_reset_succeeds(self, test_db, auth_service) -> None:
         """Valid reset should succeed and old password should no longer work."""
         user_data = _make_unique_user_data()
         user = _create_user(test_db, user_data)
@@ -77,7 +77,7 @@ class TestPasswordReset:
         assert user.failed_login_attempts == 0
         assert user.locked_until is None
 
-    def test_expired_token_rejected(self, test_db, auth_service):
+    def test_expired_token_rejected(self, test_db, auth_service) -> None:
         """Expired token should be rejected."""
         user_data = _make_unique_user_data()
         user = _create_user(test_db, user_data)
@@ -102,7 +102,7 @@ class TestPasswordReset:
         with pytest.raises(AuthError, match="invalid or has expired"):
             auth_service.reset_password(user.id, raw_token, "NewPass123!@#")
 
-    def test_reused_token_rejected(self, test_db, auth_service):
+    def test_reused_token_rejected(self, test_db, auth_service) -> None:
         """Reusing a token after successful reset should be rejected."""
         user_data = _make_unique_user_data()
         user = _create_user(test_db, user_data)
@@ -116,7 +116,7 @@ class TestPasswordReset:
         with pytest.raises(AuthError, match="invalid or has expired"):
             auth_service.reset_password(user.id, raw_token, "AnotherPass123!@#")
 
-    def test_forgot_password_no_email_leak(self, test_db, auth_service):
+    def test_forgot_password_no_email_leak(self, test_db, auth_service) -> None:
         """Forgot-password should return same response whether email exists or not."""
         user_data = _make_unique_user_data()
         user = _create_user(test_db, user_data)
@@ -134,7 +134,7 @@ class TestPasswordReset:
         )
         assert non_existent is None
 
-    def test_reset_invalidates_sessions(self, test_db, auth_service):
+    def test_reset_invalidates_sessions(self, test_db, auth_service) -> None:
         """Password reset should mark tokens as invalid for the user."""
         user_data = _make_unique_user_data()
         user = _create_user(test_db, user_data)
@@ -161,7 +161,7 @@ class TestPasswordReset:
         )
         assert abs((naive_now - naive_pwd).total_seconds()) < 30
 
-    def test_password_policy_enforced(self, auth_service):
+    def test_password_policy_enforced(self, auth_service) -> None:
         """Password must meet strength requirements."""
         with pytest.raises(AuthError, match="at least 8 characters"):
             auth_service.validate_password_strength("Short1!")

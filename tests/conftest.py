@@ -17,7 +17,7 @@ from services.student_service import StudentService
 
 
 @pytest.fixture(scope="session")
-def test_db():
+def test_db() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
