@@ -22,8 +22,6 @@ import bcrypt
 import pytest
 
 from database.models import (
-
-pytestmark = pytest.mark.slow
     Attendance,
     AttendanceStatus,
     Course,
@@ -38,6 +36,8 @@ pytestmark = pytest.mark.slow
 )
 from database.models import Session as AcadSession
 from utils.time import utc_now
+
+pytestmark = pytest.mark.slow
 
 
 @pytest.fixture
