@@ -105,7 +105,7 @@ try:
                     print(f"[OK] OTP verification succeeded! user={otp_result['user']['name']}")
                 except AuthError as e2:
                     print(f"[FAIL] Admin login with fallback also failed: {e2}")
-except Exception as e:
+except (OSError, ValueError, KeyError) as e:
     print(f"[FAIL] Login test error: {e}")
     traceback.print_exc()
 finally:
@@ -178,7 +178,7 @@ for route, (mod_path, cls_name) in module_routes.items():
         importlib = __import__(mod_path, fromlist=[cls_name])
         cls = getattr(importlib, cls_name)
         print(f"  [OK] {route}: {mod_path}.{cls_name}")
-    except Exception as e:
+    except (ImportError, AttributeError, OSError) as e:
         imports_failed.append((route, mod_path, cls_name, str(e)))
         print(f"  [FAIL] {route}: {e}")
 
@@ -230,7 +230,7 @@ for mod_path, cls_name in service_imports:
         if cls_name:
             getattr(mod, cls_name)
         print(f"  [OK] {mod_path}" + (f".{cls_name}" if cls_name else ""))
-    except Exception as e:
+    except (ImportError, AttributeError, OSError) as e:
         svc_failed.append((mod_path, str(e)))
         print(f"  [FAIL] {mod_path}: {e}")
 

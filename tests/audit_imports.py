@@ -50,7 +50,7 @@ def safe_py_compile(filepath):
         return True, None
     except SyntaxError as e:
         return False, f"SyntaxError: {e}"
-    except Exception as e:
+    except (OSError, ValueError) as e:
         return False, f"CompileError: {e}"
 
 
@@ -118,7 +118,7 @@ for rel_path, full_path in files:
         results["import_ok"] += 1
     except ImportError as e:
         results["import_fail"].append((rel_path, mod_name, str(e)))
-    except Exception as e:
+    except (OSError, ValueError, AttributeError) as e:
         results["import_fail"].append((rel_path, mod_name, f"{type(e).__name__}: {e}"))
 
 # --- Summary ---
