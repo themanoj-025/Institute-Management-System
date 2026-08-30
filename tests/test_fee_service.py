@@ -11,6 +11,9 @@ from database.models import Course, Fee, FeePayment, FeeStatus, Session, Student
 from services.fee_service import FeeService
 
 
+
+
+pytestmark = pytest.mark.slow
 @pytest.fixture
 def db_session():
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})

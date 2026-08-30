@@ -20,6 +20,8 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
+
+pytestmark = pytest.mark.slow
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-production")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -461,6 +463,7 @@ def test_invalid_verification_token_rejected(test_db, auth_service):
 
     from database.models import User, UserRole
     from services.auth_service import AuthError
+
 
     pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(4)).decode("utf-8")
     user = User(
