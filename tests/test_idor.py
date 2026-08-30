@@ -14,6 +14,8 @@ from fastapi.testclient import TestClient
 
 from api.main import _resolve_student_user_id, app
 
+
+pytestmark = pytest.mark.slow
 _client = TestClient(app)
 
 
@@ -268,6 +270,7 @@ class TestStaffAccessNotBlocked:
     def test_staff_can_access_all_placements(self):
         """Staff can access placements list."""
         from api.main import create_access_token
+
 
         token = create_access_token({"sub": "test_staff", "role": "staff", "user_id": 2})
         headers = {"Authorization": f"Bearer {token}"}

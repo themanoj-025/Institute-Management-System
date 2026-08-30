@@ -15,6 +15,8 @@ from fastapi.testclient import TestClient
 
 from api.main import ALGORITHM, SECRET_KEY, app, create_access_token
 
+
+pytestmark = pytest.mark.slow
 client = TestClient(app)
 
 
@@ -569,6 +571,7 @@ class TestSetConfigValue:
                 calls.append(("commit",))
 
         from utils.config import set_config_value
+
 
         set_config_value(MockSession(), "test_key", 200, user_id=2)
         assert captured_entry is not None

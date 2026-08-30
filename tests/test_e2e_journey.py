@@ -22,6 +22,8 @@ import bcrypt
 import pytest
 
 from database.models import (
+
+pytestmark = pytest.mark.slow
     Attendance,
     AttendanceStatus,
     Course,
@@ -345,6 +347,7 @@ class TestEndToEndJourney:
     def test_risk_explanation_references_real_features(self, test_db, test_data):
         """Risk explanation should reference real feature data when available."""
         from ml.service import MLService
+
 
         ml_svc = MLService()
         risk = ml_svc.predict_student_risk(test_db, student_id=test_data["student"].id)

@@ -11,6 +11,9 @@ from database.models import Course, Notice, Session, Staff, Student, Subject, Us
 from services.search_service import SearchService
 
 
+
+
+pytestmark = pytest.mark.slow
 @pytest.fixture
 def db_session():
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})

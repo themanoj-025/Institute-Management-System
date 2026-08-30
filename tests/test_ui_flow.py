@@ -9,6 +9,8 @@ import os
 import sys
 import traceback
 
+
+pytestmark = pytest.mark.slow
 # Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -71,6 +73,7 @@ try:
     if not admin_pwd:
         try:
             from database.seeder import DEMO_ADMIN_PASSWORD
+
 
             admin_pwd = DEMO_ADMIN_PASSWORD
         except (ImportError, AttributeError):

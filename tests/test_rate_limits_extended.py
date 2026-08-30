@@ -12,9 +12,12 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 
+
+pytestmark = pytest.mark.slow
 def _make_app_with_limits(limits=None):
     """Create a minimal FastAPI app with configurable rate limits for testing."""
     from api.rate_limiter import RateLimitMiddleware
+
 
     app = FastAPI()
 
