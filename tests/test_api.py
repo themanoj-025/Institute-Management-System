@@ -7,18 +7,18 @@ pytestmark = pytest.mark.slow
 client = TestClient(app)
 
 
-def test_login_endpoint():
+def test_login_endpoint() -> None:
     # Attempt login with non-existent user to assert standard unauthorized response
     resp = client.post("/v1/auth/login", json={"username": "none", "password": "bad"})
     assert resp.status_code == 401
 
 
-def test_protected_endpoint_no_token():
+def test_protected_endpoint_no_token() -> None:
     resp = client.get("/v1/students")
     assert resp.status_code == 401
 
 
-def test_health_check():
+def test_health_check() -> None:
     resp = client.get("/health")
     assert resp.status_code == 200
     data = resp.json()
@@ -30,7 +30,7 @@ def test_health_check():
     assert "version" in data
 
 
-def test_v1_health_check():
+def test_v1_health_check() -> None:
     resp = client.get("/v1/health")
     assert resp.status_code == 200
     data = resp.json()
@@ -39,7 +39,7 @@ def test_v1_health_check():
     assert data["version"] == "v1"
 
 
-def test_metrics_endpoint():
+def test_metrics_endpoint() -> None:
     """The /metrics endpoint should return Prometheus-formatted text."""
     resp = client.get("/metrics")
     assert resp.status_code == 200
@@ -49,7 +49,7 @@ def test_metrics_endpoint():
     assert "bbims_http_requests_total" in body or "prometheus_client not installed" in body
 
 
-def test_pagination_response_shape():
+def test_pagination_response_shape() -> None:
     # Verify the paginated response contains all required metadata keys
     resp = client.get("/v1/students", headers={"Authorization": "Bearer invalid"})
     assert resp.status_code == 401  # No auth = unauthorized
@@ -108,7 +108,7 @@ def _make_rate_limit_app(limits=None):
     return app
 
 
-def test_rate_limit_headers_on_protected_endpoint():
+def test_rate_limit_headers_on_protected_endpoint() -> None:
     """Protected endpoints should include X-RateLimit-* headers."""
     rl_client = TestClient(_make_rate_limit_app())
     resp = rl_client.post("/v1/auth/login", json={"username": "none", "password": "bad"})
@@ -119,7 +119,7 @@ def test_rate_limit_headers_on_protected_endpoint():
     assert resp.headers["X-RateLimit-Remaining"] == "4"
 
 
-def test_rate_limiter_rejects_excess_requests():
+def test_rate_limiter_rejects_excess_requests() -> None:
     """After exhausting the limit, the 6th request should get 429."""
     rl_client = TestClient(_make_rate_limit_app())
 
@@ -137,7 +137,7 @@ def test_rate_limiter_rejects_excess_requests():
     assert resp.headers["X-RateLimit-Remaining"] == "0"
 
 
-def test_rate_limiter_allows_options_preflight():
+def test_rate_limiter_allows_options_preflight() -> None:
     """CORS preflight (OPTIONS) should never be rate-limited."""
     rl_client = TestClient(_make_rate_limit_app())
     # Exhaust the limit first
@@ -148,7 +148,7 @@ def test_rate_limiter_allows_options_preflight():
     assert resp.status_code != 429
 
 
-def test_rate_limiter_no_headers_on_unprotected_endpoint():
+def test_rate_limiter_no_headers_on_unprotected_endpoint() -> None:
     """Unprotected endpoints should not carry rate-limit headers."""
     rl_client = TestClient(_make_rate_limit_app())
     resp = rl_client.get("/v1/health")
@@ -156,7 +156,7 @@ def test_rate_limiter_no_headers_on_unprotected_endpoint():
     assert "X-RateLimit-Limit" not in resp.headers
 
 
-def test_rate_limiter_independent_paths():
+def test_rate_limiter_independent_paths() -> None:
     """Rate limits for different paths should be independent."""
     rl_client = TestClient(_make_rate_limit_app())
     # Exhaust /v1/auth/login limit
@@ -190,7 +190,7 @@ def test_rate_limiter_independent_paths():
     assert resp.headers["X-RateLimit-Remaining"] == "2"
 
 
-def test_rate_limiter_students_headers_present():
+def test_rate_limiter_students_headers_present() -> None:
     """POST /v1/students should carry rate-limit headers.
 
     The rate-limit middleware runs before auth, so even an unauthenticated

@@ -15,7 +15,7 @@ from services.placement_service import PlacementService
 
 pytestmark = pytest.mark.slow
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -26,7 +26,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     course = Course(code="CS101", name="CS", duration_months=6, fee=10000)
     db_session.add(course)
     sess = Session(name="2024", start_date=date(2024, 1, 1), end_date=date(2024, 12, 31))
@@ -58,7 +58,7 @@ def seeded_db(db_session):
 
 
 class TestPlacementService:
-    def test_create_placement(self, seeded_db):
+    def test_create_placement(self, seeded_db) -> None:
         db, student = seeded_db
         service = PlacementService(db)
         result = service.create_placement(
@@ -73,7 +73,7 @@ class TestPlacementService:
         assert result["package_lpa"] == 24.0
         assert "Placed Student" in result["student_name"]
 
-    def test_get_all_placements(self, seeded_db):
+    def test_get_all_placements(self, seeded_db) -> None:
         db, student = seeded_db
         service = PlacementService(db)
         service.create_placement(
@@ -94,7 +94,7 @@ class TestPlacementService:
         placements = service.get_all_placements()
         assert len(placements) == 2
 
-    def test_placement_order(self, seeded_db):
+    def test_placement_order(self, seeded_db) -> None:
         db, student = seeded_db
         service = PlacementService(db)
         service.create_placement(
@@ -115,6 +115,6 @@ class TestPlacementService:
         placements = service.get_all_placements()
         assert placements[0]["id"] > placements[1]["id"]  # Desc order
 
-    def test_empty_placements(self, db_session):
+    def test_empty_placements(self, db_session) -> None:
         service = PlacementService(db_session)
         assert service.get_all_placements() == []

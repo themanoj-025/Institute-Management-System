@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 
 
 pytestmark = pytest.mark.slow
-def _make_app_with_limits(limits=None):
+def _make_app_with_limits(limits=None) -> dict[str, object]:
     """Create a minimal FastAPI app with configurable rate limits for testing."""
     from api.rate_limiter import RateLimitMiddleware
 
@@ -23,51 +23,51 @@ def _make_app_with_limits(limits=None):
 
     # Add a simple test endpoint for each route group
     @app.post("/v1/courses/test")
-    async def test_courses():
+    async def test_courses() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/staff/test")
-    async def test_staff():
+    async def test_staff() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/fees/test")
-    async def test_fees():
+    async def test_fees() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/placements/test")
-    async def test_placements():
+    async def test_placements() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/attendance/test")
-    async def test_attendance():
+    async def test_attendance() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/results/test")
-    async def test_results():
+    async def test_results() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/leaves/test")
-    async def test_leaves():
+    async def test_leaves() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/notices/test")
-    async def test_notices():
+    async def test_notices() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/feedback/test")
-    async def test_feedback():
+    async def test_feedback() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.get("/v1/analytics/test")
-    async def test_analytics():
+    async def test_analytics() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/courses/reset-test")
-    async def test_reset_test():
+    async def test_reset_test() -> dict[str, object]:
         return {"status": "ok"}
 
     @app.post("/v1/auth/forgot-password")
-    async def test_forgot_password():
+    async def test_forgot_password() -> dict[str, object]:
         return {
             "status": "sent",
             "message": "If an account exists, a reset link has been sent.",
@@ -109,7 +109,7 @@ class TestRateLimitsExtended:
     ]
 
     @pytest.mark.parametrize("name,path,limit,window", ENDPOINTS)
-    def test_endpoint_returns_429_when_exhausted(self, name, path, limit, window):
+    def test_endpoint_returns_429_when_exhausted(self, name, path, limit, window) -> None:
         """Each endpoint should return 429 once its rate limit is exceeded."""
         app = _make_app_with_limits(
             {
@@ -145,7 +145,7 @@ class TestRateLimitsExtended:
         assert "Retry-After" in resp.headers
         assert resp.headers["X-RateLimit-Remaining"] == "0"
 
-    def test_forgot_password_rate_limited(self):
+    def test_forgot_password_rate_limited(self) -> None:
         """Forgot-password endpoint should have a strict rate limit."""
         path = "/v1/auth/forgot-password"
         limit = 3
@@ -169,7 +169,7 @@ class TestRateLimitsExtended:
             assert "X-RateLimit-Limit" in resp.headers
             assert "X-RateLimit-Remaining" in resp.headers
 
-    def test_rate_limit_resets_after_window(self):
+    def test_rate_limit_resets_after_window(self) -> None:
         """Rate limit should reset after the window expires."""
         # Use a very short window (1 second) for testing
         path = "/v1/courses/reset-test"
@@ -198,7 +198,7 @@ class TestRateLimitsExtended:
         remaining = int(resp.headers["X-RateLimit-Remaining"])
         assert remaining == limit - 1, f"Expected {limit - 1} remaining, got {remaining}"
 
-    def test_independent_rate_limits_for_different_groups(self):
+    def test_independent_rate_limits_for_different_groups(self) -> None:
         """Rate limits for different route groups should be independent."""
         app = _make_app_with_limits(
             {

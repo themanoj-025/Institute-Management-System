@@ -10,7 +10,7 @@ from services.course_service import CourseService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -40,19 +40,19 @@ def seeded_db(db_session):
 
 
 class TestCourseService:
-    def test_get_all_courses(self, seeded_db):
+    def test_get_all_courses(self, seeded_db) -> None:
         service = CourseService(seeded_db)
         courses = service.get_all_courses()
         assert len(courses) == 1
         assert courses[0]["code"] == "PY101"
         assert courses[0]["name"] == "Python Basics"
 
-    def test_get_all_courses_empty(self, db_session):
+    def test_get_all_courses_empty(self, db_session) -> None:
         service = CourseService(db_session)
         courses = service.get_all_courses()
         assert courses == []
 
-    def test_get_course_details(self, seeded_db):
+    def test_get_course_details(self, seeded_db) -> None:
         service = CourseService(seeded_db)
         details = service.get_course_details(1)
         assert details["code"] == "PY101"
@@ -60,12 +60,12 @@ class TestCourseService:
         assert len(details["subjects"]) == 2
         assert details["modules"][0]["name"] == "Module 1"
 
-    def test_get_course_details_not_found(self, seeded_db):
+    def test_get_course_details_not_found(self, seeded_db) -> None:
         service = CourseService(seeded_db)
         with pytest.raises(ValueError, match="Course not found"):
             service.get_course_details(999)
 
-    def test_get_course_details_includes_duration(self, seeded_db):
+    def test_get_course_details_includes_duration(self, seeded_db) -> None:
         service = CourseService(seeded_db)
         details = service.get_course_details(1)
         assert details["duration"] == 3

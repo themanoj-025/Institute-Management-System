@@ -15,7 +15,7 @@ from services.result_service import ResultService
 
 pytestmark = pytest.mark.slow
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -26,7 +26,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     course = Course(code="CS101", name="CS", duration_months=6, fee=10000)
     db_session.add(course)
     sess = Session(name="2024", start_date=date(2024, 1, 1), end_date=date(2024, 12, 31))
@@ -73,20 +73,20 @@ def seeded_db(db_session):
 
 
 class TestResultService:
-    def test_get_existing_marks(self, seeded_db):
+    def test_get_existing_marks(self, seeded_db) -> None:
         db, student, subject, sess = seeded_db
         service = ResultService(db)
         marks = service.get_existing_marks(subject.id, sess.id, "Midterm")
         assert len(marks) == 1
         assert marks[student.id] == 85.0
 
-    def test_get_existing_marks_empty(self, seeded_db):
+    def test_get_existing_marks_empty(self, seeded_db) -> None:
         db, student, subject, sess = seeded_db
         service = ResultService(db)
         marks = service.get_existing_marks(subject.id, sess.id, "Final")
         assert marks == {}
 
-    def test_get_student_results(self, seeded_db):
+    def test_get_student_results(self, seeded_db) -> None:
         db, student, subject, sess = seeded_db
         service = ResultService(db)
         results = service.get_student_results(student.id)
@@ -96,11 +96,11 @@ class TestResultService:
         assert results[0]["grade"] == "A"
         assert results[0]["pct"] == 85.0
 
-    def test_get_student_results_empty(self, db_session):
+    def test_get_student_results_empty(self, db_session) -> None:
         service = ResultService(db_session)
         assert service.get_student_results(999) == []
 
-    def test_bulk_upsert_create(self, seeded_db):
+    def test_bulk_upsert_create(self, seeded_db) -> None:
         db, student, subject, sess = seeded_db
         service = ResultService(db)
         records = [
@@ -119,7 +119,7 @@ class TestResultService:
         results = service.get_student_results(student.id)
         assert len(results) == 2
 
-    def test_bulk_upsert_update_existing(self, seeded_db):
+    def test_bulk_upsert_update_existing(self, seeded_db) -> None:
         db, student, subject, sess = seeded_db
         service = ResultService(db)
         records = [
@@ -138,7 +138,7 @@ class TestResultService:
         assert len(results) == 1
         assert results[0]["marks"] == 95.0
 
-    def test_soft_deleted_excluded(self, seeded_db):
+    def test_soft_deleted_excluded(self, seeded_db) -> None:
         """Soft-deleted results should NOT appear in queries."""
         db, student, subject, sess = seeded_db
         service = ResultService(db)

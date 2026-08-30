@@ -19,7 +19,7 @@ pytestmark = pytest.mark.slow
 class TestRedisTokenBlacklist:
     """Test the Redis-backed token blacklist implementation."""
 
-    def _make_token(self, jti=None, user_id=1):
+    def _make_token(self, jti=None, user_id=1) -> tuple[object, ...]:
         """Create a JWT with the given jti."""
         import jwt
 
@@ -43,7 +43,7 @@ class TestRedisTokenBlacklist:
         )
         return token, jti, expire
 
-    def test_token_rejected_after_logout(self):
+    def test_token_rejected_after_logout(self) -> None:
         """A token revoked via logout should be rejected on the next request."""
         from api.main import _blacklist_token, _check_token_blacklist
 
@@ -62,7 +62,7 @@ class TestRedisTokenBlacklist:
         _, other_jti, _ = self._make_token()
         assert not _check_token_blacklist(other_jti), "Unrelated JTI should not be blacklisted"
 
-    def test_db_fallback_when_redis_unavailable(self):
+    def test_db_fallback_when_redis_unavailable(self) -> None:
         """When Redis is unavailable, the DB fallback should still reject blacklisted tokens."""
         from api.main import _blacklist_token, _check_token_blacklist
 
@@ -81,7 +81,7 @@ class TestRedisTokenBlacklist:
         result = _check_token_blacklist(jti)
         assert result, "Token should be blacklisted even if Redis is unavailable (DB fallback)"
 
-    def test_redis_expiry_around_expected_ttl(self):
+    def test_redis_expiry_around_expected_ttl(self) -> None:
         """Redis entries should expire around the expected TTL."""
         from api.main import _blacklist_token, _check_token_blacklist
 
@@ -107,7 +107,7 @@ class TestRedisTokenBlacklist:
         # This test verifies the Redis TTL behavior.
         time.sleep(1)  # Give it a bit more time
 
-    def test_blacklist_consistency_redis_and_db(self):
+    def test_blacklist_consistency_redis_and_db(self) -> None:
         """Both Redis and DB should have the blacklisted token."""
         from api.main import _blacklist_token, _check_token_blacklist
         from database.db_session import SessionLocal

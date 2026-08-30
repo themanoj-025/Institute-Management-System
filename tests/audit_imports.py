@@ -16,7 +16,7 @@ sys.path.insert(0, PROJECT_ROOT)
 EXCLUDE_DIRS = {"__pycache__", "venv", ".git", ".github"}
 
 
-def get_project_files():
+def get_project_files() -> list[object]:
     """Get all .py files in the project excluding excluded dirs."""
     files = []
     for root, dirs, fnames in os.walk(PROJECT_ROOT):
@@ -30,7 +30,7 @@ def get_project_files():
     return sorted(files)
 
 
-def compute_module_name(rel_path):
+def compute_module_name(rel_path) -> str:
     """Convert a relative file path like 'services/auth_service.py' to 'services.auth_service'."""
     parts = rel_path.replace("\\", "/").split("/")
     mod_name = parts[-1].replace(".py", "")
@@ -41,7 +41,7 @@ def compute_module_name(rel_path):
     return ".".join(pkg_parts)
 
 
-def safe_py_compile(filepath):
+def safe_py_compile(filepath) -> tuple[object, ...]:
     """Try to compile a .py file and return (success, error_msg)."""
     try:
         with open(filepath, encoding="utf-8") as f:

@@ -193,7 +193,7 @@ def seeded_db(test_db):
 # Feature Engineering Tests
 
 
-def test_compute_student_features(seeded_db):
+def test_compute_student_features(seeded_db) -> None:
     """Verify feature computation returns all expected features."""
     student = seeded_db.query(Student).first()
     features = compute_student_features(seeded_db, student.id)
@@ -206,13 +206,13 @@ def test_compute_student_features(seeded_db):
     assert features["attendance_rate_overall"] <= 100
 
 
-def test_compute_student_features_nonexistent(seeded_db):
+def test_compute_student_features_nonexistent(seeded_db) -> None:
     """Non-existent student should raise ValueError."""
     with pytest.raises(ValueError, match="Student .* not found"):
         compute_student_features(seeded_db, 99999)
 
 
-def test_compute_all_features_shape(seeded_db):
+def test_compute_all_features_shape(seeded_db) -> None:
     """Verify batch feature computation returns correct DataFrame shape."""
     df = compute_all_features(seeded_db)
     assert isinstance(df, pd.DataFrame)
@@ -221,7 +221,7 @@ def test_compute_all_features_shape(seeded_db):
         assert feat in df.columns, f"Missing column: {feat}"
 
 
-def test_compute_target(seeded_db):
+def test_compute_target(seeded_db) -> None:
     """Verify target computation flags at-risk students correctly."""
     target = compute_target(seeded_db)
     assert isinstance(target, pd.Series)
@@ -235,7 +235,7 @@ def test_compute_target(seeded_db):
 # Training Tests
 
 
-def test_train_risk_model(seeded_db):
+def test_train_risk_model(seeded_db) -> None:
     """Verify model training runs and produces metrics."""
     trained, metrics = train_risk_model(seeded_db, force_retrain=True)
 
@@ -246,7 +246,7 @@ def test_train_risk_model(seeded_db):
     assert metrics["test_samples"] >= 0
 
 
-def test_train_risk_model_skip_if_exists(seeded_db):
+def test_train_risk_model_skip_if_exists(seeded_db) -> None:
     """Verify training skips if model exists and force_retrain=False."""
     # Train once
     train_risk_model(seeded_db, force_retrain=True)
@@ -259,7 +259,7 @@ def test_train_risk_model_skip_if_exists(seeded_db):
 # ML Service Tests
 
 
-def test_ml_service_get_dashboard_kpis(seeded_db):
+def test_ml_service_get_dashboard_kpis(seeded_db) -> None:
     """Verify MLService.get_dashboard_kpis returns correct structure."""
     svc = MLService()
     kpis = svc.get_dashboard_kpis(seeded_db)
@@ -272,7 +272,7 @@ def test_ml_service_get_dashboard_kpis(seeded_db):
     assert isinstance(kpis["collection_rate"], (int, float))
 
 
-def test_ml_service_get_at_risk_students(seeded_db):
+def test_ml_service_get_at_risk_students(seeded_db) -> None:
     """Verify at-risk student detection returns expected structure."""
     svc = MLService()
     at_risk = svc.get_at_risk_students(seeded_db, threshold=0.0, top_n=10)
@@ -287,7 +287,7 @@ def test_ml_service_get_at_risk_students(seeded_db):
         assert "explanations" in student
 
 
-def test_ml_service_predict_student_risk(seeded_db):
+def test_ml_service_predict_student_risk(seeded_db) -> None:
     """Verify single-student risk prediction."""
     student = seeded_db.query(Student).first()
     svc = MLService()
@@ -301,14 +301,14 @@ def test_ml_service_predict_student_risk(seeded_db):
     assert len(result["explanations"]) <= 3  # top_n=3
 
 
-def test_ml_service_predict_student_risk_nonexistent(seeded_db):
+def test_ml_service_predict_student_risk_nonexistent(seeded_db) -> None:
     """Non-existent student ID should return None."""
     svc = MLService()
     result = svc.predict_student_risk(seeded_db, 99999)
     assert result is None
 
 
-def test_ml_service_predict_attendance_trend(seeded_db):
+def test_ml_service_predict_attendance_trend(seeded_db) -> None:
     """Verify attendance trend prediction returns expected structure."""
     student = seeded_db.query(Student).first()
     svc = MLService()
@@ -319,7 +319,7 @@ def test_ml_service_predict_attendance_trend(seeded_db):
     assert "current_4wk_rate" in trend or "prediction" in trend
 
 
-def test_ml_service_train(seeded_db):
+def test_ml_service_train(seeded_db) -> None:
     """Verify explicit training triggers model training."""
     svc = MLService()
     trained, metrics = svc.train(seeded_db, force=True)
@@ -331,7 +331,7 @@ def test_ml_service_train(seeded_db):
 # Explainability Tests
 
 
-def test_explain_prediction_fallback(seeded_db):
+def test_explain_prediction_fallback(seeded_db) -> None:
     """Verify explain_prediction works with fallback to feature importances."""
     from xgboost import XGBClassifier
 
@@ -364,19 +364,19 @@ def test_explain_prediction_fallback(seeded_db):
 # Analytics Service Integration Tests
 
 
-def test_analytics_service_get_dashboard_kpis(seeded_db, analytics_service):
+def test_analytics_service_get_dashboard_kpis(seeded_db, analytics_service) -> None:
     """Verify AnalyticsService delegates correctly to MLService."""
     kpis = analytics_service.get_dashboard_kpis()
     assert kpis["total_students"] >= 4
 
 
-def test_analytics_service_get_at_risk(seeded_db, analytics_service):
+def test_analytics_service_get_at_risk(seeded_db, analytics_service) -> None:
     """Verify AnalyticsService.get_at_risk_students returns list."""
     at_risk = analytics_service.get_at_risk_students(threshold=0.0, top_n=10)
     assert isinstance(at_risk, list)
 
 
-def test_analytics_service_predict_attendance_trend(seeded_db, analytics_service):
+def test_analytics_service_predict_attendance_trend(seeded_db, analytics_service) -> None:
     """Verify attendance trend prediction works through analytics service."""
     student = seeded_db.query(Student).first()
     trend = analytics_service.predict_attendance_trend(student.id)

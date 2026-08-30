@@ -12,7 +12,7 @@ from services.staff_attendance_service import StaffAttendanceService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -23,7 +23,7 @@ def db_session():
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> tuple[object, ...]:
     user = User(
         username="prof1",
         password_hash="hash",
@@ -46,7 +46,7 @@ def seeded_db(db_session):
 
 
 class TestStaffAttendanceService:
-    def test_mark_attendance_create(self, seeded_db):
+    def test_mark_attendance_create(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         result = service.mark_attendance(
@@ -60,7 +60,7 @@ class TestStaffAttendanceService:
         assert result["in_time"] == "09:00"
         assert result["out_time"] == "17:00"
 
-    def test_mark_attendance_update(self, seeded_db):
+    def test_mark_attendance_update(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         service.mark_attendance(staff.id, date(2024, 9, 1), AttendanceStatus.present)
@@ -77,14 +77,14 @@ class TestStaffAttendanceService:
         count = db.query(StaffAttendance).filter(StaffAttendance.staff_id == staff.id).count()
         assert count == 1
 
-    def test_mark_attendance_without_times(self, seeded_db):
+    def test_mark_attendance_without_times(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         result = service.mark_attendance(staff.id, date(2024, 9, 1), AttendanceStatus.late)
         assert result["status"] == "late"
         assert result["in_time"] is None
 
-    def test_get_staff_attendance(self, seeded_db):
+    def test_get_staff_attendance(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         for day in range(1, 6):
@@ -93,13 +93,13 @@ class TestStaffAttendanceService:
         records = service.get_staff_attendance(staff.id)
         assert len(records) == 5
 
-    def test_get_staff_attendance_empty(self, seeded_db):
+    def test_get_staff_attendance_empty(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         records = service.get_staff_attendance(staff.id)
         assert records == []
 
-    def test_get_staff_attendance_by_month(self, seeded_db):
+    def test_get_staff_attendance_by_month(self, seeded_db) -> None:
         db, staff = seeded_db
         service = StaffAttendanceService(db)
         service.mark_attendance(staff.id, date(2024, 9, 1), AttendanceStatus.present)
