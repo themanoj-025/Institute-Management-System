@@ -10,7 +10,7 @@ from services.notice_service import NoticeService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -34,7 +34,7 @@ def admin_user(db_session):
 
 
 class TestNoticeService:
-    def test_create_notice(self, db_session, admin_user):
+    def test_create_notice(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         result = service.create_notice(
             title="Holiday Notice",
@@ -46,7 +46,7 @@ class TestNoticeService:
         assert result["content"] == "Institute closed on Friday"
         assert result["is_pinned"] is False
 
-    def test_create_pinned_notice(self, db_session, admin_user):
+    def test_create_pinned_notice(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         result = service.create_notice(
             title="Important",
@@ -57,7 +57,7 @@ class TestNoticeService:
         )
         assert result["is_pinned"] is True
 
-    def test_get_all_notices(self, db_session, admin_user):
+    def test_get_all_notices(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         for i in range(3):
             service.create_notice(
@@ -67,7 +67,7 @@ class TestNoticeService:
         notices = service.get_all_notices()
         assert len(notices) == 3
 
-    def test_get_notices_by_target_role(self, db_session, admin_user):
+    def test_get_notices_by_target_role(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         service.create_notice(
             title="All", content="All", author_id=admin_user.id, target_role="all"
@@ -86,7 +86,7 @@ class TestNoticeService:
         student_notices = service.get_all_notices(target_role="student")
         assert len(student_notices) == 2  # "all" + "students"
 
-    def test_delete_notice(self, db_session, admin_user):
+    def test_delete_notice(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         result = service.create_notice(title="Delete Me", content="Gone", author_id=admin_user.id)
         notice_id = result["id"]
@@ -95,7 +95,7 @@ class TestNoticeService:
         remaining = service.get_all_notices()
         assert len(remaining) == 0
 
-    def test_pinned_notices_first(self, db_session, admin_user):
+    def test_pinned_notices_first(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         service.create_notice(
             title="Regular", content="Regular", author_id=admin_user.id, is_pinned=False
@@ -108,7 +108,7 @@ class TestNoticeService:
         assert notices[0]["is_pinned"] is True
         assert notices[0]["title"] == "Pinned"
 
-    def test_notice_format(self, db_session, admin_user):
+    def test_notice_format(self, db_session, admin_user) -> None:
         service = NoticeService(db_session)
         result = service.create_notice(title="Test", content="Test", author_id=admin_user.id)
         assert "id" in result

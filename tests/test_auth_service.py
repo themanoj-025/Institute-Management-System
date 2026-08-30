@@ -12,14 +12,14 @@ PWD_STAFF = b"StaffPass456!"
 PWD_STUDENT = b"StudentPass789!"
 
 
-def test_password_hashing(auth_service):
+def test_password_hashing(auth_service) -> None:
     # Enforce BCRYPT_COST=14
     hash_val = bcrypt.hashpw(PWD_ADMIN, bcrypt.gensalt(14)).decode("utf-8")
     assert bcrypt.checkpw(PWD_ADMIN, hash_val.encode())
     assert not bcrypt.checkpw(b"wrong", hash_val.encode())
 
 
-def test_login_success(test_db, auth_service):
+def test_login_success(test_db, auth_service) -> None:
     # Create test user
     pwd_hash = bcrypt.hashpw(PWD_ADMIN, bcrypt.gensalt(14)).decode("utf-8")
     user = User(
@@ -39,17 +39,17 @@ def test_login_success(test_db, auth_service):
     assert result.get("otp_sent") is True
 
 
-def test_login_wrong_password(auth_service):
+def test_login_wrong_password(auth_service) -> None:
     with pytest.raises(AuthError, match="Invalid username or password"):
         auth_service.login("test_admin", "WrongPass")
 
 
-def test_login_nonexistent_user(auth_service):
+def test_login_nonexistent_user(auth_service) -> None:
     with pytest.raises(AuthError, match="Invalid username or password"):
         auth_service.login("non_existent", "SomePass")
 
 
-def test_account_lockout(test_db, auth_service):
+def test_account_lockout(test_db, auth_service) -> None:
     pwd_hash = bcrypt.hashpw(PWD_STUDENT, bcrypt.gensalt(14)).decode("utf-8")
     user = User(
         username="locked_user",
@@ -73,7 +73,7 @@ def test_account_lockout(test_db, auth_service):
         auth_service.login("locked_user", "WrongPass")
 
 
-def test_account_locked_timestamp(test_db, auth_service):
+def test_account_locked_timestamp(test_db, auth_service) -> None:
     user = test_db.query(User).filter(User.username == "locked_user").first()
     assert user.locked_until is not None
     # SQLite stores naive UTC datetimes. Convert both to naive for comparison
@@ -85,7 +85,7 @@ def test_account_locked_timestamp(test_db, auth_service):
     ), f"locked_until ({locked_until_naive}) should be after now ({now_naive})"
 
 
-def test_otp_generation(auth_service):
+def test_otp_generation(auth_service) -> None:
     # Verify 6-digit OTP generation via the service
     # randbelow(900000) + 100000 => OTP "123456" when randbelow returns 23456
     with patch("services.auth_service.secrets.randbelow", return_value=23456):
@@ -104,7 +104,7 @@ def test_otp_generation(auth_service):
         assert result.get("otp_sent") is True
 
 
-def test_otp_verification(test_db, auth_service):
+def test_otp_verification(test_db, auth_service) -> None:
     # Seed a known user for OTP verification test
     pwd_hash = bcrypt.hashpw(PWD_ADMIN, bcrypt.gensalt(14)).decode("utf-8")
     user = User(

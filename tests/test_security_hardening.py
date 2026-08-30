@@ -26,7 +26,7 @@ os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-product
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def test_app_fails_without_secret_key():
+def test_app_fails_without_secret_key() -> None:
     """Verify the app refuses to start when SECRET_KEY is not set."""
     original_key = os.environ.get("SECRET_KEY")
     if "SECRET_KEY" in os.environ:
@@ -39,7 +39,7 @@ def test_app_fails_without_secret_key():
             os.environ["SECRET_KEY"] = original_key
 
 
-def test_settings_missing_secret_key_raises():
+def test_settings_missing_secret_key_raises() -> None:
     """Verify SECRET_KEY access raises KeyError when env var missing."""
     original_key = os.environ.get("SECRET_KEY")
     if "SECRET_KEY" in os.environ:
@@ -52,7 +52,7 @@ def test_settings_missing_secret_key_raises():
             os.environ["SECRET_KEY"] = original_key
 
 
-def test_password_not_in_response_body():
+def test_password_not_in_response_body() -> None:
     """Verify login response never contains the actual submitted password value."""
     from api.main import app as _app
 
@@ -68,7 +68,7 @@ def test_password_not_in_response_body():
     assert "testpass" not in body_text, "Actual password value leaked in response!"
 
 
-def test_seeder_generates_random_passwords():
+def test_seeder_generates_random_passwords() -> None:
     """Verify the seeder generates random passwords each run."""
     from database.seeder import _generate_password
 
@@ -90,7 +90,7 @@ def test_seeder_generates_random_passwords():
 class TestInputValidation:
     """Verify the API rejects or safely handles malicious input."""
 
-    def _make_token(self):
+    def _make_token(self) -> str:
         import uuid
 
         import jwt
@@ -109,7 +109,7 @@ class TestInputValidation:
             algorithm=ALGORITHM,
         )
 
-    def test_invalid_email_rejected(self):
+    def test_invalid_email_rejected(self) -> None:
         """Invalid email formats should be rejected with 422."""
         from api.main import app
 
@@ -136,7 +136,7 @@ class TestInputValidation:
                 resp.status_code,
             )
 
-    def test_sql_injection_in_search(self):
+    def test_sql_injection_in_search(self) -> None:
         """SQL injection in search should not cause errors."""
         from database.db_session import SessionLocal
         from services.search_service import SearchService
@@ -163,7 +163,7 @@ class TestInputValidation:
 # --- SEARCH SERVICE PARAMETERIZED QUERY VERIFICATION -----------------------
 
 
-def test_search_service_uses_parameterized_queries():
+def test_search_service_uses_parameterized_queries() -> None:
     """Verify search service uses parameterized queries, not f-strings."""
     import ast
 
@@ -194,14 +194,14 @@ def test_search_service_uses_parameterized_queries():
 # --- PAGINATION CAP TEST -------------------------------------------------
 
 
-def test_pagination_per_page_is_capped():
+def test_pagination_per_page_is_capped() -> int:
     """Verify paginated_response caps per_page at MAX_PER_PAGE."""
     from api.main import MAX_PER_PAGE, paginated_response
 
     assert MAX_PER_PAGE == 100
 
     class MockQuery:
-        def count(self):
+        def count(self) -> int:
             return 500
 
         def filter(self, *args, **kwargs):
@@ -213,7 +213,7 @@ def test_pagination_per_page_is_capped():
         def limit(self, n):
             return self
 
-        def all(self):
+        def all(self) -> list[object]:
             return [{"id": i} for i in range(MAX_PER_PAGE)]
 
         @property
@@ -245,7 +245,7 @@ def test_pagination_per_page_is_capped():
 # --- RATE LIMIT CONFIGURATION TEST ----------------------------------------
 
 
-def test_rate_limits_configured_for_critical_endpoints():
+def test_rate_limits_configured_for_critical_endpoints() -> None:
     """Critical endpoints must have rate limits configured in main.py."""
     required_limits = ["/v1/auth/login", "/v1/auth/refresh", "/v1/auth/otp/request"]
     main_path = os.path.join(
@@ -262,7 +262,7 @@ def test_rate_limits_configured_for_critical_endpoints():
 # --- HEALTH CHECK TEST -----------------------------------------------------
 
 
-def test_health_check_probes_database():
+def test_health_check_probes_database() -> None:
     """Health check should include database connectivity check."""
     from utils.observability import HealthChecker
 
@@ -276,7 +276,7 @@ def test_health_check_probes_database():
 # --- ACCOUNT LOCKOUT TEST --------------------------------------------------
 
 
-def test_account_lockout_after_max_attempts(test_db, auth_service):
+def test_account_lockout_after_max_attempts(test_db, auth_service) -> None:
     """Account must be locked after MAX_LOGIN_ATTEMPTS consecutive failures."""
     import bcrypt
 
@@ -309,7 +309,7 @@ def test_account_lockout_after_max_attempts(test_db, auth_service):
 # --- TOKEN JTI UNIQUENESS TEST -------------------------------------------
 
 
-def test_every_token_has_unique_jti():
+def test_every_token_has_unique_jti() -> None:
     """Every JWT token should have a unique jti claim."""
     import jwt
 
@@ -329,7 +329,7 @@ def test_every_token_has_unique_jti():
 # --- ENV FILE TEST -------------------------------------------------------
 
 
-def test_env_file_exists():
+def test_env_file_exists() -> None:
     """.env.example must exist and document required variables."""
     env_example_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -346,7 +346,7 @@ def test_env_file_exists():
 # --- CORRECT LOGIN RESETS FAILED ATTEMPTS ---------------------------------
 
 
-def test_correct_login_resets_failed_attempts(test_db, auth_service):
+def test_correct_login_resets_failed_attempts(test_db, auth_service) -> None:
     """Successful login resets failed_login_attempts to 0."""
     import bcrypt
 
@@ -380,7 +380,7 @@ def test_correct_login_resets_failed_attempts(test_db, auth_service):
 # --- EMAIL VERIFICATION TESTS ---------------------------------------------
 
 
-def test_email_verification_tokens(test_db, auth_service):
+def test_email_verification_tokens(test_db, auth_service) -> None:
     """Verify email verification token generation and validation."""
     import bcrypt
 
@@ -434,7 +434,7 @@ def test_email_verification_tokens(test_db, auth_service):
         auth_service.verify_email_token(user.id, raw_token)
 
 
-def test_login_rejected_when_email_not_verified(test_db, auth_service):
+def test_login_rejected_when_email_not_verified(test_db, auth_service) -> None:
     """Login must be rejected when email_verified is False."""
     import bcrypt
 
@@ -457,7 +457,7 @@ def test_login_rejected_when_email_not_verified(test_db, auth_service):
         auth_service.login("unverified_user", "TestPass123!")
 
 
-def test_invalid_verification_token_rejected(test_db, auth_service):
+def test_invalid_verification_token_rejected(test_db, auth_service) -> None:
     """Invalid verification tokens should be rejected."""
     import bcrypt
 

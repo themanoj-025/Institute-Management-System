@@ -10,7 +10,7 @@ from services.activity_service import ActivityService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -39,7 +39,7 @@ def test_user(db_session):
 
 
 class TestActivityService:
-    def test_log_success(self, db_session, activity_service, test_user):
+    def test_log_success(self, db_session, activity_service, test_user) -> None:
         """Verify logging a successful action creates a DB entry."""
         activity_service.log(
             user_id=test_user.id,
@@ -54,7 +54,7 @@ class TestActivityService:
         assert logs[0].action == "Viewed dashboard [success]"
         assert logs[0].module == "Dashboard"
 
-    def test_log_failure(self, db_session, activity_service, test_user):
+    def test_log_failure(self, db_session, activity_service, test_user) -> None:
         """Verify logging a failure action works correctly."""
         activity_service.log(
             user_id=test_user.id,
@@ -68,7 +68,7 @@ class TestActivityService:
         assert len(logs) == 1
         assert logs[0].action == "Login failed [fail]"
 
-    def test_log_with_details(self, db_session, activity_service, test_user):
+    def test_log_with_details(self, db_session, activity_service, test_user) -> None:
         """Verify logging with extra details dictionary."""
         activity_service.log(
             user_id=test_user.id,
@@ -82,7 +82,7 @@ class TestActivityService:
         assert len(logs) == 1
         assert logs[0].action == "Updated profile [success]"
 
-    def test_get_logs(self, db_session, activity_service, test_user):
+    def test_get_logs(self, db_session, activity_service, test_user) -> None:
         """Verify get_logs returns logs in reverse chronological order."""
         for i in range(5):
             activity_service.log(
@@ -94,7 +94,7 @@ class TestActivityService:
         logs = activity_service.get_logs(limit=3)
         assert len(logs) == 3
 
-    def test_get_user_logs(self, db_session, activity_service, test_user):
+    def test_get_user_logs(self, db_session, activity_service, test_user) -> None:
         """Verify get_user_logs filters by user_id."""
         # Create another user
         other_user = User(
@@ -115,7 +115,7 @@ class TestActivityService:
         for log in user_logs:
             assert log.user_id == test_user.id
 
-    def test_log_db_failure_does_not_crash(self, db_session, activity_service, test_user):
+    def test_log_db_failure_does_not_crash(self, db_session, activity_service, test_user) -> None:
         """Verify the service doesn't crash when DB logging fails."""
         # Force a DB failure by passing a non-existent user_id
         # This should not raise despite DB failure (logged to error logger)

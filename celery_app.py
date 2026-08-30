@@ -119,7 +119,7 @@ def send_email_task(
     subject: str,
     body: str,
     html_body: str | None = None,
-):
+) -> dict[str, object]:
     """Send an email via SMTP as a background task.
 
     Retries with exponential backoff on failure.
@@ -426,7 +426,7 @@ def generate_export_task(
     headers: list[str],
     rows: list[list[Any]],
     **kwargs,
-):
+) -> dict[str, object]:
     """Generate an export file as a background task.
 
     export_type: 'csv', 'xlsx', or 'pdf'

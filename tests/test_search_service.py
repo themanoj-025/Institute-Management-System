@@ -15,7 +15,7 @@ from services.search_service import SearchService
 
 pytestmark = pytest.mark.slow
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -150,35 +150,35 @@ class TestSearchService:
             .all()
         )
 
-    def test_global_search_student(self, seeded_db):
+    def test_global_search_student(self, seeded_db) -> None:
         results = self._like_search_students(seeded_db, "Jane")
         assert len(results) >= 1
         assert results[0].first_name == "Jane"
 
-    def test_global_search_staff(self, seeded_db):
+    def test_global_search_staff(self, seeded_db) -> None:
         results = self._like_search_staff(seeded_db, "Smith")
         assert len(results) >= 1
         assert results[0].last_name == "Smith"
 
-    def test_global_search_course(self, seeded_db):
+    def test_global_search_course(self, seeded_db) -> None:
         results = self._like_search_courses(seeded_db, "Computer")
         assert len(results) >= 1
 
-    def test_global_search_subject(self, seeded_db):
+    def test_global_search_subject(self, seeded_db) -> None:
         results = self._like_search_subjects(seeded_db, "Data")
         assert len(results) >= 1
 
-    def test_global_search_short_query(self, seeded_db):
+    def test_global_search_short_query(self, seeded_db) -> None:
         service = SearchService(seeded_db)
         results = service.global_search("a")  # Too short
         assert results == {}
 
-    def test_global_search_empty_query(self, seeded_db):
+    def test_global_search_empty_query(self, seeded_db) -> None:
         service = SearchService(seeded_db)
         results = service.global_search("")
         assert results == {}
 
-    def test_global_search_no_match(self, seeded_db):
+    def test_global_search_no_match(self, seeded_db) -> None:
         service = SearchService(seeded_db)
         results = service.global_search("zzzznonexistent")
         # Threaded search on in-memory SQLite returns empty for all categories

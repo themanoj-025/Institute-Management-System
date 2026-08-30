@@ -85,7 +85,7 @@ def set_config_value(
     value: Any,
     description: str = "",
     user_id: int | None = None,
-):
+) -> None:
     """Set a typed value in ``SystemConfig``, creating or updating as needed.
 
     Parameters

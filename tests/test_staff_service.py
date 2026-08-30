@@ -12,7 +12,7 @@ from services.staff_service import StaffService
 
 
 @pytest.fixture
-def db_session():
+def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -48,42 +48,42 @@ def seeded_db(db_session):
 
 
 class TestStaffService:
-    def test_get_all_staff(self, seeded_db):
+    def test_get_all_staff(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         result = service.get_all_staff()
         assert result["total"] >= 3
         assert len(result["staff"]) >= 3
         assert result["staff"][0]["first_name"] == "First2"  # desc order
 
-    def test_get_all_staff_paginated(self, seeded_db):
+    def test_get_all_staff_paginated(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         result = service.get_all_staff(limit=2, offset=0)
         assert len(result["staff"]) == 2
         assert result["total"] >= 3
 
-    def test_get_all_staff_search(self, seeded_db):
+    def test_get_all_staff_search(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         result = service.get_all_staff(search_query="First0")
         assert len(result["staff"]) == 1
         assert result["staff"][0]["first_name"] == "First0"
 
-    def test_get_all_staff_search_partial(self, seeded_db):
+    def test_get_all_staff_search_partial(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         result = service.get_all_staff(search_query="First")
         assert result["total"] >= 3
 
-    def test_get_staff_by_id(self, seeded_db):
+    def test_get_staff_by_id(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         staff = service.get_staff_by_id(1)
         assert staff["id"] == 1
         assert "full_name" in staff
 
-    def test_get_staff_by_id_not_found(self, seeded_db):
+    def test_get_staff_by_id_not_found(self, seeded_db) -> None:
         service = StaffService(seeded_db)
         with pytest.raises(ValueError, match="Staff not found"):
             service.get_staff_by_id(999)
 
-    def test_create_staff(self, db_session):
+    def test_create_staff(self, db_session) -> None:
         service = StaffService(db_session)
         result = service.create_staff(
             {
@@ -106,7 +106,7 @@ class TestStaffService:
         assert user is not None
         assert user.role == UserRole.staff
 
-    def test_get_all_staff_empty(self, db_session):
+    def test_get_all_staff_empty(self, db_session) -> None:
         service = StaffService(db_session)
         result = service.get_all_staff()
         assert result["total"] == 0

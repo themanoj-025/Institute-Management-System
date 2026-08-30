@@ -121,7 +121,7 @@ class StaffAttendanceManager(ctk.CTkFrame):
 
     def _show_placeholder(
         self, msg="Select filters and click Load Report to view staff attendance."
-    ):
+    ) -> None:
         for w in self.details_frame.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.details_frame, fg_color="transparent")

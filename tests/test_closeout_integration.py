@@ -33,7 +33,7 @@ class TestTimezoneRoundTrip:
     as the canonical test case.
     """
 
-    def test_timezone_aware_creation_and_comparison(self, test_db):
+    def test_timezone_aware_creation_and_comparison(self, test_db) -> None:
         """Verify timezone-aware datetimes can be created and compared.
 
         NOTE: SQLite does NOT preserve ``tzinfo`` through SQLAlchemy's
@@ -91,7 +91,7 @@ class TestTimezoneRoundTrip:
         finally:
             fresh_session.close()
 
-    def test_naive_comparison_does_not_raise(self):
+    def test_naive_comparison_does_not_raise(self) -> None:
         """Verify comparing a timezone-aware datetime against another does not raise."""
         now1 = utc_now()
         now2 = utc_now()
@@ -115,7 +115,7 @@ class TestExportOutputValidity:
         ["Charlie", "A-", "Chemistry"],
     ]
 
-    def test_csv_parses_to_expected_row_count(self):
+    def test_csv_parses_to_expected_row_count(self) -> None:
         """CSV export should parse back to exactly header + data rows."""
         from services.export_service import ExportService
 
@@ -130,7 +130,7 @@ class TestExportOutputValidity:
             assert rows[0] == self.HEADERS
             assert rows[1:] == self.ROWS
 
-    def test_excel_opens_with_expected_sheet(self):
+    def test_excel_opens_with_expected_sheet(self) -> None:
         """Excel export should open via openpyxl with expected sheet/row structure."""
         import openpyxl
 
@@ -152,7 +152,7 @@ class TestExportOutputValidity:
             finally:
                 wb.close()
 
-    def test_pdf_has_non_zero_pages(self):
+    def test_pdf_has_non_zero_pages(self) -> None:
         """PDF export should have non-zero page count and extractable text."""
         from services.export_service import ExportService
 
@@ -181,7 +181,7 @@ class TestMLPromotionRule:
     training pipeline (which requires real feature data and XGBoost).
     """
 
-    def test_promotion_recorded_when_better(self, test_db):
+    def test_promotion_recorded_when_better(self, test_db) -> None:
         """Manually insert promotion records simulating promoted and not-promoted."""
         from database.models import PromotionHistory
 
@@ -235,7 +235,7 @@ class TestMLPromotionRule:
         assert not_promoted_record[0].active_auroc == 0.85
         assert "Not promoted" in not_promoted_record[0].reason
 
-    def test_promotion_history_records_are_queryable(self, test_db):
+    def test_promotion_history_records_are_queryable(self, test_db) -> None:
         """Verify promotion history records are stored and queryable."""
         # Insert two test records directly with unique identifiers
         import uuid
@@ -310,7 +310,7 @@ class TestDesktopApiAuthIntegration:
     client uses under the hood.
     """
 
-    def test_login_returns_valid_jwt(self, test_db, auth_service):
+    def test_login_returns_valid_jwt(self, test_db, auth_service) -> None:
         """Simulate desktop login and verify JWT validity."""
         import bcrypt
         import jwt
@@ -352,7 +352,7 @@ class TestDesktopApiAuthIntegration:
         assert "exp" in payload
         assert "iat" in payload
 
-    def test_logout_blacklists_token(self, test_db):
+    def test_logout_blacklists_token(self, test_db) -> None:
         """Simulate desktop logout via POST /v1/auth/logout analogue."""
         import uuid
         from datetime import timedelta
@@ -393,7 +393,7 @@ class TestDesktopApiAuthIntegration:
         other_jti = str(uuid.uuid4())
         assert not _check_token_blacklist(other_jti), "Unused JTI should not be blacklisted"
 
-    def test_revoked_token_denied_access(self, test_db):
+    def test_revoked_token_denied_access(self, test_db) -> None:
         """Verify that using a blacklisted token on a protected endpoint fails."""
         import uuid
         from datetime import timedelta

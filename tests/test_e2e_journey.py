@@ -41,7 +41,7 @@ pytestmark = pytest.mark.slow
 
 
 @pytest.fixture
-def test_data(test_db):
+def test_data(test_db) -> dict[str, object]:
     """Set up minimal test data for the end-to-end journey."""
     now = utc_now()
 
@@ -163,7 +163,7 @@ def test_data(test_db):
 class TestEndToEndJourney:
     """End-to-end user journey through the entire system."""
 
-    def test_full_journey(self, test_db, auth_service, test_data):
+    def test_full_journey(self, test_db, auth_service, test_data) -> None:
         """Complete end-to-end test of the user journey."""
 
         data = test_data
@@ -175,7 +175,7 @@ class TestEndToEndJourney:
             test_db.rollback()
             raise
 
-    def _run_journey_steps(self, test_db, auth_service, data):
+    def _run_journey_steps(self, test_db, auth_service, data) -> None:
         """Run the actual journey steps in a single transaction scope."""
         student_user = data["student_user"]
         student = data["student"]
@@ -344,7 +344,7 @@ class TestEndToEndJourney:
             assert "E2E Student" in content
             assert "25000.0" in content or "25000" in content
 
-    def test_risk_explanation_references_real_features(self, test_db, test_data):
+    def test_risk_explanation_references_real_features(self, test_db, test_data) -> None:
         """Risk explanation should reference real feature data when available."""
         from ml.service import MLService
 

@@ -27,7 +27,7 @@ from ml.evaluate import (
 
 
 @pytest.fixture
-def synthetic_data():
+def synthetic_data() -> tuple[object, ...]:
     """Create synthetic binary classification data."""
     np.random.seed(42)
     n = 100
@@ -55,7 +55,7 @@ def trained_model(synthetic_data):
 
 
 class TestClassificationMetrics:
-    def test_perfect_classification(self):
+    def test_perfect_classification(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_pred = np.array([0, 0, 1, 1])
         y_proba = np.array([0.1, 0.2, 0.9, 0.8])
@@ -66,7 +66,7 @@ class TestClassificationMetrics:
         assert metrics["recall"] == 1.0
         assert metrics["auroc"] > 0.5
 
-    def test_all_negative(self):
+    def test_all_negative(self) -> None:
         y_true = np.array([0, 0, 0])
         y_pred = np.array([0, 0, 0])
         y_proba = np.array([0.1, 0.2, 0.3])
@@ -76,7 +76,7 @@ class TestClassificationMetrics:
         assert "class_0_precision" in metrics
         # class_1 may not appear in classification_report if no positive samples
 
-    def test_all_positive(self):
+    def test_all_positive(self) -> None:
         y_true = np.array([1, 1, 1])
         y_pred = np.array([1, 1, 1])
         y_proba = np.array([0.9, 0.8, 0.95])
@@ -84,7 +84,7 @@ class TestClassificationMetrics:
         assert metrics["accuracy"] == 1.0
         assert metrics["auroc"] == 0.0  # only one class
 
-    def test_worst_case(self):
+    def test_worst_case(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_pred = np.array([1, 1, 0, 0])
         y_proba = np.array([0.9, 0.8, 0.1, 0.2])
@@ -94,7 +94,7 @@ class TestClassificationMetrics:
         assert metrics["precision"] == 0.0
         assert metrics["recall"] == 0.0
 
-    def test_support_counts(self):
+    def test_support_counts(self) -> None:
         y_true = np.array([0, 0, 0, 1, 1])
         y_pred = np.array([0, 0, 0, 1, 1])
         y_proba = np.array([0.1, 0.2, 0.3, 0.9, 0.8])
@@ -112,7 +112,7 @@ class TestClassificationMetrics:
 
 
 class TestConfusionMatrix:
-    def test_perfect(self):
+    def test_perfect(self) -> None:
         cm = _confusion_matrix_data(
             np.array([0, 0, 1, 1]),
             np.array([0, 0, 1, 1]),
@@ -124,7 +124,7 @@ class TestConfusionMatrix:
         assert cm["matrix"][0][0] == 2
         assert cm["matrix"][1][1] == 2
 
-    def test_all_wrong(self):
+    def test_all_wrong(self) -> None:
         cm = _confusion_matrix_data(
             np.array([0, 0, 1, 1]),
             np.array([1, 1, 0, 0]),
@@ -132,7 +132,7 @@ class TestConfusionMatrix:
         assert cm["false_positives"] == 2
         assert cm["false_negatives"] == 2
 
-    def test_imbalanced(self):
+    def test_imbalanced(self) -> None:
         cm = _confusion_matrix_data(
             np.array([0, 0, 0, 1]),
             np.array([0, 0, 1, 1]),
@@ -149,7 +149,7 @@ class TestConfusionMatrix:
 
 
 class TestThresholdAnalysis:
-    def test_default_thresholds(self):
+    def test_default_thresholds(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.05, 0.95, 0.9, 0.1])
         results = _threshold_analysis(y_true, y_proba)
@@ -157,14 +157,14 @@ class TestThresholdAnalysis:
         assert all(0.0 <= r["precision"] <= 1.0 for r in results)
         assert all(0.0 <= r["recall"] <= 1.0 for r in results)
 
-    def test_custom_thresholds(self):
+    def test_custom_thresholds(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.1, 0.2, 0.9, 0.8])
         results = _threshold_analysis(y_true, y_proba, thresholds=[0.5, 0.8])
         assert len(results) == 2
         assert results[0]["threshold"] == 0.5
 
-    def test_extreme_thresholds(self):
+    def test_extreme_thresholds(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.9, 0.8, 0.1, 0.2])  # reversed
         results = _threshold_analysis(y_true, y_proba, thresholds=[0.0, 1.0])
@@ -181,7 +181,7 @@ class TestThresholdAnalysis:
 
 
 class TestRocCurve:
-    def test_perfect_separation(self):
+    def test_perfect_separation(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.0, 0.0, 1.0, 1.0])
         roc = _roc_curve_data(y_true, y_proba)
@@ -189,7 +189,7 @@ class TestRocCurve:
         assert len(roc["fpr"]) >= 2
         assert len(roc["tpr"]) >= 2
 
-    def test_random_guess(self):
+    def test_random_guess(self) -> None:
         np.random.seed(42)
         y_true = np.array([0, 0, 0, 1, 1, 1])
         y_proba = np.random.rand(6)
@@ -197,7 +197,7 @@ class TestRocCurve:
         assert roc["auroc"] >= 0.0
         assert roc["auroc"] <= 1.0
 
-    def test_includes_endpoints(self):
+    def test_includes_endpoints(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.1, 0.2, 0.9, 0.8])
         roc = _roc_curve_data(y_true, y_proba, max_points=2)
@@ -212,7 +212,7 @@ class TestRocCurve:
 
 
 class TestFeatureImportance:
-    def test_returns_ranked_list(self, trained_model):
+    def test_returns_ranked_list(self, trained_model) -> None:
         features = ["feat_a", "feat_b", "feat_c", "feat_d", "feat_e"]
         fi = _feature_importance_analysis(trained_model, features, top_n=5)
         assert len(fi) <= 5
@@ -225,19 +225,19 @@ class TestFeatureImportance:
             importances = [f["importance"] for f in fi]
             assert importances == sorted(importances, reverse=True)
 
-    def test_top_n(self, trained_model):
+    def test_top_n(self, trained_model) -> None:
         features = ["feat_a", "feat_b", "feat_c", "feat_d", "feat_e"]
         fi = _feature_importance_analysis(trained_model, features, top_n=2)
         assert len(fi) <= 2
 
-    def test_empty_model(self):
+    def test_empty_model(self) -> None:
         class DummyModel:
             pass
 
         fi = _feature_importance_analysis(DummyModel(), ["a", "b"], top_n=5)
         assert fi == []
 
-    def test_model_with_importances(self):
+    def test_model_with_importances(self) -> None:
         class MockModel:
             feature_importances_ = np.array([0.6, 0.4])
 
@@ -253,7 +253,7 @@ class TestFeatureImportance:
 
 
 class TestGenerateReport:
-    def test_report_structure(self, trained_model, synthetic_data):
+    def test_report_structure(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         report = _generate_report_data(trained_model, X, y, "test_model")
 
@@ -268,7 +268,7 @@ class TestGenerateReport:
         assert "threshold_analysis" in report
         assert "feature_importance" in report
 
-    def test_report_with_cv(self, trained_model, synthetic_data):
+    def test_report_with_cv(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         cv = {"cv_accuracy": 0.95, "cv_f1": 0.94}
         report = _generate_report_data(trained_model, X, y, "cv_test", cv_metrics=cv)
@@ -276,7 +276,7 @@ class TestGenerateReport:
         assert "cv_metrics" in report
         assert report["cv_metrics"]["cv_accuracy"] == 0.95
 
-    def test_report_metrics_are_reasonable(self, trained_model, synthetic_data):
+    def test_report_metrics_are_reasonable(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         report = _generate_report_data(trained_model, X, y, "test_model")
         metrics = report["metrics"]
@@ -292,7 +292,7 @@ class TestGenerateReport:
 
 
 class TestReportToMarkdown:
-    def test_contains_sections(self, trained_model, synthetic_data):
+    def test_contains_sections(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         report = _generate_report_data(trained_model, X, y, "test_model")
         md = _report_to_markdown(report)
@@ -304,7 +304,7 @@ class TestReportToMarkdown:
         assert "## Per-Threshold Analysis" in md
         assert "## Feature Importance" in md
 
-    def test_has_cv_section(self, trained_model, synthetic_data):
+    def test_has_cv_section(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         cv = {"cv_accuracy": 0.95}
         report = _generate_report_data(trained_model, X, y, "test_model", cv_metrics=cv)
@@ -313,7 +313,7 @@ class TestReportToMarkdown:
         assert "## Cross-Validation Metrics" in md
         assert "0.95" in md
 
-    def test_no_feature_importance(self):
+    def test_no_feature_importance(self) -> None:
         """Report should still render even with empty feature importance."""
         report = {
             "report_metadata": {
@@ -352,7 +352,7 @@ class TestReportToMarkdown:
 
 
 class TestGenerateEvaluationReport:
-    def test_saves_files(self, trained_model, synthetic_data, monkeypatch):
+    def test_saves_files(self, trained_model, synthetic_data, monkeypatch) -> None:
         X, y = synthetic_data
         with tempfile.TemporaryDirectory() as tmpdir:
             monkeypatch.setattr("ml.evaluate.MODELS_DIR", Path(tmpdir))
@@ -371,7 +371,7 @@ class TestGenerateEvaluationReport:
             assert saved["report_metadata"]["model_name"] == "test_model_v1"
             assert saved["metrics"]["accuracy"] == report["metrics"]["accuracy"]
 
-    def test_no_save_flag(self, trained_model, synthetic_data, monkeypatch):
+    def test_no_save_flag(self, trained_model, synthetic_data, monkeypatch) -> None:
         X, y = synthetic_data
         with tempfile.TemporaryDirectory() as tmpdir:
             monkeypatch.setattr("ml.evaluate.MODELS_DIR", Path(tmpdir))
@@ -383,7 +383,7 @@ class TestGenerateEvaluationReport:
             assert not md_path.exists()
             assert not json_path.exists()
 
-    def test_returns_correct_shape(self, trained_model, synthetic_data):
+    def test_returns_correct_shape(self, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         report = generate_evaluation_report(trained_model, X, y, "test", save=False)
         assert "report_metadata" in report
@@ -400,13 +400,13 @@ class TestGenerateEvaluationReport:
 
 
 class TestListEvaluationReports:
-    def test_list_empty(self, monkeypatch):
+    def test_list_empty(self, monkeypatch) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             monkeypatch.setattr("ml.evaluate.MODELS_DIR", Path(tmpdir))
             reports = list_evaluation_reports()
             assert reports == []
 
-    def test_list_reports(self, monkeypatch, trained_model, synthetic_data):
+    def test_list_reports(self, monkeypatch, trained_model, synthetic_data) -> None:
         X, y = synthetic_data
         with tempfile.TemporaryDirectory() as tmpdir:
             monkeypatch.setattr("ml.evaluate.MODELS_DIR", Path(tmpdir))
@@ -422,7 +422,7 @@ class TestListEvaluationReports:
             assert "v2" in names
             assert all("accuracy" in r for r in reports)
 
-    def test_skips_corrupt_files(self, monkeypatch):
+    def test_skips_corrupt_files(self, monkeypatch) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             monkeypatch.setattr("ml.evaluate.MODELS_DIR", Path(tmpdir))
 
@@ -440,7 +440,7 @@ class TestListEvaluationReports:
 
 
 class TestEdgeCases:
-    def test_single_sample(self):
+    def test_single_sample(self) -> None:
         """Single sample should not crash."""
         y_true = np.array([1])
         y_pred = np.array([1])
@@ -449,13 +449,13 @@ class TestEdgeCases:
         assert metrics["accuracy"] == 1.0
         assert metrics["auroc"] == 0.0  # only one class
 
-    def test_empty_threshold_list(self):
+    def test_empty_threshold_list(self) -> None:
         y_true = np.array([0, 0, 1, 1])
         y_proba = np.array([0.1, 0.2, 0.9, 0.8])
         results = _threshold_analysis(y_true, y_proba, thresholds=[])
         assert results == []
 
-    def test_feature_importance_no_booster(self):
+    def test_feature_importance_no_booster(self) -> None:
         """Model without feature_importances_ should return empty list."""
 
         class MinimalModel:
