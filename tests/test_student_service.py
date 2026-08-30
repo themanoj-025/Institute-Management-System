@@ -3,6 +3,9 @@ from datetime import date
 from database.models import Course, Session, Student
 
 
+
+
+pytestmark = pytest.mark.slow
 def test_create_student(test_db, student_service):
     # Ensure a Course and Session exist
     course = Course(code="PY-1", name="Python Basic", duration_months=3, fee=5000)

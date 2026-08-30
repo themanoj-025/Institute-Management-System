@@ -19,6 +19,8 @@ from sqlalchemy.orm import sessionmaker
 
 from utils.time import utc_now
 
+
+pytestmark = pytest.mark.slow
 # ═══════════════════════════════════════════════════════════════════
 #  1. TIMEZONE ROUND-TRIP TEST
 # ═══════════════════════════════════════════════════════════════════
@@ -397,6 +399,7 @@ class TestDesktopApiAuthIntegration:
         from datetime import timedelta
 
         from api.main import _blacklist_token, _check_token_blacklist, utc_now
+
 
         # Create and blacklist a token
         jti = str(uuid.uuid4())

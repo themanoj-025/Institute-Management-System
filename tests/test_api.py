@@ -2,6 +2,8 @@ from fastapi.testclient import TestClient
 
 from api.main import app
 
+
+pytestmark = pytest.mark.slow
 client = TestClient(app)
 
 
@@ -166,6 +168,7 @@ def test_rate_limiter_independent_paths():
     import jwt
 
     from api.main import ALGORITHM, SECRET_KEY
+
 
     token = jwt.encode(
         {

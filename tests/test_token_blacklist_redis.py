@@ -14,6 +14,8 @@ from unittest.mock import patch
 from utils.time import utc_now
 
 
+
+pytestmark = pytest.mark.slow
 class TestRedisTokenBlacklist:
     """Test the Redis-backed token blacklist implementation."""
 
@@ -110,6 +112,7 @@ class TestRedisTokenBlacklist:
         from api.main import _blacklist_token, _check_token_blacklist
         from database.db_session import SessionLocal
         from database.models import RevokedToken
+
 
         token, jti, expire = self._make_token()
         _blacklist_token(jti, expire, user_id=1)
