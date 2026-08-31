@@ -23,7 +23,7 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> None:
     course = Course(code="CS101", name="Computer Science", duration_months=6, fee=10000)
     db_session.add(course)
     sess = Session(name="2024", start_date=date(2024, 1, 1), end_date=date(2024, 12, 31))

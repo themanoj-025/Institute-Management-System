@@ -6,6 +6,7 @@ Extracted from main.py to reduce file size and enable reuse across route modules
 
 import os
 import uuid
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
@@ -242,7 +243,7 @@ def verify_ownership(
     resource_type: str = "student_id",
     allow_staff: bool = True,
     allow_admin: bool = True,
-):
+) -> Callable:
     """FastAPI dependency that prevents IDOR."""
 
     def dependency(

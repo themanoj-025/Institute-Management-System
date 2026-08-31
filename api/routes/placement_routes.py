@@ -13,7 +13,7 @@ router = APIRouter(tags=["Placements"])
 
 
 @router.get("/placements", summary="List placements")
-def get_placements(page: int = 1, per_page: int = 25, user: dict = Depends(get_current_user)):
+def get_placements(page: int = 1, per_page: int = 25, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         from sqlalchemy.orm import joinedload
 

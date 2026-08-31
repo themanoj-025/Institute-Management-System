@@ -21,7 +21,7 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def test_user(db_session):
+def test_user(db_session) -> None:
     user = User(
         username="feedback_user",
         password_hash="hash",
@@ -34,7 +34,7 @@ def test_user(db_session):
 
 
 @pytest.fixture
-def admin_user(db_session):
+def admin_user(db_session) -> None:
     user = User(
         username="admin_fb",
         password_hash="hash",

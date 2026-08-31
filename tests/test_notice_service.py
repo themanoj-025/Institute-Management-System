@@ -21,7 +21,7 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def admin_user(db_session):
+def admin_user(db_session) -> None:
     user = User(
         username="admin_note",
         password_hash="hash",

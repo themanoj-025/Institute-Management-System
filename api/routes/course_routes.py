@@ -11,7 +11,7 @@ router = APIRouter(tags=["Courses"])
 
 
 @router.get("/courses", summary="List courses")
-def get_courses(page: int = 1, per_page: int = 25, user: dict = Depends(get_current_user)):
+def get_courses(page: int = 1, per_page: int = 25, user: dict = Depends(get_current_user)) -> dict:
     with get_session() as session:
         query = session.query(Course).order_by(Course.id)
         return paginated_response(query, page, per_page, serialize_course)

@@ -30,7 +30,7 @@ def get_students(
     per_page: int = 25,
     course_id: int | None = None,
     user: dict = Depends(get_current_user),
-):
+) -> dict:
     from api.schemas import paginated_response
 
     with get_session() as session:

@@ -21,12 +21,12 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def activity_service(db_session):
+def activity_service(db_session) -> None:
     return ActivityService(db_session)
 
 
 @pytest.fixture
-def test_user(db_session):
+def test_user(db_session) -> None:
     user = User(
         username="test_user",
         password_hash="hash",

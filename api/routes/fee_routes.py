@@ -19,7 +19,7 @@ def get_fees(
     status: str | None = None,
     include_deleted: bool = False,
     user: dict = Depends(get_current_user),
-):
+) -> dict:
     with get_session() as session:
         from sqlalchemy.orm import joinedload
 
