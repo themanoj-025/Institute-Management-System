@@ -2,9 +2,6 @@ from datetime import date
 
 from database.models import Course, Session, Student
 
-
-
-
 pytestmark = pytest.mark.slow
 def test_create_student(test_db, student_service) -> None:
     # Ensure a Course and Session exist

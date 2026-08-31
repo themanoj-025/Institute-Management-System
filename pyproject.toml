@@ -51,7 +51,6 @@ ignore = [
     "RUF043",  # comparison to literal
     "RUF015",  # unnecessary iterable allocation
     "RUF002",  # ambiguous unicode — intentional
-    "E999",    # syntax error — pre-existing in landing pages
 ]
 
 [tool.isort]

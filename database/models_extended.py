@@ -24,7 +24,9 @@ from sqlalchemy.orm import relationship
 from database.db_session import Base
 from utils.time import utc_now
 
-from .models import FeeStatus, LeaveStatus, UserRole  # noqa: F401
+from .models import FeeStatus, LeaveStatus, UserRole
+
+
 class Leave(Base):
     __tablename__ = "leaves"
     id = Column(Integer, primary_key=True, index=True)

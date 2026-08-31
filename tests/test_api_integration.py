@@ -15,7 +15,6 @@ from fastapi.testclient import TestClient
 
 from api.main import ALGORITHM, SECRET_KEY, app, create_access_token
 
-
 pytestmark = pytest.mark.slow
 client = TestClient(app)
 

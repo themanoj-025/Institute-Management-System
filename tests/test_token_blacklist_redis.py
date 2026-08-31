@@ -13,8 +13,6 @@ from unittest.mock import patch
 
 from utils.time import utc_now
 
-
-
 pytestmark = pytest.mark.slow
 class TestRedisTokenBlacklist:
     """Test the Redis-backed token blacklist implementation."""

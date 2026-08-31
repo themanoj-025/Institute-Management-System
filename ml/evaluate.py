@@ -15,9 +15,9 @@ import pandas as pd
 from ml.eval_metrics import (
     _classification_metrics_dict,
     _confusion_matrix_data,
-    _threshold_analysis,
-    _roc_curve_data,
     _feature_importance_analysis,
+    _roc_curve_data,
+    _threshold_analysis,
 )
 
 logger = logging.getLogger(__name__)
