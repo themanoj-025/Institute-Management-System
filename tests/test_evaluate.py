@@ -41,7 +41,7 @@ def synthetic_data() -> tuple[object, ...]:
 
 
 @pytest.fixture
-def trained_model(synthetic_data):
+def trained_model(synthetic_data) -> None:
     """Train a small XGBoost model for testing."""
     X, y = synthetic_data
     model = XGBClassifier(n_estimators=10, max_depth=3, random_state=42)

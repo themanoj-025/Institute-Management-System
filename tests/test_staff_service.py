@@ -23,7 +23,7 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> None:
     for i in range(3):
         user = User(
             username=f"staff{i}",

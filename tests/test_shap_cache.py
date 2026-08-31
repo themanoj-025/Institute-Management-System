@@ -38,7 +38,7 @@ class TestShapExplainerCache:
 
             assert result1 is result2  # Same instance
 
-    def test_cache_miss_on_version_change(self):
+    def test_cache_miss_on_version_change(self) -> None:
         """Cache should miss when model_version changes, building a new explainer."""
         mock_explainer_v1 = MagicMock()
         mock_explainer_v2 = MagicMock()
@@ -65,7 +65,7 @@ class TestShapExplainerCache:
 
             assert result1 is not result2  # Different instances
 
-    def test_no_version_skips_cache(self):
+    def test_no_version_skips_cache(self) -> None:
         """When model_version is None, caching should be skipped."""
         mock_explainer1 = MagicMock()
         mock_explainer2 = MagicMock()

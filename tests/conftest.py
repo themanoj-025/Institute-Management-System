@@ -29,15 +29,15 @@ def test_db() -> None:
 
 
 @pytest.fixture
-def auth_service(test_db):
+def auth_service(test_db) -> None:
     return AuthService(test_db)
 
 
 @pytest.fixture
-def student_service(test_db):
+def student_service(test_db) -> None:
     return StudentService(test_db)
 
 
 @pytest.fixture
-def analytics_service(test_db):
+def analytics_service(test_db) -> None:
     return AnalyticsService(test_db)

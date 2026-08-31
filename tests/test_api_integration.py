@@ -24,7 +24,7 @@ client = TestClient(app)
 # ═══════════════════════════════════════════════════════════════════
 
 
-def make_token(username="admin", role="admin", user_id=1, extra=None):
+def make_token(username="admin", role="admin", user_id=1, extra=None) -> None:
     """Create a test JWT with a unique jti."""
     data = {"sub": username, "role": role, "user_id": user_id, **(extra or {})}
     return create_access_token(data)
@@ -276,7 +276,7 @@ class TestAdminConfig:
 
 
 class TestConfigUtility:
-    def test_get_config_value_types(self):
+    def test_get_config_value_types(self) -> None:
         """Verify get_config_value handles different value types."""
         from utils.config import get_config_value
 
@@ -300,7 +300,7 @@ class TestConfigUtility:
         result = get_config_value(session, "test_key", 50)
         assert result == 75
 
-    def test_get_config_value_default(self):
+    def test_get_config_value_default(self) -> None:
         """Verify get_config_value returns default when no entry exists."""
 
         class MockSession:
@@ -320,7 +320,7 @@ class TestConfigUtility:
         result = get_config_value(session, "missing_key", 42)
         assert result == 42
 
-    def test_get_config_float(self):
+    def test_get_config_float(self) -> None:
         """Verify get_config_float returns float."""
         from utils.config import get_config_float
 
@@ -343,7 +343,7 @@ class TestConfigUtility:
         assert result == 75.5
         assert isinstance(result, float)
 
-    def test_get_config_int(self):
+    def test_get_config_int(self) -> None:
         """Verify get_config_int returns int."""
         from utils.config import get_config_int
 
@@ -514,7 +514,7 @@ class TestCeleryConfiguration:
 
 
 class TestSetConfigValue:
-    def test_set_config_value_create(self):
+    def test_set_config_value_create(self) -> None:
         """Verify set_config_value creates a new entry."""
         from utils.config import set_config_value
 
@@ -542,7 +542,7 @@ class TestSetConfigValue:
         assert len(calls) >= 1
         assert calls[-1] == ("commit",)
 
-    def test_set_config_value_update(self):
+    def test_set_config_value_update(self) -> None:
         """Verify set_config_value updates an existing entry."""
         calls = []
         captured_entry = None
