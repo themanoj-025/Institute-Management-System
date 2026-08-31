@@ -76,11 +76,10 @@ disable_error_code = ["var-annotated"]
 
 
 [tool.pytest.ini_options]
-addopts = "-m 'not slow'"
+addopts = "-v --tb=short -m 'not slow'"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
 
 markers = [
     "slow: integration tests (database, HTTP, ML models) — excluded from default run; use pytest -m slow"
