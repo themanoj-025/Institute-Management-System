@@ -75,7 +75,7 @@ disable_error_code = ["var-annotated"]
 
 
 [tool.pytest.ini_options]
-addopts = "-v --tb=short -m 'not slow'"
+addopts = "-v --tb=short -m 'not slow' --cov --cov-fail-under=40"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
