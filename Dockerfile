@@ -3,7 +3,7 @@
 # Run the desktop app via: python main.py (on your local machine)
 
 # ── Stage 1: Dependencies ──────────────────────────────────────────────
-FROM python:3.11-slim AS base
+FROM python:3.14-slim AS base
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
