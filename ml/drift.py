@@ -13,6 +13,9 @@ import pandas as pd
 
 from ml.drift_psi import (
     BinningStrategy,
+    DEFAULT_HIGH_PSI_THRESHOLD,
+    DEFAULT_PSI_THRESHOLD,
+    DEFAULT_WASSERSTEIN_THRESHOLD,
     _compute_feature_psi,
     _compute_categorical_psi,
     _compute_wasserstein_distance,
