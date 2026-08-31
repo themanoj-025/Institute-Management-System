@@ -16,7 +16,7 @@ class TestSlidingWindowCounter:
 
     def test_allows_up_to_max(self) -> None:
         sw = SlidingWindowCounter(max_requests=3, window_seconds=60)
-        for i in range(3):
+        for _ in range(3):
             allowed, _, _ = sw.allow("ip1")
             assert allowed is True
         allowed, remaining, _ = sw.allow("ip1")
