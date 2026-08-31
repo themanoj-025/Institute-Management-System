@@ -19,7 +19,6 @@ from sqlalchemy.orm import sessionmaker
 
 from utils.time import utc_now
 
-
 pytestmark = pytest.mark.slow
 # ═══════════════════════════════════════════════════════════════════
 #  1. TIMEZONE ROUND-TRIP TEST

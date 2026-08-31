@@ -20,7 +20,6 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
-
 pytestmark = pytest.mark.slow
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-production")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

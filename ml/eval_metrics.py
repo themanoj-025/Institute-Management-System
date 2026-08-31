@@ -40,23 +40,7 @@ Typical usage::
     # report saved as ml/models/risk_v1_eval.md + risk_v1_eval.json
 """
 
-import json
 import logging
-from pathlib import Path
-from typing import Any
-
-import numpy as np
-import pandas as pd
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-    roc_curve,
-)
 
 from ml.features import FEATURE_NAMES, compute_all_features, compute_target
 from ml.registry import load_metadata, load_model
