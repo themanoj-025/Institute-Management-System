@@ -10,9 +10,6 @@ from database.db_session import Base
 from database.models import Course, LeaveStatus, Session, Staff, Student, User, UserRole
 from services.leave_service import LeaveService
 
-
-
-
 pytestmark = pytest.mark.slow
 @pytest.fixture
 def db_session() -> None:

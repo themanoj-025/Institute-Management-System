@@ -10,9 +10,6 @@ from database.db_session import Base
 from database.models import Course, Fee, FeePayment, FeeStatus, Session, Student, User, UserRole
 from services.fee_service import FeeService
 
-
-
-
 pytestmark = pytest.mark.slow
 @pytest.fixture
 def db_session() -> None:

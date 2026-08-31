@@ -38,13 +38,8 @@ Usage::
 
 import json
 import logging
-from enum import Enum
 from math import ceil, log2
 from pathlib import Path
-from typing import Any
-
-import numpy as np
-import pandas as pd
 
 from ml.features import FEATURE_NAMES, compute_all_features
 

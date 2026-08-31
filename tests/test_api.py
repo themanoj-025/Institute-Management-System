@@ -2,7 +2,6 @@ from fastapi.testclient import TestClient
 
 from api.main import app
 
-
 pytestmark = pytest.mark.slow
 client = TestClient(app)
 

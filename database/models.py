@@ -344,20 +344,20 @@ class Result(Base):
 
 
 # Re-export extended models for backward compatibility
-from database.models_extended import (  # noqa: F401, E402
-    Leave,
-    Feedback,
-    Fee,
-    FeePayment,
-    Notice,
-    Timetable,
+from database.models_extended import (
     ActivityLog,
-    Enquiry,
-    SystemConfig,
-    OtpCode,
-    RevokedToken,
     EmailVerificationToken,
-    PromotionHistory,
+    Enquiry,
+    Fee,
+    Feedback,
+    FeePayment,
+    Leave,
+    Notice,
+    OtpCode,
     PasswordResetToken,
     Placement,
+    PromotionHistory,
+    RevokedToken,
+    SystemConfig,
+    Timetable,
 )

@@ -4,6 +4,7 @@ import os
 import sys
 
 import pytest
+from pydantic import ValidationError
 
 # config/courses.py uses `from courses_pkg import ...` which needs config/ on the path
 _config_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
@@ -11,14 +12,14 @@ if _config_dir not in sys.path:
     sys.path.insert(0, _config_dir)
 
 from api.schemas import (
+    AttendanceRecord,
+    CourseCreate,
     ErrorCode,
     LoginRequest,
-    StudentCreate,
-    CourseCreate,
-    AttendanceRecord,
     PaymentCreate,
-    StaffCreate,
     PlacementCreate,
+    StaffCreate,
+    StudentCreate,
     error_code_for_status,
 )
 
@@ -75,7 +76,7 @@ class TestStudentCreate:
         assert student.first_name == "John"
 
     def test_missing_required(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             StudentCreate(first_name="John")
 
 
@@ -92,7 +93,7 @@ class TestCourseCreate:
         assert course.name == "Data Structures"
 
     def test_missing_required(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             CourseCreate(name="Data Structures")
 
 
@@ -140,7 +141,7 @@ class TestStaffCreate:
         assert staff.first_name == "Jane"
 
     def test_missing_required(self) -> None:
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             StaffCreate(first_name="Jane")
 
 

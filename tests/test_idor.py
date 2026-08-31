@@ -14,7 +14,6 @@ from fastapi.testclient import TestClient
 
 from api.main import _resolve_student_user_id, app
 
-
 pytestmark = pytest.mark.slow
 _client = TestClient(app)
 

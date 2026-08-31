@@ -10,9 +10,6 @@ from database.db_session import Base
 from database.models import Course, Result, Session, Student, Subject, User, UserRole
 from services.result_service import ResultService
 
-
-
-
 pytestmark = pytest.mark.slow
 @pytest.fixture
 def db_session() -> None:
