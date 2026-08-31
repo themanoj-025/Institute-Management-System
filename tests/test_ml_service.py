@@ -34,7 +34,7 @@ from ml.train import DEFAULT_PARAMS, train_risk_model
 
 
 @pytest.fixture
-def seeded_db(test_db):
+def seeded_db(test_db) -> None:
     """Seed the test database with students, attendance, results, and fees."""
     # Use a unique course code per test run to avoid UNIQUE constraint conflicts
     # in session-scoped test_db.

@@ -21,7 +21,7 @@ def db_session() -> None:
 
 
 @pytest.fixture
-def seeded_db(db_session):
+def seeded_db(db_session) -> None:
     course = Course(
         code="PY101",
         name="Python Basics",

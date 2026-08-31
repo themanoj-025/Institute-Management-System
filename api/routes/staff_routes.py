@@ -19,7 +19,7 @@ def get_staff(
     per_page: int = 25,
     department: str | None = None,
     user: dict = Depends(get_current_user),
-):
+) -> dict:
     with get_session() as session:
         from sqlalchemy.orm import joinedload
 
