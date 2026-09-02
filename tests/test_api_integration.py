@@ -11,13 +11,10 @@ Tests:
 """
 
 import jwt
+import pytest
 from fastapi.testclient import TestClient
 
 from api.main import ALGORITHM, SECRET_KEY, app, create_access_token
-
-import pytest
-
-import pytest
 
 pytestmark = pytest.mark.integration
 pytestmark = pytest.mark.slow
