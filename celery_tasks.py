@@ -165,7 +165,7 @@ def cleanup_expired_otps_task() -> None:
             return {"status": "ok", "cleaned": result}
         finally:
             session.close()
-    except Exception as exc:
+    except (OSError, RuntimeError) as exc:
         logger.error("OTP cleanup failed: %s", exc)
         return {"status": "failed", "error": str(exc)}
 
@@ -187,7 +187,7 @@ def cleanup_revoked_tokens_task() -> None:
             return {"status": "ok", "cleaned": result}
         finally:
             session.close()
-    except Exception as exc:
+    except (OSError, RuntimeError) as exc:
         logger.error("Token cleanup failed: %s", exc)
         return {"status": "failed", "error": str(exc)}
 
