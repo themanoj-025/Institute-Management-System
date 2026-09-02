@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """
 IDOR (Insecure Direct Object Reference) regression tests.
 

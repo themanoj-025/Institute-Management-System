@@ -6,6 +6,9 @@ import pytest
 
 from api.circuit_breaker import CircuitBreaker, CircuitBreakerOpenError, CircuitState
 
+pytestmark = pytest.mark.integration
+
+
 
 class TestCircuitBreaker:
     """Test CircuitBreaker state transitions."""
