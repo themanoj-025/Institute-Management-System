@@ -11,8 +11,6 @@ import traceback
 
 import pytest
 
-import pytest
-
 pytestmark = pytest.mark.unit
 pytestmark = pytest.mark.slow
 # Add project root to path
