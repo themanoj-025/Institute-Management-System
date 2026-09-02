@@ -21,7 +21,7 @@ def show_error_dialog(parent, friendly_msg: str, full_traceback: str | None = No
         x = parent.winfo_rootx() + (parent.winfo_width() - 520) // 2
         y = parent.winfo_rooty() + (parent.winfo_height() - 320) // 2
         dialog.geometry(f"+{max(0, x)}+{max(0, y)}")
-    except Exception:
+    except (ValueError, TypeError):
         pass
 
     frame = ctk.CTkFrame(dialog, fg_color="transparent")
