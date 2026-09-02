@@ -22,6 +22,9 @@ import bcrypt
 import pytest
 
 from database.models import (
+
+pytestmark = pytest.mark.unit
+
     Attendance,
     AttendanceStatus,
     Course,

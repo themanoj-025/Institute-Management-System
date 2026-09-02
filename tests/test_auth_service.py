@@ -7,6 +7,9 @@ from database.models import User, UserRole
 from services.auth_service import AuthError
 from utils.time import utc_now
 
+pytestmark = pytest.mark.unit
+
+
 PWD_ADMIN = b"TestAdminPass123!"
 PWD_STAFF = b"StaffPass456!"
 PWD_STUDENT = b"StudentPass789!"

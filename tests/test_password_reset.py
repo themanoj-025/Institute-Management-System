@@ -20,6 +20,9 @@ from database.models import PasswordResetToken, User, UserRole
 from services.auth_service import AuthError
 from utils.time import utc_now
 
+pytestmark = pytest.mark.integration
+
+
 
 def _make_unique_user_data() -> dict[str, object]:
     """Helper to create unique user credentials for each test."""

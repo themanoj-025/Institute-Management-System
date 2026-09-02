@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """SHAP explainer cache tests.
 
 Tests cover:

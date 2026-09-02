@@ -10,6 +10,9 @@ import pytest
 from xgboost import XGBClassifier
 
 from ml.evaluate import (
+
+pytestmark = pytest.mark.unit
+
     _classification_metrics_dict,
     _confusion_matrix_data,
     _feature_importance_analysis,
