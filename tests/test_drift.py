@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """Tests for ML drift detection module (ml/drift.py)."""
 
 import math

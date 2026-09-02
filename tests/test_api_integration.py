@@ -15,6 +15,11 @@ from fastapi.testclient import TestClient
 
 from api.main import ALGORITHM, SECRET_KEY, app, create_access_token
 
+import pytest
+
+import pytest
+
+pytestmark = pytest.mark.integration
 pytestmark = pytest.mark.slow
 client = TestClient(app)
 
@@ -503,7 +508,6 @@ class TestCeleryConfiguration:
             ]
             assert any(found_tasks), f"No expected tasks found in {task_names[:10]}"
         except ImportError:
-            import pytest
 
             pytest.skip("celery not installed")
 

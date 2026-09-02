@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.integration
+
 """
 Closeout integration tests for the 5 remaining blueprint items.
 

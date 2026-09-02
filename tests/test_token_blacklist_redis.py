@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.integration
+
 """Redis-backed token blacklist tests.
 
 Tests cover:

@@ -11,6 +11,7 @@ from database.models import Course, LeaveStatus, Session, Staff, Student, User, 
 from services.leave_service import LeaveService
 
 pytestmark = pytest.mark.slow
+
 @pytest.fixture
 def db_session() -> None:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})

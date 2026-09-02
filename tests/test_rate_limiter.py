@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.integration
+
 """Tests for api.rate_limiter — SlidingWindowCounter."""
 
 import time
