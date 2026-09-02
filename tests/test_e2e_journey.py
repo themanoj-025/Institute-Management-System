@@ -21,10 +21,8 @@ from datetime import datetime, timedelta
 import bcrypt
 import pytest
 
-from database.models import (
-
 pytestmark = pytest.mark.unit
-
+from database.models import (
     Attendance,
     AttendanceStatus,
     Course,
