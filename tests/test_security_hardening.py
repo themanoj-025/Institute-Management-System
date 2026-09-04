@@ -14,7 +14,6 @@ Tests cover:
 """
 
 import os
-import sys
 from unittest.mock import patch
 
 import pytest
@@ -25,7 +24,6 @@ pytestmark = pytest.mark.integration
 
 pytestmark = pytest.mark.slow
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-production")
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def test_app_fails_without_secret_key() -> None:

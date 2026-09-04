@@ -6,12 +6,10 @@ checks for syntax validity, then attempts to import each module.
 
 import importlib
 import os
-import sys
 from typing import TypedDict
 
 # Ensure project root is on path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, PROJECT_ROOT)
 
 EXCLUDE_DIRS = {"__pycache__", "venv", ".git", ".github"}
 

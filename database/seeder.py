@@ -1,7 +1,6 @@
 import os
 import random
 import secrets
-import sys
 import time
 from datetime import date, timedelta
 
@@ -14,9 +13,6 @@ from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from utils.time import utc_now
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from config.constants import AVAILABLE_COURSES
 from database.db_session import Base, SessionLocal, engine
 from database.models import (

@@ -1,3 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "institute-management-system"
+version = "0.1.0"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+include = ["api*", "database*", "services*", "config*", "modules*", "utils*", "ui*", "auth*", "analytics*", "landing*", "ml*", "monitoring*", "notifications*", "audit*"]
+
 [tool.black]
 line-length = 100
 target-version = ["py310"]
@@ -77,6 +89,7 @@ disable_error_code = ["var-annotated"]
 [tool.pytest.ini_options]
 addopts = "-v --tb=short -m 'not slow' --cov --cov-fail-under=70"
 testpaths = ["tests"]
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
 
