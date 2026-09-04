@@ -6,15 +6,12 @@ Comprehensive test script to verify:
 """
 
 import os
-import sys
 import traceback
 
 import pytest
 
 pytestmark = pytest.mark.unit
 pytestmark = pytest.mark.slow
-# Add project root to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
 

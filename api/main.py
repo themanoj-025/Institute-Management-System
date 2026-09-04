@@ -18,8 +18,6 @@ This file is the application entry point. Route logic is split into:
   - api/routes/admin_routes.py    Config, risk thresholds, promotion history
 """
 
-import os
-import sys
 import traceback
 from contextlib import asynccontextmanager
 
@@ -29,9 +27,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 from utils.time import utc_now
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from utils.logger import setup_logger
 
 logger = setup_logger("bb-ims-api")

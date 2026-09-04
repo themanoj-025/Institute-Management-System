@@ -1,10 +1,7 @@
 import os
-import sys
 
 # Set test secrets BEFORE any project imports
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-production")
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
 from sqlalchemy import create_engine
