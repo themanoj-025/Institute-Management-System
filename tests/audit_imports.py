@@ -6,8 +6,9 @@ checks for syntax validity, then attempts to import each module.
 
 import importlib
 import os
-import structlog
 from typing import TypedDict
+
+import structlog
 
 logger = structlog.get_logger("audit_imports")
 
