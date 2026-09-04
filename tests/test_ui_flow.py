@@ -9,6 +9,9 @@ import os
 import traceback
 
 import pytest
+import structlog
+
+logger = structlog.get_logger("test_ui_flow")
 
 pytestmark = pytest.mark.unit
 pytestmark = pytest.mark.slow
@@ -23,9 +26,7 @@ if __name__ != "__main__":
     pytest.skip("Standalone script — not a pytest test", allow_module_level=True)
 
 # --- Step 1: Init DB ---
-print("=" * 60)
-print("STEP 1: Database Initialization & Seeding")
-print("=" * 60)
+logger.info("step_1_database_init")
 
 from database.db_session import SessionLocal, init_db
 from database.models import User
@@ -35,31 +36,28 @@ from database.seeder import seed_database
 db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bbims.db")
 if os.path.exists(db_path):
     os.remove(db_path)
-    print(f"[OK] Removed existing DB: {db_path}")
+    logger.info("db_removed", path=db_path)
 
 init_db()
-print("[OK] Database tables created")
+logger.info("database_tables_created")
 
 db = SessionLocal()
 try:
     seed_database(db)
-    print("[OK] Database seeded")
+    logger.info("database_seeded")
 
     # Verify admin user exists
     admin = db.query(User).filter(User.username == "admin").first()
     if admin:
-        print(f"[OK] Admin user found: id={admin.id}, role={admin.role.value}")
+        logger.info("admin_user_found", id=admin.id, role=admin.role.value)
     else:
-        print("[FAIL] Admin user not found!")
+        logger.error("admin_user_not_found")
         sys.exit(1)
 finally:
     db.close()
 
 # --- Step 2: Test Login ---
-print()
-print("=" * 60)
-print("STEP 2: Testing Admin Login")
-print("=" * 60)
+logger.info("step_2_admin_login")
 
 from services.auth_service import AuthError, AuthService
 
@@ -79,42 +77,38 @@ try:
             admin_pwd = None
 
     if not admin_pwd:
-        print("[SKIP] DEMO_ADMIN_PASSWORD not set — skipping login test")
+        logger.info("admin_password_not_set")
     else:
         try:
             result = auth_service.login("admin", admin_pwd)
-            print(f"[OK] Admin login succeeded! role={result['role']}, user_id={result['user_id']}")
+            logger.info("admin_login_succeeded", role=result['role'], user_id=result['user_id'])
 
             # Verify OTP
             otp_result = auth_service.verify_otp(
                 result["user_id"], result["otp_code"], result["otp_code"]
             )
-            print(f"[OK] OTP verification succeeded! user={otp_result['user']['name']}")
+            logger.info("otp_verification_succeeded", user=otp_result['user']['name'])
         except AuthError as e:
-            print(f"[FAIL] Admin login failed: {e}")
+            logger.warning("admin_login_failed", error=str(e))
             # Try alternative password from environment
             fallback_pwd = os.environ.get("DEMO_ADMIN_FALLBACK_PASSWORD")
             if fallback_pwd:
                 try:
                     result = auth_service.login("admin", fallback_pwd)
-                    print(f"[OK] Admin login with fallback succeeded! role={result['role']}")
+                    logger.info("admin_login_fallback_succeeded", role=result['role'])
                     otp_result = auth_service.verify_otp(
                         result["user_id"], result["otp_code"], result["otp_code"]
                     )
-                    print(f"[OK] OTP verification succeeded! user={otp_result['user']['name']}")
+                    logger.info("otp_verification_succeeded", user=otp_result['user']['name'])
                 except AuthError as e2:
-                    print(f"[FAIL] Admin login with fallback also failed: {e2}")
+                    logger.error("admin_login_fallback_failed", error=str(e2))
 except (OSError, ValueError, KeyError) as e:
-    print(f"[FAIL] Login test error: {e}")
-    traceback.print_exc()
+    logger.error("login_test_error", error=str(e), traceback=traceback.format_exc())
 finally:
     db.close()
 
 # --- Step 3: Test All Module Imports ---
-print()
-print("=" * 60)
-print("STEP 3: Verifying All Module Imports (Navigation)")
-print("=" * 60)
+logger.info("step_3_module_imports")
 
 
 # Mock a ThemeManager-like class and AppState for instantiation tests
@@ -176,23 +170,18 @@ for route, (mod_path, cls_name) in module_routes.items():
     try:
         importlib = __import__(mod_path, fromlist=[cls_name])
         cls = getattr(importlib, cls_name)
-        print(f"  [OK] {route}: {mod_path}.{cls_name}")
+        logger.info("module_import_ok", route=route, module=f"{mod_path}.{cls_name}")
     except (ImportError, AttributeError, OSError) as e:
         imports_failed.append((route, mod_path, cls_name, str(e)))
-        print(f"  [FAIL] {route}: {e}")
+        logger.warning("module_import_failed", route=route, error=str(e))
 
 if imports_failed:
-    print(f"\n[WARN] {len(imports_failed)} module(s) failed to import:")
-    for route, mod_path, cls_name, err in imports_failed:
-        print(f"  - {route} ({mod_path}.{cls_name}): {err}")
+    logger.warning("modules_failed", count=len(imports_failed))
 else:
-    print(f"\n[OK] All {len(module_routes)} modules imported successfully!")
+    logger.info("all_modules_imported", count=len(module_routes))
 
 # --- Step 4: Test Shared Service Imports ---
-print()
-print("=" * 60)
-print("STEP 4: Verifying Service & Utility Imports")
-print("=" * 60)
+logger.info("step_4_service_imports")
 
 service_imports: list[tuple[str, str | None]] = [
     ("services.activity_service", "ActivityService"),
@@ -228,28 +217,21 @@ for mod_path, cls_name in service_imports:
         mod = __import__(mod_path, fromlist=[cls_name] if cls_name else [])
         if cls_name:
             getattr(mod, cls_name)
-        print(f"  [OK] {mod_path}" + (f".{cls_name}" if cls_name else ""))
+        logger.info("service_import_ok", module=mod_path + (f".{cls_name}" if cls_name else ""))
     except (ImportError, AttributeError, OSError) as e:
         svc_failed.append((mod_path, str(e)))
-        print(f"  [FAIL] {mod_path}: {e}")
+        logger.warning("service_import_failed", module=mod_path, error=str(e))
 
 if svc_failed:
-    print(f"\n[WARN] {len(svc_failed)} service(s) failed to import:")
-    for mod_path, err in svc_failed:
-        print(f"  - {mod_path}: {err}")
+    logger.warning("services_failed", count=len(svc_failed))
 
 # --- Summary ---
-print()
-print("=" * 60)
-print("SUMMARY")
-print("=" * 60)
 if not imports_failed and not svc_failed:
-    print("[PASS] All imports successful!")
+    logger.info("all_imports_successful")
 else:
     if imports_failed:
-        print(f"[WARN] {len(imports_failed)} module import(s) failed")
+        logger.warning("module_imports_failed", count=len(imports_failed))
     if svc_failed:
-        print(f"[WARN] {len(svc_failed)} service import(s) failed")
+        logger.warning("service_imports_failed", count=len(svc_failed))
 
-print(f"\nTotal modules tested: {len(module_routes)}")
-print(f"Total services tested: {len(service_imports)}")
+logger.info("audit_complete", total_modules=len(module_routes), total_services=len(service_imports))

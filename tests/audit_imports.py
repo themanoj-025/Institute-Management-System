@@ -6,7 +6,10 @@ checks for syntax validity, then attempts to import each module.
 
 import importlib
 import os
+import structlog
 from typing import TypedDict
+
+logger = structlog.get_logger("audit_imports")
 
 # Ensure project root is on path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -67,12 +70,10 @@ results: AuditResults = {
     "bypass_import": [],
 }
 
-print("=" * 70)
-print("COMPREHENSIVE IMPORT AUDIT")
-print("=" * 70)
+logger.info("comprehensive_import_audit")
 
 files = get_project_files()
-print(f"\nFound {len(files)} .py files to audit\n")
+logger.info("files_found", count=len(files))
 
 for rel_path, full_path in files:
     mod_name = compute_module_name(rel_path)
@@ -81,7 +82,7 @@ for rel_path, full_path in files:
     ok, err = safe_py_compile(full_path)
     if not ok:
         results["compile_fail"].append((rel_path, err))
-        print(f"  [COMPILE FAIL] {rel_path}: {err}")
+        logger.warning("compile_fail", file=rel_path, error=err)
         continue
     results["compile_ok"] += 1
 
@@ -120,26 +121,15 @@ for rel_path, full_path in files:
         results["import_fail"].append((rel_path, mod_name, f"{type(e).__name__}: {e}"))
 
 # --- Summary ---
-print()
-print("=" * 70)
-print("SUMMARY")
-print("=" * 70)
-print(f"\nTotal files checked: {len(files)}")
-print(f"  Syntax OK:          {results['compile_ok']}")
-print(f"  Syntax FAILED:      {len(results['compile_fail'])}")
-print(f"  Imported OK:        {results['import_ok']}")
-print(f"  Bypassed (Tk/UI):   {len(results['bypass_import'])}")
-print(f"  Import FAILED:      {len(results['import_fail'])}")
+logger.info("audit_summary", total_files=len(files), syntax_ok=results['compile_ok'], syntax_failed=len(results['compile_fail']), imported_ok=results['import_ok'], bypassed=len(results['bypass_import']), import_failed=len(results['import_fail']))
 
 if results["compile_fail"]:
-    print("\n--- SYNTAX ERRORS ---")
     for path, err in results["compile_fail"]:
-        print(f"  {path}: {err}")
+        logger.error("syntax_error", file=path, error=err)
 
 if results["import_fail"]:
-    print("\n--- IMPORT ERRORS ---")
     for path, mod, err in results["import_fail"]:
-        print(f"  {path} ({mod}): {err}")
+        logger.error("import_error", file=path, module=mod, error=err)
 
 if results["bypass_import"]:
     print("\n--- BYPASSED (needs Tkinter runtime) ---")
