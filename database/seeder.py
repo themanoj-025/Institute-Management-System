@@ -12,7 +12,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from tqdm import tqdm
 
-from utils.time import utc_now
 from config.constants import AVAILABLE_COURSES
 from database.db_session import Base, SessionLocal, engine
 from database.models import (
@@ -32,6 +31,7 @@ from database.models import (
     UserRole,
 )
 from database.models import Session as AcadSession
+from utils.time import utc_now
 
 fake = Faker("en_IN")
 
