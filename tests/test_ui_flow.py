@@ -5,6 +5,7 @@ Comprehensive test script to verify:
 3. All module classes can be imported (navigation viability)
 """
 
+import importlib
 import os
 import traceback
 
@@ -168,8 +169,8 @@ module_routes = {
 
 for route, (mod_path, cls_name) in module_routes.items():
     try:
-        importlib = __import__(mod_path, fromlist=[cls_name])
-        cls = getattr(importlib, cls_name)
+        mod = importlib.import_module(mod_path)
+        cls = getattr(mod, cls_name)
         logger.info("module_import_ok", route=route, module=f"{mod_path}.{cls_name}")
     except (ImportError, AttributeError, OSError) as e:
         imports_failed.append((route, mod_path, cls_name, str(e)))
@@ -214,7 +215,7 @@ service_imports: list[tuple[str, str | None]] = [
 svc_failed = []
 for mod_path, cls_name in service_imports:
     try:
-        mod = __import__(mod_path, fromlist=[cls_name] if cls_name else [])
+        mod = importlib.import_module(mod_path)
         if cls_name:
             getattr(mod, cls_name)
         logger.info("service_import_ok", module=mod_path + (f".{cls_name}" if cls_name else ""))
