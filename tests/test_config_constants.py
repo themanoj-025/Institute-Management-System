@@ -1,14 +1,6 @@
 """Tests for IMS configuration constants."""
 
-import os
-import sys
-
 import pytest
-
-# config/courses.py uses `from courses_pkg import ...` which needs config/ on the path
-_config_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
-if _config_dir not in sys.path:
-    sys.path.insert(0, _config_dir)
 
 from config.constants import (
     ANIMATION_DELAY,

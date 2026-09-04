@@ -4,13 +4,10 @@ from __future__ import annotations
 
 import importlib
 import os
-import sys
 import traceback as tb_mod
 from tkinter import TclError
 
 import customtkinter as ctk
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from auth.session import SessionTracker
 from database.db_session import get_db, init_db
