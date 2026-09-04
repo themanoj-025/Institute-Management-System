@@ -26,8 +26,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
-from utils.time import utc_now
 from utils.logger import setup_logger
+from utils.time import utc_now
 
 logger = setup_logger("bb-ims-api")
 
