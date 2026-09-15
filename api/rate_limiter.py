@@ -37,10 +37,12 @@ in ``api/main.py`` for the full list).
 import threading
 import time
 from collections import defaultdict
+from collections.abc import Awaitable, Callable
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 from starlette.types import ASGIApp
 
 # Rate-limit error code (string literal avoids circular imports)
@@ -176,7 +178,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 self._counters[matched] = SlidingWindowCounter(max_req, window)
             return self._counters[matched]
 
-    async def dispatch(self, request: Request, call_next) -> None:
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         # Never rate-limit CORS preflight requests
         if request.method == "OPTIONS":
             return await call_next(request)

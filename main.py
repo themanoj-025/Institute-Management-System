@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib
 import os
+import sys
 import traceback as tb_mod
 from tkinter import TclError
 
@@ -26,8 +27,8 @@ log = setup_logger("bb-ims")
 
 class AppState:
     def __init__(self) -> None:
-        self.current_user = None
-        self.current_route = None
+        self.current_user: dict[str, object] | None = None
+        self.current_route: str | None = None
 
 
 class BBIMS_App(ctk.CTk):
@@ -77,7 +78,9 @@ class BBIMS_App(ctk.CTk):
 
     def show_landing_page(self) -> None:
         self.clear_main_window()
-        self.landing = LandingPage(self, self.tm, self.app_state, self.db_session, self.start_main_app)
+        self.landing = LandingPage(
+            self, self.tm, self.app_state, self.db_session, self.start_main_app
+        )
         self.landing.pack(fill="both", expand=True)
 
     def start_main_app(self) -> None:
@@ -92,7 +95,7 @@ class BBIMS_App(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        role = self.app_state.current_user.get("role", "student")
+        role = (self.app_state.current_user or {}).get("role", "student")
         self.sidebar = Sidebar(self, self.tm, self.navigate, role)
         self.sidebar.grid(row=0, column=0, sticky="nsew")
 
@@ -145,7 +148,7 @@ class BBIMS_App(ctk.CTk):
 
     def _resolve_module(self, route):
         """Resolve a route to its module class via routes.py mapping."""
-        role = self.app_state.current_user.get("role", "student")
+        role = (self.app_state.current_user or {}).get("role", "student")
         resolved = resolve_route(route, role)
         if not resolved:
             return None
@@ -154,8 +157,15 @@ class BBIMS_App(ctk.CTk):
             mod = importlib.import_module(module_path)
             return getattr(mod, class_name)
         except (OSError, ValueError) as e:
-            log.error("Failed to import %s.%s: %s\n%s", module_path, class_name, e, tb_mod.format_exc())
-            self.after(0, lambda: self.show_error_dialog(f"Failed to load module: {class_name}", tb_mod.format_exc()))
+            log.error(
+                "Failed to import %s.%s: %s\n%s", module_path, class_name, e, tb_mod.format_exc()
+            )
+            self.after(
+                0,
+                lambda: self.show_error_dialog(
+                    f"Failed to load module: {class_name}", tb_mod.format_exc()
+                ),
+            )
             return None
 
     def _install_global_exception_handler(self) -> None:

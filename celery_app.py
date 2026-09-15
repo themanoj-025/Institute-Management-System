@@ -78,7 +78,11 @@ class LoggedTask(Task):
         logger.info("Task %s succeeded", self.name, extra={"task_id": task_id})
 
     def on_failure(self, exc, task_id, args, kwargs, einfo) -> None:
-        logger.error("Task %s failed: %s", self.name, exc, extra={"task_id": task_id, "error": str(exc)})
+        logger.error(
+            "Task %s failed: %s", self.name, exc, extra={"task_id": task_id, "error": str(exc)}
+        )
 
     def on_retry(self, exc, task_id, args, kwargs, einfo) -> None:
-        logger.warning("Task %s retrying: %s", self.name, exc, extra={"task_id": task_id, "error": str(exc)})
+        logger.warning(
+            "Task %s retrying: %s", self.name, exc, extra={"task_id": task_id, "error": str(exc)}
+        )

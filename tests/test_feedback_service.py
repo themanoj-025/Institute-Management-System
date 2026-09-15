@@ -1,5 +1,8 @@
 """Tests for FeedbackService."""
 
+from collections.abc import Iterator
+from typing import Any
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,7 +13,7 @@ from services.feedback_service import FeedbackService
 
 
 @pytest.fixture
-def db_session() -> None:
+def db_session() -> Iterator[Any]:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -60,7 +63,7 @@ class TestFeedbackService:
 
         # Reply to feedback
         replied = service.reply_to_feedback(fb["id"], admin_user.id, "Labs are coming soon!")
-        assert replied["reply"] == "Labs are coming soon!"
+        assert replied is not None and replied["reply"] == "Labs are coming soon!"
         assert replied["replied_on"] is not None
 
     def test_get_user_feedback(self, db_session, test_user) -> None:

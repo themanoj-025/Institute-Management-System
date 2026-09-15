@@ -194,7 +194,7 @@ def test_search_service_uses_parameterized_queries() -> None:
 # --- PAGINATION CAP TEST -------------------------------------------------
 
 
-def test_pagination_per_page_is_capped() -> int:
+def test_pagination_per_page_is_capped() -> None:
     """Verify paginated_response caps per_page at MAX_PER_PAGE."""
     from api.main import MAX_PER_PAGE, paginated_response
 
@@ -463,7 +463,6 @@ def test_invalid_verification_token_rejected(test_db, auth_service) -> None:
 
     from database.models import User, UserRole
     from services.auth_service import AuthError
-
 
     pwd_hash = bcrypt.hashpw(b"TestPass123!", bcrypt.gensalt(4)).decode("utf-8")
     user = User(

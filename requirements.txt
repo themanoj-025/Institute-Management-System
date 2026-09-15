@@ -9,7 +9,9 @@ opencv-python~=4.11.0
 matplotlib~=3.11.1
 seaborn~=0.13.2
 pandas~=3.0.5
-numpy~=2.5.2
+# 2.4.x: last numpy line with wheels for Python 3.10/3.11 (CI matrix) —
+# 2.5.x requires Python >=3.12 and breaks the typecheck/test jobs at install.
+numpy>=2.4.0,<2.5
 mplcursors~=0.7.1
 reportlab==5.0.1
 openpyxl==3.1.2

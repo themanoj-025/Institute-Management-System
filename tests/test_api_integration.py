@@ -26,7 +26,7 @@ client = TestClient(app)
 # ═══════════════════════════════════════════════════════════════════
 
 
-def make_token(username="admin", role="admin", user_id=1, extra=None) -> None:
+def make_token(username="admin", role="admin", user_id=1, extra=None) -> str:
     """Create a test JWT with a unique jti."""
     data = {"sub": username, "role": role, "user_id": user_id, **(extra or {})}
     return create_access_token(data)
@@ -375,7 +375,7 @@ class TestConfigUtility:
 
 
 class TestPagination:
-    def test_pagination_helper_shape(self) -> int:
+    def test_pagination_helper_shape(self) -> None:
         """Verify paginated_response returns correct shape."""
         from api.main import paginated_response
 
@@ -411,7 +411,7 @@ class TestPagination:
         assert result["prev_page"] == 1
         assert len(result["data"]) == 10
 
-    def test_pagination_first_page(self) -> int:
+    def test_pagination_first_page(self) -> None:
         """Verify pagination metadata for first page."""
         from api.main import paginated_response
 
@@ -571,7 +571,6 @@ class TestSetConfigValue:
                 calls.append(("commit",))
 
         from utils.config import set_config_value
-
 
         set_config_value(MockSession(), "test_key", 200, user_id=2)
         assert captured_entry is not None

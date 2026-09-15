@@ -18,9 +18,9 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXCLUDE_DIRS = {"__pycache__", "venv", ".git", ".github"}
 
 
-def get_project_files() -> list[object]:
+def get_project_files() -> list[tuple[str, str]]:
     """Get all .py files in the project excluding excluded dirs."""
-    files = []
+    files: list[tuple[str, str]] = []
     for root, dirs, fnames in os.walk(PROJECT_ROOT):
         # Prune excluded directories
         dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
@@ -43,7 +43,7 @@ def compute_module_name(rel_path) -> str:
     return ".".join(pkg_parts)
 
 
-def safe_py_compile(filepath) -> tuple[object, ...]:
+def safe_py_compile(filepath) -> tuple[bool, str | None]:
     """Try to compile a .py file and return (success, error_msg)."""
     try:
         with open(filepath, encoding="utf-8") as f:
@@ -62,6 +62,7 @@ class AuditResults(TypedDict):
     import_ok: int
     import_fail: list[tuple[str, str, str]]
     bypass_import: list[tuple[str, str, str]]
+
 
 results: AuditResults = {
     "compile_ok": 0,
@@ -100,17 +101,11 @@ for rel_path, full_path in files:
         if parent:
             try:
                 importlib.import_module(parent)
-                results["bypass_import"].append(
-                    (rel_path, mod_name, "OK (parent valid)")
-                )
+                results["bypass_import"].append((rel_path, mod_name, "OK (parent valid)"))
             except ImportError as e:
-                results["import_fail"].append(
-                    (rel_path, mod_name, f"Parent import failed: {e}")
-                )
+                results["import_fail"].append((rel_path, mod_name, f"Parent import failed: {e}"))
         else:
-            results["bypass_import"].append(
-                (rel_path, mod_name, "OK (SKIP - needs Tk)")
-            )
+            results["bypass_import"].append((rel_path, mod_name, "OK (SKIP - needs Tk)"))
         continue
 
     try:
@@ -122,7 +117,15 @@ for rel_path, full_path in files:
         results["import_fail"].append((rel_path, mod_name, f"{type(e).__name__}: {e}"))
 
 # --- Summary ---
-logger.info("audit_summary", total_files=len(files), syntax_ok=results['compile_ok'], syntax_failed=len(results['compile_fail']), imported_ok=results['import_ok'], bypassed=len(results['bypass_import']), import_failed=len(results['import_fail']))
+logger.info(
+    "audit_summary",
+    total_files=len(files),
+    syntax_ok=results["compile_ok"],
+    syntax_failed=len(results["compile_fail"]),
+    imported_ok=results["import_ok"],
+    bypassed=len(results["bypass_import"]),
+    import_failed=len(results["import_fail"]),
+)
 
 if results["compile_fail"]:
     for path, err in results["compile_fail"]:

@@ -90,13 +90,17 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         finally:
             duration = time.monotonic() - start
             status = getattr(response, "status_code", 500) if response is not None else 500
-            assert REQUEST_COUNT is not None and REQUEST_LATENCY is not None and ACTIVE_REQUESTS is not None
+            assert (
+                REQUEST_COUNT is not None
+                and REQUEST_LATENCY is not None
+                and ACTIVE_REQUESTS is not None
+            )
             REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
             REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(duration)
             ACTIVE_REQUESTS.dec()
 
 
-def metrics_endpoint() -> None:
+def metrics_endpoint() -> str:
     """Return a plain-text response with Prometheus-formatted metrics.
 
     Must be registered as a FastAPI route::

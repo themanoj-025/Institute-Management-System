@@ -1,6 +1,8 @@
 """Tests for LeaveService."""
 
+from collections.abc import Iterator
 from datetime import date
+from typing import Any
 
 import pytest
 from sqlalchemy import create_engine
@@ -12,8 +14,9 @@ from services.leave_service import LeaveService
 
 pytestmark = pytest.mark.slow
 
+
 @pytest.fixture
-def db_session() -> None:
+def db_session() -> Iterator[Any]:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
@@ -140,7 +143,7 @@ class TestLeaveService:
         )
 
         approved = service.approve_leave(result["id"], admin.id)
-        assert approved["status"] == "approved"
+        assert approved and approved["status"] == "approved"
 
     def test_reject_leave(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db
@@ -155,7 +158,7 @@ class TestLeaveService:
         )
 
         rejected = service.reject_leave(result["id"], admin.id)
-        assert rejected["status"] == "rejected"
+        assert rejected and rejected["status"] == "rejected"
 
     def test_get_all_leaves(self, seeded_db) -> None:
         db, admin, student, staff, sess = seeded_db

@@ -6,13 +6,7 @@ import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from api.deps import get_current_user, require_role, serialize_student
-from api.schemas import (
-    AttendanceRecord,
-    ResultRecord,
-    StudentCreate,
-    StudentPatch,
-    StudentResponse,
-)
+from api.schemas import AttendanceRecord, ResultRecord, StudentCreate, StudentPatch, StudentResponse
 from database.db_session import get_session
 from database.models import Attendance, Course, Result, Student, User, UserRole
 from utils.time import utc_now
@@ -62,7 +56,9 @@ def create_student(req: StudentCreate) -> dict:
     with get_session() as session:
         existing = session.query(User).filter(User.email == req.email).first()
         if existing:
-            raise HTTPException(status_code=400, detail="Email is already registered in BB-IMS system")
+            raise HTTPException(
+                status_code=400, detail="Email is already registered in BB-IMS system"
+            )
 
         import secrets as _secrets
 
@@ -174,7 +170,10 @@ def bulk_attendance(records: list[AttendanceRecord]) -> dict:
                 status=r.status,
             )
             session.add(att)
-        return {"status": "success", "message": f"Successfully entered {len(records)} attendance records."}
+        return {
+            "status": "success",
+            "message": f"Successfully entered {len(records)} attendance records.",
+        }
 
 
 @router.post(

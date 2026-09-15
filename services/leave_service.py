@@ -23,7 +23,9 @@ class LeaveService:
         self.db.commit()
         return self._format_leave(leave)
 
-    def get_leaves_for_user(self, student_id: int | None = None, staff_id: int | None = None) -> list[dict]:
+    def get_leaves_for_user(
+        self, student_id: int | None = None, staff_id: int | None = None
+    ) -> list[dict]:
         query = self.db.query(Leave)
         if student_id:
             query = query.filter(Leave.student_id == student_id)

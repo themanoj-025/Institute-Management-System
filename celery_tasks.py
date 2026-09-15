@@ -57,7 +57,7 @@ def send_email_task(
     except (smtplib.SMTPException, OSError) as exc:
         logger.error("Failed to send email to %s: %s", to_email, exc)
         try:
-            raise self.retry(exc=exc, countdown=2 ** self.request.retries * 60)
+            raise self.retry(exc=exc, countdown=2**self.request.retries * 60)
         except MaxRetriesExceededError:
             return {"status": "failed", "error": str(exc)}
 
@@ -71,14 +71,54 @@ def _store_drift_report(session, report: dict) -> dict:
     from utils.time import utc_now
 
     entries = [
-        ("drift_detected", str(report.get("drift_detected", False)), "bool", "Whether ML feature drift has been detected"),
-        ("drift_severe", str(report.get("severe_drift", False)), "bool", "Whether severe ML feature drift has been detected"),
-        ("drift_max_psi", str(report.get("max_psi", 0.0)), "float", "Maximum PSI across all features"),
-        ("drift_max_psi_feature", str(report.get("max_psi_feature", "")), "string", "Feature with highest PSI"),
-        ("drift_features_drifted", str(report.get("features_drifted", 0)), "int", "Features exceeding PSI threshold"),
-        ("drift_feature_count", str(report.get("feature_count", 0)), "int", "Total features compared"),
-        ("drift_last_checked", utc_now().isoformat(), "string", "ISO timestamp of last drift check"),
-        ("drift_error", str(report.get("error", "")), "string", "Error message from last drift check"),
+        (
+            "drift_detected",
+            str(report.get("drift_detected", False)),
+            "bool",
+            "Whether ML feature drift has been detected",
+        ),
+        (
+            "drift_severe",
+            str(report.get("severe_drift", False)),
+            "bool",
+            "Whether severe ML feature drift has been detected",
+        ),
+        (
+            "drift_max_psi",
+            str(report.get("max_psi", 0.0)),
+            "float",
+            "Maximum PSI across all features",
+        ),
+        (
+            "drift_max_psi_feature",
+            str(report.get("max_psi_feature", "")),
+            "string",
+            "Feature with highest PSI",
+        ),
+        (
+            "drift_features_drifted",
+            str(report.get("features_drifted", 0)),
+            "int",
+            "Features exceeding PSI threshold",
+        ),
+        (
+            "drift_feature_count",
+            str(report.get("feature_count", 0)),
+            "int",
+            "Total features compared",
+        ),
+        (
+            "drift_last_checked",
+            utc_now().isoformat(),
+            "string",
+            "ISO timestamp of last drift check",
+        ),
+        (
+            "drift_error",
+            str(report.get("error", "")),
+            "string",
+            "Error message from last drift check",
+        ),
     ]
 
     written = {}
@@ -88,7 +128,9 @@ def _store_drift_report(session, report: dict) -> dict:
             entry.value = value
             entry.value_type = value_type
         else:
-            session.add(SystemConfig(key=key, value=value, value_type=value_type, description=description))
+            session.add(
+                SystemConfig(key=key, value=value, value_type=value_type, description=description)
+            )
         written[key] = value
     session.commit()
     return written
@@ -109,7 +151,11 @@ def check_ml_drift_task(self) -> None:
             report = compute_drift_report(session)
             _store_drift_report(session, report)
             if report.get("drift_detected"):
-                logger.warning("ML drift detected! %d/%d features drifted.", report.get("features_drifted", 0), report.get("feature_count", 0))
+                logger.warning(
+                    "ML drift detected! %d/%d features drifted.",
+                    report.get("features_drifted", 0),
+                    report.get("feature_count", 0),
+                )
             return {"status": "ok", "drift_detected": report.get("drift_detected")}
         finally:
             session.close()
@@ -158,7 +204,11 @@ def cleanup_expired_otps_task() -> None:
 
         session = SessionLocal()
         try:
-            result = session.query(OtpCode).filter(OtpCode.expires_at < utc_now(), OtpCode.is_used == False).delete()
+            result = (
+                session.query(OtpCode)
+                .filter(OtpCode.expires_at < utc_now(), OtpCode.is_used == False)
+                .delete()
+            )
             session.commit()
             if result:
                 logger.info("Cleaned up %d expired OTP codes", result)
@@ -180,7 +230,9 @@ def cleanup_revoked_tokens_task() -> None:
 
         session = SessionLocal()
         try:
-            result = session.query(RevokedToken).filter(RevokedToken.expires_at < utc_now()).delete()
+            result = (
+                session.query(RevokedToken).filter(RevokedToken.expires_at < utc_now()).delete()
+            )
             session.commit()
             if result:
                 logger.info("Cleaned up %d expired revoked tokens", result)
@@ -196,7 +248,9 @@ def cleanup_revoked_tokens_task() -> None:
 
 
 @app.task(base=app.Task, bind=True, max_retries=2)
-def generate_export_task(self, export_type: str, filename: str, headers: list[str], rows: list[list[Any]], **kwargs) -> dict[str, object]:
+def generate_export_task(
+    self, export_type: str, filename: str, headers: list[str], rows: list[list[Any]], **kwargs
+) -> dict[str, object]:
     """Generate an export file as a background task."""
     from services.export_service import ExportError, ExportService
 

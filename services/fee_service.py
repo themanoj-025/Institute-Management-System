@@ -21,7 +21,9 @@ class FeeService:
         )
         return [self._format_fee(f) for f in fees]
 
-    def record_payment(self, fee_id: int, amount: float, mode: str, transaction_id: str | None = None) -> str:
+    def record_payment(
+        self, fee_id: int, amount: float, mode: str, transaction_id: str | None = None
+    ) -> str:
         fee = self.db.query(Fee).filter(Fee.id == fee_id, Fee.is_deleted == False).first()
         if not fee:
             raise ValueError("Fee record not found or has been deleted")

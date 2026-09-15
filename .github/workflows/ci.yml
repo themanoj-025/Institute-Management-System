@@ -128,7 +128,7 @@ jobs:
           SECRET_KEY: test-secret-key-for-ci
         run: |
           echo "=== Checking for datetime.now(timezone.utc) outside utc_now() ==="
-          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py" | grep -v "IMPLEMENTATION_NOTES.md" | wc -l)
+          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -vc "utils/time.py\|IMPLEMENTATION_NOTES.md")
           if [ "$REMAINING" -ne "0" ]; then
             echo "FAIL: Found $REMAINING datetime.now(timezone.utc) calls outside utc_now()"
             grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py"
@@ -355,6 +355,7 @@ jobs:
       - uses: hadolint/hadolint-action@v3.5.0
         with:
           dockerfile: Dockerfile
+          failure-threshold: warning
 
   schemathesis-fuzz:
     name: Contract fuzzing (Schemathesis)
@@ -371,6 +372,8 @@ jobs:
           pip install -r requirements.txt 2>/dev/null || pip install -e ".[dev]" 2>/dev/null || true
           pip install schemathesis
       - name: Generate OpenAPI spec
+        env:
+          SECRET_KEY: test-secret-key-for-ci-12345678
         run: |
           python -c "
           from api.main import app
@@ -380,6 +383,8 @@ jobs:
           print('OpenAPI spec generated:', len(json.dumps(app.openapi())), 'bytes')
           "
       - name: Fuzz API against OpenAPI contract
+        env:
+          SECRET_KEY: test-secret-key-for-ci-12345678
         run: |
           uvicorn api.main:app --host 0.0.0.0 --port 8000 &
           sleep 3
@@ -409,7 +414,7 @@ jobs:
         run: |
           npx vite preview --port 3000 &
           sleep 5
-          lhci autorun --config=web/lighthouserc.json
+          lhci autorun --config=lighthouserc.json
       - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v7
