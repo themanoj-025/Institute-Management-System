@@ -1,8 +1,8 @@
 # SECURITY & QA FINAL REPORT — Binary Brain Institute Management System
 
-**Date:** July 26, 2026  
-**Scope:** Final audit, test, hardening, and optimization pass  
-**Test Suite:** 342 tests passing, 1 skipped, 0 failing  
+**Date:** July 26, 2026
+**Scope:** Final audit, test, hardening, and optimization pass
+**Test Suite:** 342 tests passing, 1 skipped, 0 failing
 **Baseline:** 292 tests (prior state) → 342 tests (post-audit)
 
 ---
@@ -57,8 +57,8 @@
 
 ### Critical Fix Applied
 **`api/main.py` — Login endpoint no longer returns JWT**
-- Before: `POST /v1/auth/login` returned `{access_token: ..., role: ...}` 
-- After: Returns `{status: "otp_required", user_id: ..., role: ..., message: "..."}` 
+- Before: `POST /v1/auth/login` returned `{access_token: ..., role: ...}`
+- After: Returns `{status: "otp_required", user_id: ..., role: ..., message: "..."}`
 - JWT is ONLY issued at `/v1/auth/verify-otp` after successful OTP validation
 - **Test proof**: All 342 tests pass including auth test suite
 
@@ -82,7 +82,7 @@
 | Risk explanation | ✅ `verify_ownership()` | Also inline check | ✅ |
 | Attendance, Results, Leaves, Feedback | ❌ No endpoints that read by ID | N/A (bulk only) | N/A |
 
-**`_resolve_student_user_id()` supports:** student_id, fee_id, attendance_id, result_id, leave_id, placement_id  
+**`_resolve_student_user_id()` supports:** student_id, fee_id, attendance_id, result_id, leave_id, placement_id
 **`verify_ownership()` supports:** All six resource types, with staff/admin bypass
 
 ### Tests
@@ -354,8 +354,8 @@ The remaining items are **straightforward configuration/code changes** that can 
 
 ## Section 11: Final Closeout — All 17 Findings Resolved
 
-**Date:** July 26, 2026 (Closeout Pass)  
-**Test Suite (final):** 342 passed, 1 skipped, 0 failing  
+**Date:** July 26, 2026 (Closeout Pass)
+**Test Suite (final):** 342 passed, 1 skipped, 0 failing
 
 ### Closed Findings Summary
 

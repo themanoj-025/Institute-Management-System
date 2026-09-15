@@ -54,7 +54,7 @@ receivers:
     # ── Placeholder: Replace with your notification channel ──
     # Supported receivers: slack, pagerduty, email, webhook, etc.
     # See https://prometheus.io/docs/alerting/latest/configuration/
-    
+
     # Example: Slack
     # slack_configs:
     #   - api_url: '<your-slack-webhook-url>'  # e.g. https://hooks.slack.com/services/...
@@ -109,7 +109,7 @@ The existing Prometheus setup (defined in `docker-compose.yml`) already exposes 
    ```yaml
    rule_files:
      - '/etc/prometheus/alert.rules'
-   
+
    alerting:
      alertmanagers:
        - static_configs:

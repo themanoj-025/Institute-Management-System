@@ -159,7 +159,7 @@ export async function apiRequest(path, options = {}) {
   return resp.json();
 }
 
-# Convenience wrappers
+// Convenience wrappers
 
 export const api = {
   get: (path, params) => apiRequest(path, { params }),
@@ -169,7 +169,7 @@ export const api = {
   delete: (path) => apiRequest(path, { method: 'DELETE' }),
 };
 
-# Auth endpoints
+// Auth endpoints
 
 export async function login(username, password) {
   const data = await apiRequest('/auth/login', {
@@ -211,7 +211,7 @@ export async function logout() {
   clearAuth();
 }
 
-# Password Reset endpoints
+// Password Reset endpoints
 
 export async function forgotPassword(email) {
   return apiRequest('/auth/forgot-password', {
@@ -227,7 +227,7 @@ export async function resetPassword(userId, token, newPassword) {
   });
 }
 
-# Student endpoints
+// Student endpoints
 
 export async function fetchStudents(params = {}) {
   return api.get('/students', params);
@@ -241,7 +241,7 @@ export async function updateStudent(id, data) {
   return api.patch(`/students/${id}`, data);
 }
 
-# Analytics endpoints
+// Analytics endpoints
 
 export async function fetchAtRiskStudents(params = {}) {
   return api.get('/analytics/at-risk', params);
@@ -259,7 +259,7 @@ export async function fetchAnalyticsSummary() {
   return api.get('/analytics/summary');
 }
 
-# Fee endpoints
+// Fee endpoints
 
 export async function fetchFees(params = {}) {
   return api.get('/fees', params);
@@ -269,13 +269,13 @@ export async function recordPayment(data) {
   return api.post('/fees/payment', data);
 }
 
-# Placement endpoints
+// Placement endpoints
 
 export async function fetchPlacements(params = {}) {
   return api.get('/placements', params);
 }
 
-# Attendance endpoints
+// Attendance endpoints
 
 export async function fetchAttendance(params = {}) {
   return api.get('/attendance', params);
@@ -285,7 +285,7 @@ export async function recordAttendance(records) {
   return api.post('/attendance/bulk', records);
 }
 
-# Result endpoints
+// Result endpoints
 
 export async function fetchResults(params = {}) {
   return api.get('/results', params);
@@ -295,7 +295,7 @@ export async function recordResults(records) {
   return api.post('/results/bulk', records);
 }
 
-# Leave endpoints
+// Leave endpoints
 
 export async function fetchLeaves(params = {}) {
   return api.get('/leaves', params);
@@ -305,13 +305,13 @@ export async function applyLeave(data) {
   return api.post('/leaves', data);
 }
 
-# Notice endpoints
+// Notice endpoints
 
 export async function fetchNotices(params = {}) {
   return api.get('/notices', params);
 }
 
-# Feedback endpoints
+// Feedback endpoints
 
 export async function fetchFeedback(params = {}) {
   return api.get('/feedback', params);
@@ -321,7 +321,7 @@ export async function submitFeedback(data) {
   return api.post('/feedback', data);
 }
 
-# Staff endpoints
+// Staff endpoints
 
 export async function fetchStaff(params = {}) {
   return api.get('/staff', params);
@@ -343,7 +343,7 @@ export async function deleteStaff(id) {
   return api.delete(`/staff/${id}`);
 }
 
-# Course endpoints
+// Course endpoints
 
 export async function fetchCourses(params = {}) {
   return api.get('/courses', params);
@@ -365,7 +365,7 @@ export async function deleteCourse(id) {
   return api.delete(`/courses/${id}`);
 }
 
-# Config endpoints (admin)
+// Config endpoints (admin)
 
 export async function fetchRiskThresholds() {
   return api.get('/admin/config/risk-thresholds');
