@@ -29,6 +29,10 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 3
+    ignore:
+      # CI matrix is 3.10-3.12 and numpy<2.5 has no py3.13+ wheels; stay 3.12
+      - dependency-name: "python"
+        versions: [">=3.13-slim"]
     labels:
       - "dependencies"
       - "docker"
