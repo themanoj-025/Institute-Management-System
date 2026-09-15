@@ -266,12 +266,14 @@ jobs:
       - name: Run pip-audit (dependency vulnerabilities)
         run: pip-audit || true
 
+      # Pinned binary instead of gitleaks-action@v2: the action intermittently
+      # fails with gitleaks' "stderr is not empty" git-plumbing error (gitleaks
+      # #1464) even with no leaks; a direct scan is deterministic.
       - name: Run Gitleaks (secret scanning)
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          path: .
-          report-format: json
-          report-path: gitleaks-report.json
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o gitleaks.tgz
+          sudo tar -xzf gitleaks.tgz -C /usr/local/bin gitleaks
+          gitleaks detect --source . --report-format json --report-path gitleaks-report.json --no-git --redact -v
 
       - name: Upload security reports
         uses: actions/upload-artifact@v7
