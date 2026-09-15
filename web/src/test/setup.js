@@ -17,7 +17,7 @@ const localStorageMock = (() => {
 
 Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock, writable: true });
 
-# Global fetch polyfill
+// Global fetch polyfill
 // Some components (e.g. Settings.jsx PromotionHistory) call raw fetch()
 // instead of the api client. Intercept those calls in tests so they
 // don't produce unhandled rejections from relative URLs.

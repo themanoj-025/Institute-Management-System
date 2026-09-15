@@ -11,12 +11,8 @@ repos:
       - id: black
         args: [--line-length=100]
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: [--profile=black, --line-length=100]
-
+  # isort removed: ruff's I001 (isort-compatible rules) covers import
+  # sorting, and running both hooks made them fight each other.
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v2.3.1
     hooks:
