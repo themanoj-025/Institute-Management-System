@@ -73,7 +73,9 @@ class AttendanceTaker(ctk.CTkFrame):
         )
         self.save_btn.pack(pady=(0, 10))
 
-    def _show_placeholder(self, msg="Select course and date above, then click Load Students.") -> None:
+    def _show_placeholder(
+        self, msg="Select course and date above, then click Load Students."
+    ) -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.grid_container, fg_color="transparent")

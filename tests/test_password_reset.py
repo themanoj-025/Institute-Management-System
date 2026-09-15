@@ -23,7 +23,6 @@ from utils.time import utc_now
 pytestmark = pytest.mark.integration
 
 
-
 def _make_unique_user_data() -> dict[str, object]:
     """Helper to create unique user credentials for each test."""
     tag = uuid.uuid4().hex[:8]

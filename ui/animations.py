@@ -24,7 +24,9 @@ class HoverEffect:
 
 class CounterAnimation:
     @staticmethod
-    def animate(label: ctk.CTkLabel, target: int, duration_ms: int = 1200, prefix="", suffix="") -> None:
+    def animate(
+        label: ctk.CTkLabel, target: int, duration_ms: int = 1200, prefix="", suffix=""
+    ) -> None:
         steps = 30
         step_ms = duration_ms // steps
 
@@ -52,11 +54,11 @@ class SlideTransition:
         step_ms = duration_ms // steps
 
         # Simple color blend helper
-        def hex_to_rgb(hex_str) -> None:
+        def hex_to_rgb(hex_str: str) -> tuple[int, int, int]:
             hex_str = hex_str.lstrip("#")
             return tuple(int(hex_str[i : i + 2], 16) for i in (0, 2, 4))
 
-        def rgb_to_hex(rgb) -> None:
+        def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
             return "#{:02x}{:02x}{:02x}".format(*rgb)
 
         appearance = ctk.get_appearance_mode().lower()

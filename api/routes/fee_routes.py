@@ -76,7 +76,9 @@ def record_payment(req: PaymentCreate) -> dict:
     dependencies=[Depends(require_role(["admin"]))],
     summary="Soft-delete fee record",
 )
-def delete_fee(fee_id: int, permanent: bool = False, user: dict = Depends(get_current_user)) -> dict:
+def delete_fee(
+    fee_id: int, permanent: bool = False, user: dict = Depends(get_current_user)
+) -> dict:
     with get_session() as session:
         fee = session.query(Fee).filter(Fee.id == fee_id).first()
         if not fee:

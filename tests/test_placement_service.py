@@ -1,6 +1,8 @@
 """Tests for PlacementService."""
 
+from collections.abc import Iterator
 from datetime import date
+from typing import Any
 
 import pytest
 from sqlalchemy import create_engine
@@ -12,8 +14,9 @@ from services.placement_service import PlacementService
 
 pytestmark = pytest.mark.slow
 
+
 @pytest.fixture
-def db_session() -> None:
+def db_session() -> Iterator[Any]:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

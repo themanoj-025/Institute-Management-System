@@ -342,7 +342,6 @@ class Result(Base):
     )
 
 
-
 # Re-export extended models for backward compatibility
 from database.models_extended import (
     ActivityLog,

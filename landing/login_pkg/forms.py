@@ -25,7 +25,7 @@ import customtkinter as ctk
 try:
     from sqlalchemy.exc import SQLAlchemyError
 except ImportError:
-    SQLAlchemyError = Exception
+    SQLAlchemyError = Exception  # type: ignore[misc,assignment]
 
 # Use httpx if available, fall back to urllib.request
 try:

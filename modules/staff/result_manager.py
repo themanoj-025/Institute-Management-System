@@ -8,7 +8,7 @@ from ui.toast import ToastManager
 from utils.async_loader import AsyncLoader
 
 
-def _calculate_grade(pct) -> None:
+def _calculate_grade(pct: float) -> str:
     if pct >= 90:
         return "A+"
     elif pct >= 80:
@@ -101,7 +101,9 @@ class ResultManager(ctk.CTkFrame):
         )
         self.save_btn.pack(pady=(0, 10))
 
-    def _show_placeholder(self, msg="Filter by course and exam type, then click Load Students.") -> None:
+    def _show_placeholder(
+        self, msg="Filter by course and exam type, then click Load Students."
+    ) -> None:
         for w in self.grid_container.winfo_children():
             w.destroy()
         frame = ctk.CTkFrame(self.grid_container, fg_color="transparent")
@@ -193,7 +195,7 @@ class ResultManager(ctk.CTkFrame):
             grade_lbl.pack(side="left", padx=5, pady=4)
 
             # Auto-calculate grade on key release
-            def make_callback(mv=marks_var, gl=grade_lbl) -> None:
+            def make_callback(mv=marks_var, gl=grade_lbl):
                 def callback(*_) -> None:
                     try:
                         total = float(self.total_entry.get() or 100)

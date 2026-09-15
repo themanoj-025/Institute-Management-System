@@ -2,6 +2,8 @@
 
 import os
 import tempfile
+from collections.abc import Iterator
+from typing import Any
 
 import pytest
 
@@ -11,7 +13,7 @@ from services.export_service import ExportError, ExportService
 
 
 @pytest.fixture
-def export_service() -> None:
+def export_service() -> Iterator[Any]:
     """Create an ExportService with a temporary export directory."""
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmpdir:
         yield ExportService(export_dir=tmpdir, auto_create=True)

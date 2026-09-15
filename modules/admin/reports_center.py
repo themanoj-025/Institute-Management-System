@@ -74,7 +74,7 @@ class ReportsCenter(ctk.CTkFrame):
 
             ToastManager.show(
                 self.winfo_toplevel(),
-                f"{title} saved → {os.path.basename(result.path)}",
+                f"{title} saved → {os.path.basename(str(result.path))}",
                 "success",
             )
         except (SQLAlchemyError, ValueError, OSError) as exc:

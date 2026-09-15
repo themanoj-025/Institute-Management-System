@@ -4,7 +4,9 @@ from landing.login_dialog import LoginDialog
 
 
 class LandingPage(ctk.CTkFrame):
-    def __init__(self, master, tm, app_state, db_session, show_main_app_cb, *args, **kwargs) -> None:
+    def __init__(
+        self, master, tm, app_state, db_session, show_main_app_cb, *args, **kwargs
+    ) -> None:
         super().__init__(master, *args, **kwargs)
         self.tm = tm
         self.app_state = app_state

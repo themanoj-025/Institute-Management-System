@@ -15,7 +15,9 @@ class ResultService:
     def __init__(self, session: DbSession) -> None:
         self.session = session
 
-    def get_existing_marks(self, subject_id: int, session_id: int, exam_type: str) -> dict[int, float]:
+    def get_existing_marks(
+        self, subject_id: int, session_id: int, exam_type: str
+    ) -> dict[int, float]:
         records = (
             self.session.query(Result)
             .filter(
@@ -26,7 +28,7 @@ class ResultService:
             )
             .all()
         )
-        return {r.student_id: r.marks_obtained for r in records}
+        return {int(r.student_id): float(r.marks_obtained) for r in records}
 
     def get_student_results(self, student_id: int) -> list[dict[str, Any]]:
         results = (

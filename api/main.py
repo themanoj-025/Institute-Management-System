@@ -19,6 +19,7 @@ This file is the application entry point. Route logic is split into:
 """
 
 import traceback
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, Request, status
@@ -50,7 +51,7 @@ OPENAPI_TAGS = [
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     from config.settings import init_app
 
     init_app()

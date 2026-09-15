@@ -13,7 +13,14 @@ class PlacementService:
         placements = self.db.query(Placement).order_by(Placement.id.desc()).all()
         return [self._format_placement(p) for p in placements]
 
-    def create_placement(self, student_id: int, company_name: str, job_title: str, package_lpa: float, offer_date: date) -> dict:
+    def create_placement(
+        self,
+        student_id: int,
+        company_name: str,
+        job_title: str,
+        package_lpa: float,
+        offer_date: date,
+    ) -> dict:
         placement = Placement(
             student_id=student_id,
             company_name=company_name,

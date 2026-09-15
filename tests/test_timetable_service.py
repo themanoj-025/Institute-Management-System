@@ -74,6 +74,7 @@ class TestHelpers:
         import tempfile
 
         from utils.helpers import _check_magic_bytes
+
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
             f.write(b"%PDF-1.4 test content")
             f.flush()
@@ -123,12 +124,16 @@ class TestSchemas:
         from api.schemas import StudentCreate
 
         schema = StudentCreate(
-            name="Test Student",
-            roll_no="CS001",
+            first_name="Test",
+            last_name="Student",
             email="test@ims.com",
+            phone="9876543210",
+            dob="2000-01-15",
+            gender="Other",
             course_id=1,
+            session_id=1,
         )
-        assert schema.name == "Test Student"
+        assert schema.first_name == "Test"
 
     def test_course_schema(self) -> None:
         from api.schemas import CourseCreate
@@ -136,6 +141,7 @@ class TestSchemas:
         schema = CourseCreate(
             name="Computer Science",
             code="CS",
-            duration_years=4,
-        )
+            duration_months=36,
+            fee=25000.0,
+        )  # type: ignore[call-arg]
         assert schema.name == "Computer Science"

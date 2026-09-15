@@ -15,12 +15,19 @@ import pandas as pd
 from ml.eval_metrics import (
     _classification_metrics_dict,
     _confusion_matrix_data,
+    _eval_json_path,
+    _eval_markdown_path,
     _feature_importance_analysis,
     _roc_curve_data,
     _threshold_analysis,
 )
+from ml.features import FEATURE_NAMES, compute_all_features, compute_target
+from ml.registry import MODELS_DIR, load_metadata, load_model
+from ml.train import DEFAULT_PARAMS
+from utils.time import utc_now
 
 logger = logging.getLogger(__name__)
+
 
 def _generate_report_data(
     model: Any,

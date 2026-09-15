@@ -131,12 +131,12 @@ class StudentCreate(BaseModel):
 
 
 class StudentPatch(BaseModel):
-    first_name: str | None = Field(None, min_length=1, max_length=50)
-    last_name: str | None = Field(None, min_length=1, max_length=50)
+    first_name: str | None = Field(default=None, min_length=1, max_length=50)
+    last_name: str | None = Field(default=None, min_length=1, max_length=50)
     email: EmailStr | None = None
-    phone: str | None = Field(None, min_length=10, max_length=15)
-    dob: str | None = Field(None, min_length=10, max_length=10)
-    gender: str | None = Field(None, min_length=1, max_length=20)
+    phone: str | None = Field(default=None, min_length=10, max_length=15)
+    dob: str | None = Field(default=None, min_length=10, max_length=10)
+    gender: str | None = Field(default=None, min_length=1, max_length=20)
     course_id: int | None = None
     session_id: int | None = None
 
@@ -196,15 +196,15 @@ class CourseCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=100, description="Course name")
     duration_months: int
     fee: float
-    description: str | None = Field(None, max_length=1000, description="Course description")
+    description: str | None = Field(default=None, max_length=1000, description="Course description")
 
 
 class CoursePatch(BaseModel):
-    code: str | None = Field(None, min_length=1, max_length=20)
-    name: str | None = Field(None, min_length=1, max_length=100)
+    code: str | None = Field(default=None, min_length=1, max_length=20)
+    name: str | None = Field(default=None, min_length=1, max_length=100)
     duration_months: int | None = None
     fee: float | None = None
-    description: str | None = Field(None, max_length=1000)
+    description: str | None = Field(default=None, max_length=1000)
 
 
 class CourseResponse(BaseModel):
@@ -227,9 +227,9 @@ class StaffCreate(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=50, description="Staff first name")
     last_name: str = Field(..., min_length=1, max_length=50, description="Staff last name")
     email: EmailStr
-    phone: str | None = Field(None, min_length=10, max_length=15)
-    department: str | None = Field(None, min_length=1, max_length=50)
-    designation: str | None = Field(None, min_length=1, max_length=50)
+    phone: str | None = Field(default=None, min_length=10, max_length=15)
+    department: str | None = Field(default=None, min_length=1, max_length=50)
+    designation: str | None = Field(default=None, min_length=1, max_length=50)
     join_date: str = Field(
         ..., min_length=10, max_length=10, description="Joining date (YYYY-MM-DD)"
     )
@@ -237,13 +237,13 @@ class StaffCreate(BaseModel):
 
 
 class StaffPatch(BaseModel):
-    first_name: str | None = Field(None, min_length=1, max_length=50)
-    last_name: str | None = Field(None, min_length=1, max_length=50)
+    first_name: str | None = Field(default=None, min_length=1, max_length=50)
+    last_name: str | None = Field(default=None, min_length=1, max_length=50)
     email: EmailStr | None = None
-    phone: str | None = Field(None, min_length=10, max_length=15)
-    department: str | None = Field(None, min_length=1, max_length=50)
-    designation: str | None = Field(None, min_length=1, max_length=50)
-    join_date: str | None = Field(None, min_length=10, max_length=10)
+    phone: str | None = Field(default=None, min_length=10, max_length=15)
+    department: str | None = Field(default=None, min_length=1, max_length=50)
+    designation: str | None = Field(default=None, min_length=1, max_length=50)
+    join_date: str | None = Field(default=None, min_length=10, max_length=10)
     salary: float | None = None
 
 
@@ -304,10 +304,10 @@ class PlacementCreate(BaseModel):
 
 
 class PlacementPatch(BaseModel):
-    company_name: str | None = Field(None, min_length=1, max_length=100)
-    job_title: str | None = Field(None, min_length=1, max_length=100)
+    company_name: str | None = Field(default=None, min_length=1, max_length=100)
+    job_title: str | None = Field(default=None, min_length=1, max_length=100)
     package_lpa: float | None = None
-    offer_date: str | None = Field(None, min_length=10, max_length=10)
+    offer_date: str | None = Field(default=None, min_length=10, max_length=10)
 
 
 class PlacementResponse(BaseModel):
