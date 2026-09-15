@@ -355,7 +355,9 @@ jobs:
       - uses: hadolint/hadolint-action@v3.5.0
         with:
           dockerfile: Dockerfile
-          failure-threshold: warning
+          # DL3008/DL3013 (warnings): apt/pip versions float with the slim base
+          # image / requirements.txt ranges by design; DL3066 fixed via numeric UID.
+          failure-threshold: error
 
   schemathesis-fuzz:
     name: Contract fuzzing (Schemathesis)
