@@ -300,3 +300,11 @@ v1_router.include_router(analytics_router)
 v1_router.include_router(admin_router)
 
 app.include_router(v1_router)
+
+# Re-exports for tests/legacy importers — canonical definitions live in api/deps.py
+from api.deps import (
+    ALGORITHM,
+    SECRET_KEY,
+    _resolve_student_user_id,
+    create_access_token,
+)
