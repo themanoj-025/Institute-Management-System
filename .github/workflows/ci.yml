@@ -72,7 +72,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        # 3.10 dropped: the pinned scientific stack (matplotlib 3.11, pandas 3.0,
+        # numpy/scipy 2.x-era floors) requires Python >=3.11 — installs on 3.10 fail.
+        python-version: ["3.11", "3.12"]
     services:
       postgres:
         image: postgres:16-alpine
