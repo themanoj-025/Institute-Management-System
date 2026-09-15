@@ -3,22 +3,24 @@
 # Run the desktop app via: python main.py (on your local machine)
 
 # ── Stage 1: Dependencies ──────────────────────────────────────────────
-FROM python:3.14-slim AS base
+FROM python:3.12-slim AS base
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install only curl for healthcheck; remove all apt artifacts after
+# (DL3008: versions float with the slim base image by design)
 RUN apt-get update && apt-get install -y --no-install-recommends \
       curl \
-      && rm -rf /var/lib/apt/lists/*
+      && rm -rf /var/lib/apt/lists/* # hadolint ignore=DL3008
 
 # ── Stage 2: Install Python dependencies (cached layer) ───────────────
 FROM base AS dependencies
 # COPY requirements.txt BEFORE COPY . . so dependency layer caches
 COPY requirements.txt .
+# (DL3013: versions are pinned in requirements.txt)
 RUN pip install --no-cache-dir --upgrade pip && \
-      pip install --no-cache-dir -r requirements.txt
+      pip install --no-cache-dir -r requirements.txt # hadolint ignore=DL3013
 
 # ── Stage 3: Application code ─────────────────────────────────────────
 FROM dependencies AS app
@@ -26,14 +28,13 @@ COPY . .
 RUN mkdir -p database logs assets/profiles exports/generated
 
 # Create non-root user
-RUN addgroup --system app && adduser --system --ingroup app app \
+RUN addgroup --system app && adduser --system --uid 10001 --ingroup app app \
     && chown -R app:app /app
 
-USER app
+USER 10001
 
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
 
 STOPSIGNAL SIGTERM
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]

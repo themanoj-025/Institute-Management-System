@@ -1,5 +1,9 @@
 """Tests for IMS Pydantic schemas and error codes."""
 
+# Note: mypy's pydantic integration flags negative-test constructors inside
+# pytest.raises(ValidationError) blocks as missing required args. Per-line
+# suppression comments below silence only those false positives.
+
 import pytest
 from pydantic import ValidationError
 
@@ -69,7 +73,7 @@ class TestStudentCreate:
 
     def test_missing_required(self) -> None:
         with pytest.raises(ValidationError):
-            StudentCreate(first_name="John")
+            StudentCreate(first_name="John")  # type: ignore[call-arg]
 
 
 class TestCourseCreate:
@@ -86,7 +90,7 @@ class TestCourseCreate:
 
     def test_missing_required(self) -> None:
         with pytest.raises(ValidationError):
-            CourseCreate(name="Data Structures")
+            CourseCreate(name="Data Structures")  # type: ignore[call-arg]
 
 
 class TestAttendanceRecord:
@@ -116,7 +120,7 @@ class TestPaymentCreate:
         assert payment.amount == 50000.0
 
     def test_default_mode(self) -> None:
-        payment = PaymentCreate(fee_id=1, amount=1000.0)
+        payment = PaymentCreate(fee_id=1, amount=1000.0)  # type: ignore[call-arg]
         assert payment.mode == "Cash"
 
 
@@ -134,7 +138,7 @@ class TestStaffCreate:
 
     def test_missing_required(self) -> None:
         with pytest.raises(ValidationError):
-            StaffCreate(first_name="Jane")
+            StaffCreate(first_name="Jane")  # type: ignore[call-arg]
 
 
 class TestPlacementCreate:

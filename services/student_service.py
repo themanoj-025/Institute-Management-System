@@ -14,7 +14,9 @@ class StudentService:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_all_students(self, limit: int = 25, offset: int = 0, search_query: str | None = None) -> dict:
+    def get_all_students(
+        self, limit: int = 25, offset: int = 0, search_query: str | None = None
+    ) -> dict:
         query = self.db.query(Student)
 
         if search_query:

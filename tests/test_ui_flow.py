@@ -7,6 +7,7 @@ Comprehensive test script to verify:
 
 import importlib
 import os
+import sys
 import traceback
 
 import pytest
@@ -72,7 +73,6 @@ try:
         try:
             from database.seeder import DEMO_ADMIN_PASSWORD
 
-
             admin_pwd = DEMO_ADMIN_PASSWORD
         except (ImportError, AttributeError):
             admin_pwd = None
@@ -82,13 +82,11 @@ try:
     else:
         try:
             result = auth_service.login("admin", admin_pwd)
-            logger.info("admin_login_succeeded", role=result['role'], user_id=result['user_id'])
+            logger.info("admin_login_succeeded", role=result["role"], user_id=result["user_id"])
 
             # Verify OTP
-            otp_result = auth_service.verify_otp(
-                result["user_id"], result["otp_code"], result["otp_code"]
-            )
-            logger.info("otp_verification_succeeded", user=otp_result['user']['name'])
+            otp_result = auth_service.verify_otp(result["user_id"], result["otp_code"])
+            logger.info("otp_verification_succeeded", user=otp_result["user"]["name"])
         except AuthError as e:
             logger.warning("admin_login_failed", error=str(e))
             # Try alternative password from environment
@@ -96,11 +94,9 @@ try:
             if fallback_pwd:
                 try:
                     result = auth_service.login("admin", fallback_pwd)
-                    logger.info("admin_login_fallback_succeeded", role=result['role'])
-                    otp_result = auth_service.verify_otp(
-                        result["user_id"], result["otp_code"], result["otp_code"]
-                    )
-                    logger.info("otp_verification_succeeded", user=otp_result['user']['name'])
+                    logger.info("admin_login_fallback_succeeded", role=result["role"])
+                    otp_result = auth_service.verify_otp(result["user_id"], result["otp_code"])
+                    logger.info("otp_verification_succeeded", user=otp_result["user"]["name"])
                 except AuthError as e2:
                     logger.error("admin_login_fallback_failed", error=str(e2))
 except (OSError, ValueError, KeyError) as e:

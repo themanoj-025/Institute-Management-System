@@ -15,7 +15,14 @@ class NoticeService:
         notices = query.order_by(Notice.is_pinned.desc(), Notice.id.desc()).all()
         return [self._format_notice(n) for n in notices]
 
-    def create_notice(self, title: str, content: str, author_id: int, target_role: str = "all", is_pinned: bool = False) -> dict:
+    def create_notice(
+        self,
+        title: str,
+        content: str,
+        author_id: int,
+        target_role: str = "all",
+        is_pinned: bool = False,
+    ) -> dict:
         notice = Notice(
             title=title,
             content=content,

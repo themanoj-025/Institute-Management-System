@@ -4,11 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from api.deps import (
-    blacklist_token,
-    create_access_token,
-    get_current_user,
-)
+from api.deps import blacklist_token, create_access_token, get_current_user
 from api.schemas import (
     ForgotPasswordRequest,
     LoginRequest,

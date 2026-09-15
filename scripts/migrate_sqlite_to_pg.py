@@ -28,13 +28,32 @@ from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.orm import Session
 
 # Valid table names (hardcoded whitelist — prevents SQL injection)
-_VALID_TABLES = frozenset({
-    "users", "courses", "course_modules", "sessions", "staff",
-    "subjects", "students", "attendances", "staff_attendances",
-    "results", "leaves", "feedbacks", "fees", "fee_payments",
-    "notices", "timetables", "activity_logs", "enquiries",
-    "placements", "system_config", "otp_codes", "revoked_tokens",
-})
+_VALID_TABLES = frozenset(
+    {
+        "users",
+        "courses",
+        "course_modules",
+        "sessions",
+        "staff",
+        "subjects",
+        "students",
+        "attendances",
+        "staff_attendances",
+        "results",
+        "leaves",
+        "feedbacks",
+        "fees",
+        "fee_payments",
+        "notices",
+        "timetables",
+        "activity_logs",
+        "enquiries",
+        "placements",
+        "system_config",
+        "otp_codes",
+        "revoked_tokens",
+    }
+)
 
 
 def _quote_identifier(name: str) -> str:
@@ -128,9 +147,9 @@ def main() -> None:
         "revoked_tokens",
     ]
     # Safety: ensure all ordered tables are in the whitelist
-    assert set(ordered_tables) <= _VALID_TABLES, (
-        f"ordered_tables contains unknown tables: {set(ordered_tables) - _VALID_TABLES}"
-    )
+    assert (
+        set(ordered_tables) <= _VALID_TABLES
+    ), f"ordered_tables contains unknown tables: {set(ordered_tables) - _VALID_TABLES}"
 
     # Filter to only common tables, preserving order
     ordered_common = [t for t in ordered_tables if t in common_tables]

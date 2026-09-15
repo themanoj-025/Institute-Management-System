@@ -2,4 +2,4 @@
 
 from courses_pkg import AVAILABLE_COURSES
 
-__all__ = ['AVAILABLE_COURSES']
+__all__ = ["AVAILABLE_COURSES"]

@@ -9,6 +9,9 @@ Unit tests for error handling in main.py:
 """
 
 import os
+import sys
+from collections.abc import Iterator
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -43,7 +46,7 @@ class TestAppState:
 
 
 @pytest.fixture
-def mock_ctk_app() -> None:
+def mock_ctk_app() -> Iterator[Any]:
     """Create a mock BBIMS_App instance with all GUI dependencies patched."""
     # Save sys.excepthook so _install_global_exception_handler tests don't leak
     original_excepthook = sys.excepthook

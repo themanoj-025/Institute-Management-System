@@ -154,9 +154,9 @@ class TimetableService:
             "entries": result_entries,
         }
 
-    def _format_entry(self, entry: Timetable | None) -> dict | None:
+    def _format_entry(self, entry: Timetable | None) -> dict:
         if not entry:
-            return None
+            return {}
         return {
             "id": entry.id,
             "course_id": entry.course_id,

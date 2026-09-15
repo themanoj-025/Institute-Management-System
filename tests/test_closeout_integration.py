@@ -403,7 +403,6 @@ class TestDesktopApiAuthIntegration:
 
         from api.main import _blacklist_token, _check_token_blacklist, utc_now
 
-
         # Create and blacklist a token
         jti = str(uuid.uuid4())
         expires_at = utc_now() + timedelta(hours=1)

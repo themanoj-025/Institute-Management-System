@@ -71,16 +71,24 @@ def _set_system_config_value(
 def get_risk_thresholds(user: dict = Depends(require_role(["admin"]))) -> dict:
     with get_session() as session:
         thresholds = {
-            "attendance_risk_threshold": _get_system_config_value(session, "attendance_risk_threshold", 60.0),
+            "attendance_risk_threshold": _get_system_config_value(
+                session, "attendance_risk_threshold", 60.0
+            ),
             "marks_risk_threshold": _get_system_config_value(session, "marks_risk_threshold", 40.0),
             "high_risk_threshold": _get_system_config_value(session, "high_risk_threshold", 0.7),
-            "medium_risk_threshold": _get_system_config_value(session, "medium_risk_threshold", 0.5),
-            "attendance_warning_days": _get_system_config_value(session, "attendance_warning_days", 28),
+            "medium_risk_threshold": _get_system_config_value(
+                session, "medium_risk_threshold", 0.5
+            ),
+            "attendance_warning_days": _get_system_config_value(
+                session, "attendance_warning_days", 28
+            ),
             "drift_detected": _get_system_config_value(session, "drift_detected", "False"),
             "drift_severe": _get_system_config_value(session, "drift_severe", "False"),
             "drift_max_psi": _get_system_config_value(session, "drift_max_psi", "0.0"),
             "drift_max_psi_feature": _get_system_config_value(session, "drift_max_psi_feature", ""),
-            "drift_features_drifted": _get_system_config_value(session, "drift_features_drifted", "0"),
+            "drift_features_drifted": _get_system_config_value(
+                session, "drift_features_drifted", "0"
+            ),
             "drift_feature_count": _get_system_config_value(session, "drift_feature_count", "0"),
             "drift_last_checked": _get_system_config_value(session, "drift_last_checked", ""),
             "drift_error": _get_system_config_value(session, "drift_error", ""),
@@ -105,14 +113,24 @@ def update_risk_thresholds(
             "attendance_warning_days": "Number of days to look back for attendance warnings",
         }
         for key, value in req.thresholds.items():
-            _set_system_config_value(session, key, value, description=descriptions.get(key, ""), user_id=user["user_id"])
+            _set_system_config_value(
+                session, key, value, description=descriptions.get(key, ""), user_id=user["user_id"]
+            )
 
         thresholds = {}
         for key in descriptions:
             thresholds[key] = _get_system_config_value(
                 session,
                 key,
-                60.0 if "attendance" in key else (40.0 if "marks" in key else 0.7 if "high" in key else 0.5 if "medium" in key else 28),
+                (
+                    60.0
+                    if "attendance" in key
+                    else (
+                        40.0
+                        if "marks" in key
+                        else 0.7 if "high" in key else 0.5 if "medium" in key else 28
+                    )
+                ),
             )
         return {"thresholds": thresholds}
 

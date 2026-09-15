@@ -17,7 +17,9 @@ router = APIRouter(tags=["Analytics"])
     response_model=RiskExplanationResponse,
     summary="Get student risk explanation with SHAP",
 )
-def get_student_risk_explanation(student_id: int, user: dict = Depends(get_current_user)) -> dict[str, object]:
+def get_student_risk_explanation(
+    student_id: int, user: dict = Depends(get_current_user)
+) -> dict[str, object]:
     from ml.service import MLService
 
     with get_session() as session:

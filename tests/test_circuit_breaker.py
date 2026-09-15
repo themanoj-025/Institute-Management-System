@@ -9,7 +9,6 @@ from api.circuit_breaker import CircuitBreaker, CircuitBreakerOpenError, Circuit
 pytestmark = pytest.mark.integration
 
 
-
 class TestCircuitBreaker:
     """Test CircuitBreaker state transitions."""
 
@@ -41,6 +40,7 @@ class TestCircuitBreaker:
         cb.record_failure()
         assert cb.state == CircuitState.OPEN
         import time
+
         time.sleep(0.15)
         assert cb.state == CircuitState.HALF_OPEN
 
@@ -49,6 +49,7 @@ class TestCircuitBreaker:
         cb.record_failure()
         cb.record_failure()
         import time
+
         time.sleep(0.15)
         assert cb.state == CircuitState.HALF_OPEN
         cb.record_success()
@@ -59,6 +60,7 @@ class TestCircuitBreaker:
         cb.record_failure()
         cb.record_failure()
         import time
+
         time.sleep(0.15)
         assert cb.state == CircuitState.HALF_OPEN
         cb.record_failure()

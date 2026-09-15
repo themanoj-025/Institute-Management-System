@@ -336,7 +336,7 @@ class TestEndToEndJourney:
                 headers,
                 rows,
             )
-            assert csv_result.path.endswith(".csv")
+            assert str(csv_result.path).endswith(".csv")
             assert os.path.getsize(csv_result.path) > 10
 
             # Verify CSV contains expected student data
@@ -348,7 +348,6 @@ class TestEndToEndJourney:
     def test_risk_explanation_references_real_features(self, test_db, test_data) -> None:
         """Risk explanation should reference real feature data when available."""
         from ml.service import MLService
-
 
         ml_svc = MLService()
         risk = ml_svc.predict_student_risk(test_db, student_id=test_data["student"].id)

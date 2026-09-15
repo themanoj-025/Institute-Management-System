@@ -1,6 +1,8 @@
 """Tests for SearchService — uses LIKE fallback path to avoid threading issues with in-memory SQLite."""
 
+from collections.abc import Iterator
 from datetime import date
+from typing import Any
 
 import pytest
 from sqlalchemy import create_engine, or_
@@ -12,8 +14,9 @@ from services.search_service import SearchService
 
 pytestmark = pytest.mark.slow
 
+
 @pytest.fixture
-def db_session() -> None:
+def db_session() -> Iterator[Any]:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

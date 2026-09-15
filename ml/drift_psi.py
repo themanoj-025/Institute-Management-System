@@ -289,5 +289,3 @@ def _is_feature_categorical(col_name: str, values: np.ndarray) -> bool:
     if unique_count < 10 and np.all(values == values.astype(int)):
         return True
     return False
-
-

@@ -56,9 +56,7 @@ OTP_MAX_REQUESTS_PER_WINDOW = 3  # max 3 OTP requests per 10 minutes
 OTP_RATE_LIMIT_WINDOW_SECONDS = 600  # 10 minutes
 
 VERIFICATION_TOKEN_TTL_HOURS = 24
-VERIFICATION_BASE_URL = os.environ.get(
-    "VERIFICATION_BASE_URL", "http://localhost:8000/v1/auth"
-)
+VERIFICATION_BASE_URL = os.environ.get("VERIFICATION_BASE_URL", "http://localhost:8000/v1/auth")
 
 
 def _hash_otp(otp: str) -> str:

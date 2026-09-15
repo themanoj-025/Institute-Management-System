@@ -1,4 +1,6 @@
 import os
+from collections.abc import Iterator
+from typing import Any
 
 # Set test secrets BEFORE any project imports
 os.environ.setdefault("SECRET_KEY", "test-secret-key-for-ci-only-not-for-production")
@@ -14,7 +16,7 @@ from services.student_service import StudentService
 
 
 @pytest.fixture(scope="session")
-def test_db() -> None:
+def test_db() -> Iterator[Any]:
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

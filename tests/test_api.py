@@ -172,7 +172,6 @@ def test_rate_limiter_independent_paths() -> None:
 
     from api.main import ALGORITHM, SECRET_KEY
 
-
     token = jwt.encode(
         {
             "sub": "admin",
