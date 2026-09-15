@@ -3,7 +3,10 @@
 # Run the desktop app via: python main.py (on your local machine)
 
 # ── Stage 1: Dependencies ──────────────────────────────────────────────
-FROM python:3.14-slim AS base
+# Keep on 3.12: CI's test/typecheck matrix is 3.10–3.12 and the pinned
+# scientific stack (numpy<2.5) lacks py3.13+ wheels — 3.14-slim is untested
+# and breaks `pip install` during build.
+FROM python:3.12-slim AS base
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
