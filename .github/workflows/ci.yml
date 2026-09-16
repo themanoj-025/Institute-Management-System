@@ -121,7 +121,10 @@ jobs:
           SECRET_KEY: test-secret-key-for-ci-12345678
           ENV: test
         run: |
-          coverage run -m pytest tests/ -v --tb=short
+          # -o addopts= strips pyproject's --cov (pytest-cov): running it inside
+          # `coverage run` double-measures and clobbers the data file, leaving
+          # `coverage report`/`coverage json` with no data.
+          coverage run -m pytest tests/ -v --tb=short --override-ini="addopts="
           coverage report --fail-under=70
           coverage json -o coverage.json
 
