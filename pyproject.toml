@@ -87,7 +87,7 @@ disable_error_code = ["var-annotated"]
 
 
 [tool.pytest.ini_options]
-addopts = "-v --tb=short -m 'not slow' --cov --cov-fail-under=70"
+addopts = "-v --tb=short --cov --cov-fail-under=70"
 testpaths = ["tests"]
 pythonpath = ["."]
 python_files = ["test_*.py"]
@@ -102,6 +102,19 @@ markers = [
 [tool.bandit]
 exclude_dirs = ["venv", "alembic", "tests"]
 skips = ["B101"]  # allow assert in tests
+
+[tool.coverage.run]
+# Tkinter GUI code cannot be exercised headlessly in CI, and test files
+# would otherwise "cover" themselves. Omit both so the 70% gate measures
+# the actually-testable application code.
+omit = [
+    "main.py",
+    "error_dialog.py",
+    "landing/*",
+    "ui/*",
+    "database/seeder.py",
+    "tests/*",
+]
 
 [tool.coverage.report]
 show_missing = true
