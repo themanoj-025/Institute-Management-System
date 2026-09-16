@@ -1,6 +1,18 @@
 import pytest
 
-pytestmark = pytest.mark.integration
+pytestmark = [pytest.mark.integration, pytest.mark.slow]
+
+# These tests need a live Redis at REDIS_URL (a service container in CI);
+# skip cleanly when it isn't reachable instead of erroring on ConnectionError.
+try:
+    import redis as _redis_mod
+
+    _redis_mod.Redis.from_url("redis://localhost:6379/0", socket_connect_timeout=1).ping()
+    _REDIS_AVAILABLE = True
+except Exception:
+    _REDIS_AVAILABLE = False
+
+pytestmark.append(pytest.mark.skipif(not _REDIS_AVAILABLE, reason="Redis not available"))
 
 """Redis-backed token blacklist tests.
 
@@ -16,8 +28,6 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from utils.time import utc_now
-
-pytestmark = pytest.mark.slow
 
 
 class TestRedisTokenBlacklist:

@@ -22,7 +22,7 @@ import traceback
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, FastAPI, Request, status
+from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
@@ -192,6 +192,19 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException) -> Response:
+    """Wrap FastAPI's HTTPException in the app's standard error envelope."""
+    code = error_code_for_status(exc.status_code)
+    detail = exc.detail if isinstance(exc.detail, str) else "Request failed"
+    headers = getattr(exc, "headers", None)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"error": {"code": code, "message": detail}},
+        headers=headers,
+    )
+
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception) -> Response:
     full_tb = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__))
@@ -306,5 +319,26 @@ from api.deps import (
     ALGORITHM,
     SECRET_KEY,
     _resolve_student_user_id,
+    blacklist_token,
+    check_token_blacklist,
     create_access_token,
 )
+
+# Compat re-exports: tests and route modules import these helpers from
+# ``api.main`` (the pre-deps-split home). Kept as explicit re-exports to
+# satisfy ruff F401 while preserving the historical import surface.
+from api.schemas import (
+    MAX_PER_PAGE,
+    CoursePatch,
+    PlacementPatch,
+    RiskExplanationResponse,
+    RiskThresholdResponse,
+    RiskThresholdUpdate,
+    StaffPatch,
+    StudentPatch,
+    paginated_response,
+)
+
+# Compat aliases — canonical implementations live in api/deps.py.
+_blacklist_token = blacklist_token
+_check_token_blacklist = check_token_blacklist

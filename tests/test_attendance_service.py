@@ -93,7 +93,7 @@ class TestAttendanceService:
 
         result = service.get_by_date_subject(date(2024, 9, 1), subject.id)
         assert len(result) == 3
-        assert result[students[0].id].value == "present"
+        assert result[students[0].id] == "present"
 
     def test_get_by_date_subject_empty(self, seeded_db) -> None:
         db, sess, subject, students = seeded_db

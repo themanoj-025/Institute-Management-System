@@ -219,7 +219,7 @@ class MLService:
 
             explanation = explain_prediction(
                 self._model,
-                features.iloc[0] if hasattr(features, "iloc") else features,
+                features,
                 model_version=self._model_name,
             )
             student = session.query(Student).filter(Student.id == student_id).first()

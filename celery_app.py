@@ -8,6 +8,8 @@ Usage:
   celery -A celery_app beat --loglevel=info
 """
 
+from typing import TYPE_CHECKING
+
 from celery import Celery, Task
 from celery.schedules import crontab
 
@@ -27,6 +29,9 @@ app = Celery(
 # Configuration
 
 app.conf.update(
+    # Register the task modules so tasks exist on app.tasks (needed for
+    # introspection and so workers pick them up without extra config).
+    include=["celery_tasks"],
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
@@ -86,3 +91,20 @@ class LoggedTask(Task):
         logger.warning(
             "Task %s retrying: %s", self.name, exc, extra={"task_id": task_id, "error": str(exc)}
         )
+
+
+# Import task modules so their @app.task decorators register against this
+# app (introspection, autodiscovery, and worker include all rely on this).
+# The ImportError guard handles the reverse import order (celery_tasks
+# imported first): its own decorators then register the tasks directly.
+# Skipped under TYPE_CHECKING: the celery_app <-> celery_tasks cycle is fine
+# at runtime but mypy cannot resolve attribute types through the cycle.
+if not TYPE_CHECKING:
+    try:
+        from celery_tasks import (
+            cleanup_expired_otps_task,
+            retrain_ml_model_task,
+            send_email_task,
+        )
+    except ImportError:
+        pass
