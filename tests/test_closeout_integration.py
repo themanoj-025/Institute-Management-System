@@ -376,7 +376,7 @@ class TestDesktopApiAuthIntegration:
             {
                 "sub": "logout_test",
                 "role": "admin",
-                "user_id": 999,
+                "user_id": 1,
                 "jti": jti,
                 "exp": utc_now() + timedelta(hours=1),
                 "iat": utc_now(),
@@ -386,8 +386,9 @@ class TestDesktopApiAuthIntegration:
         )
 
         # Simulate logout: blacklist the token
+        # (user_id=1 exists in the app DB — Postgres enforces the FK)
         expires_at = utc_now() + timedelta(hours=1)
-        _blacklist_token(jti, expires_at, user_id=999)
+        _blacklist_token(jti, expires_at, user_id=1)
 
         # Verify token is blacklisted
         assert _check_token_blacklist(jti), "Token should be blacklisted after logout"
