@@ -55,6 +55,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     from config.settings import init_app
 
     init_app()
+    # Create tables when they don't exist (fresh Postgres in CI, first run on
+    # desktop). Alembic remains the upgrade path for existing deployments.
+    from database.db_session import init_db
+
+    init_db()
     logger.info("App bootstrap complete")
     yield
 
