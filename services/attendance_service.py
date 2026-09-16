@@ -16,7 +16,7 @@ class AttendanceService:
             .filter(Attendance.date == date_val, Attendance.subject_id == subject_id)
             .all()
         )
-        return {int(r.student_id): str(r.status) for r in records}
+        return {int(r.student_id): str(getattr(r.status, "value", r.status)) for r in records}
 
     def bulk_upsert(self, records: list[dict[str, Any]], staff_id: int) -> bool:
         # records is list of dicts: {"student_id": int, "subject_id": int, "date": "YYYY-MM-DD", "status": "present"/"absent"}

@@ -51,16 +51,6 @@ logger = logging.getLogger("ml.evaluate")
 
 # Paths
 
-MODELS_DIR = Path(__file__).resolve().parent / "models"
-
-
-def _eval_markdown_path(name: str) -> Path:
-    return MODELS_DIR / f"{name}_eval.md"
-
-
-def _eval_json_path(name: str) -> Path:
-    return MODELS_DIR / f"{name}_eval.json"
-
 
 # Core evaluation functions
 

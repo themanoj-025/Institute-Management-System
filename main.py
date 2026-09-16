@@ -156,7 +156,7 @@ class BBIMS_App(ctk.CTk):
         try:
             mod = importlib.import_module(module_path)
             return getattr(mod, class_name)
-        except (OSError, ValueError) as e:
+        except (ImportError, AttributeError, OSError, ValueError) as e:
             log.error(
                 "Failed to import %s.%s: %s\n%s", module_path, class_name, e, tb_mod.format_exc()
             )

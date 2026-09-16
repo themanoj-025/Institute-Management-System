@@ -26,6 +26,7 @@ from database.models import (
     Student,
     User,
 )
+from database.models_extended import Leave
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
@@ -230,6 +231,12 @@ def _resolve_student_user_id(resource_type: str, resource_id: int, session) -> i
             session.query(Student.user_id)
             .join(Placement, Placement.student_id == Student.id)
             .filter(Placement.id == rid)
+            .scalar()
+        ),
+        "leave_id": lambda rid: (
+            session.query(Student.user_id)
+            .join(Leave, Leave.student_id == Student.id)
+            .filter(Leave.id == rid)
             .scalar()
         ),
     }
