@@ -13,6 +13,7 @@ import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from redis.exceptions import RedisError
 
 from database.db_session import get_session
 from database.models import (
@@ -32,7 +33,10 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
 JWT_EXPIRE_HOURS = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
 
-security = HTTPBearer()
+# auto_error=False so a missing Authorization header reaches get_current_user,
+# which raises a consistent 401 across FastAPI versions (older versions raise
+# 403 from HTTPBearer itself).
+security = HTTPBearer(auto_error=False)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -50,6 +54,8 @@ def check_token_blacklist(jti: str) -> bool:
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         if r.get(f"bl:{jti}") is not None:
             return True
+    except RedisError:
+        pass
     except (OSError, ConnectionError):
         pass
 
@@ -77,6 +83,8 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
         ttl_seconds = max(1, int(math.ceil((expires_at - now).total_seconds())))
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         r.setex(f"bl:{jti}", ttl_seconds, "1")
+    except RedisError:
+        pass  # Redis failure must not block logout
     except (OSError, ConnectionError):
         pass  # Redis failure must not block logout
 
@@ -119,11 +127,17 @@ def create_access_token(data: dict) -> str:
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
 ) -> dict:
     """Verify JWT, check blacklist, check password-change revocation."""
     from utils.time import utc_now
 
+    if credentials is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

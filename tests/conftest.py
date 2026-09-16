@@ -9,10 +9,25 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database.db_session import Base
+from database.db_session import Base, init_db
 from services.analytics_service import AnalyticsService
 from services.auth_service import AuthService
 from services.student_service import StudentService
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _api_schema() -> Iterator[None]:
+    """Bootstrap the app DB for API-level tests.
+
+    Some test modules build ``TestClient`` at module import time, so the app's
+    lifespan (and its schema bootstrap) never runs. Ensure ``init_app`` and
+    ``init_db`` have run before any test touches the API.
+    """
+    from config.settings import init_app
+
+    init_app()
+    init_db()
+    yield
 
 
 @pytest.fixture(scope="session")
