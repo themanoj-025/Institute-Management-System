@@ -27,6 +27,28 @@ def _api_schema() -> Iterator[None]:
 
     init_app()
     init_db()
+    # Postgres enforces the revoked_tokens.user_id FK that SQLite ignores.
+    # Blacklist tests reference user_id=1, so ensure that user exists.
+    from config.settings import IS_POSTGRES
+
+    if IS_POSTGRES:
+        from database.db_session import SessionLocal
+        from database.models import User, UserRole
+
+        session = SessionLocal()
+        try:
+            if session.query(User).filter(User.id == 1).first() is None:
+                session.add(
+                    User(
+                        id=1,
+                        username="ci-test-user",
+                        password_hash="test-hash-not-a-real-password",
+                        role=UserRole.staff,
+                    )
+                )
+                session.commit()
+        finally:
+            session.close()
     yield
 
 
