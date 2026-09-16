@@ -15,6 +15,32 @@ from services.auth_service import AuthService
 from services.student_service import StudentService
 
 
+@pytest.fixture(autouse=True)
+def _isolated_ml_model_dir(tmp_path_factory, monkeypatch):
+    """Redirect ML model writes to a temp dir.
+
+    The risk model is lazily trained on first use, so any test touching
+    ``MLService`` can rewrite the tracked ``ml/models/`` files (fresh
+    ``saved_at`` timestamp in ``risk_v1_meta.json``, regenerated
+    ``reference_distributions.json``), churning the working tree on every
+    test run. Reads still work: existing tracked files are copied into the
+    sandbox first.
+    """
+    import shutil
+
+    from ml.drift_psi import MODELS_DIR as real_models_dir
+
+    models_dir = tmp_path_factory.mktemp("ml_models")
+    for name in ("risk_v1.json", "risk_v1_meta.json", "reference_distributions.json"):
+        src = real_models_dir / name
+        if src.exists():
+            shutil.copy(src, models_dir / name)
+    monkeypatch.setattr("ml.registry.MODELS_DIR", models_dir)
+    reference_file = models_dir / "reference_distributions.json"
+    monkeypatch.setattr("ml.drift.REFERENCE_FILE", reference_file)
+    monkeypatch.setattr("ml.drift_psi.REFERENCE_FILE", reference_file)
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _api_schema() -> Iterator[None]:
     """Bootstrap the app DB for API-level tests.
