@@ -45,13 +45,16 @@ jobs:
       - name: Prepare results dir
         run: mkdir -p k6-results
 
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+
       - name: Run k6 load test
-        uses: grafana/k6-action@v0.3.1
+        uses: grafana/run-k6-action@v1
         with:
-          filename: load-test.js
+          path: load-test.js
           flags: --quiet --summary-export=k6-results/summary.json
-        env:
-          K6_BASE_URL: http://127.0.0.1:8000
+          env: |
+            K6_BASE_URL=http://127.0.0.1:8000
 
       - name: Upload results
         uses: actions/upload-artifact@v4
