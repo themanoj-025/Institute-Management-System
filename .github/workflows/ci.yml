@@ -263,7 +263,7 @@ jobs:
       - name: Install security tools
         run: |
           python -m pip install --upgrade pip
-          pip install bandit pip-audit
+          pip install bandit==1.9.4 pip-audit
 
       - name: Run Bandit (static analysis)
         run: bandit -r . -x venv,alembic,tests -f json -o bandit-report.json || true
@@ -350,7 +350,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install mypy
+          pip install mypy==2.3.1
       - name: Type check with mypy
         run: mypy . --ignore-missing-imports
 
