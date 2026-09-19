@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import importlib
-import os
 import sys
 import traceback as tb_mod
 from tkinter import TclError

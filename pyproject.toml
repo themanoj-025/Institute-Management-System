@@ -24,7 +24,6 @@ exclude = ["venv", "alembic"]
 select = ["E", "F", "W", "B", "BLE", "UP", "SIM", "C4", "RUF", "PLC", "PIE", "S", "DTZ", "I"]
 ignore = [
     "E501",    # line too long — style preference
-    "F401",    # unused import — re-export pattern
     "E402",    # module-import-not-at-top — Flask/app pattern
     "E731",    # lambda assignment — legacy code
     "E712",    # comparison to True/False

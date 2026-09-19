@@ -28,7 +28,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 
 from utils.logger import setup_logger
-from utils.time import utc_now
 
 logger = setup_logger("bb-ims-api")
 
@@ -321,27 +320,27 @@ app.include_router(v1_router)
 
 # Re-exports for tests/legacy importers — canonical definitions live in api/deps.py
 from api.deps import (
-    ALGORITHM,
-    SECRET_KEY,
-    _resolve_student_user_id,
+    ALGORITHM,  # noqa: F401
+    SECRET_KEY,  # noqa: F401
+    _resolve_student_user_id,  # noqa: F401
     blacklist_token,
     check_token_blacklist,
-    create_access_token,
+    create_access_token,  # noqa: F401
 )
 
 # Compat re-exports: tests and route modules import these helpers from
 # ``api.main`` (the pre-deps-split home). Kept as explicit re-exports to
 # satisfy ruff F401 while preserving the historical import surface.
 from api.schemas import (
-    MAX_PER_PAGE,
-    CoursePatch,
-    PlacementPatch,
-    RiskExplanationResponse,
-    RiskThresholdResponse,
-    RiskThresholdUpdate,
-    StaffPatch,
-    StudentPatch,
-    paginated_response,
+    MAX_PER_PAGE,  # noqa: F401
+    CoursePatch,  # noqa: F401
+    PlacementPatch,  # noqa: F401
+    RiskExplanationResponse,  # noqa: F401
+    RiskThresholdResponse,  # noqa: F401
+    RiskThresholdUpdate,  # noqa: F401
+    StaffPatch,  # noqa: F401
+    StudentPatch,  # noqa: F401
+    paginated_response,  # noqa: F401
 )
 
 # Compat aliases — canonical implementations live in api/deps.py.

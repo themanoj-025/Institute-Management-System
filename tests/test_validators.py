@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 
 class TestValidators:
     def test_validate_email_valid(self) -> None:
