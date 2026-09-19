@@ -199,8 +199,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                         "error": {
                             "code": RATE_LIMITED_ERROR_CODE,
                             "message": (
-                                "You have made too many requests. "
-                                "Please wait before trying again."
+                                "You have made too many requests. Please wait before trying again."
                             ),
                             "detail": None,
                         }

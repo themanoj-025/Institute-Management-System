@@ -216,9 +216,7 @@ def require_role(allowed_roles: list[str]) -> dict:
 def _resolve_student_user_id(resource_type: str, resource_id: int, session) -> int | None:
     """Resolve the user_id of the student who owns a given resource."""
     lookup = {
-        "student_id": lambda rid: (
-            session.query(Student.user_id).filter(Student.id == rid).scalar()
-        ),
+        "student_id": lambda rid: session.query(Student.user_id).filter(Student.id == rid).scalar(),
         "fee_id": lambda rid: (
             session.query(Student.user_id)
             .join(Fee, Fee.student_id == Student.id)

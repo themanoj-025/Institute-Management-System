@@ -360,6 +360,6 @@ class TestEndToEndJourney:
                 "attendance" in e["name"] or "marks" in e["name"] or "fee" in e["name"]
                 for e in risk["explanations"]
             )
-            assert (
-                has_feature_name
-            ), f"Expected feature names in explanations, got: {risk['explanations']}"
+            assert has_feature_name, (
+                f"Expected feature names in explanations, got: {risk['explanations']}"
+            )
