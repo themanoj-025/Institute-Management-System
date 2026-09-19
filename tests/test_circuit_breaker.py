@@ -1,6 +1,5 @@
 """Tests for api.circuit_breaker — CircuitBreaker state machine."""
 
-
 import pytest
 
 from api.circuit_breaker import CircuitBreaker, CircuitBreakerOpenError, CircuitState

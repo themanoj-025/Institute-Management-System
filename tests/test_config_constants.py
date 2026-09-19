@@ -1,6 +1,5 @@
 """Tests for IMS configuration constants."""
 
-
 from config.constants import (
     ANIMATION_DELAY,
     ANIMATION_STEPS,
