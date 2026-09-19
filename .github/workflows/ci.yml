@@ -133,7 +133,10 @@ jobs:
           SECRET_KEY: test-secret-key-for-ci
         run: |
           echo "=== Checking for datetime.now(timezone.utc) outside utc_now() ==="
-          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -vc "utils/time.py\|IMPLEMENTATION_NOTES.md")
+          # `grep -c` exits 1 when the count is 0 — exactly the passing case —
+          # which killed this step under bash -e even when the tree was clean.
+          # `|| true` lets the count of zero flow into the check below.
+          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py\|IMPLEMENTATION_NOTES.md" | grep -c . || true)
           if [ "$REMAINING" -ne "0" ]; then
             echo "FAIL: Found $REMAINING datetime.now(timezone.utc) calls outside utc_now()"
             grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py"
