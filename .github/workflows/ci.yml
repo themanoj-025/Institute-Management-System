@@ -17,9 +17,11 @@ on:
     branches: [main]
 
 env:
-  DOCKER_IMAGE_API: ghcr.io/${{ github.repository }}/api
-  DOCKER_IMAGE_WORKER: ghcr.io/${{ github.repository }}/worker
-  DOCKER_IMAGE_NGINX: ghcr.io/${{ github.repository }}/nginx
+  # GHCR only accepts lowercase repository names; github.repository is
+  # "Institute-Management-System" (mixed case) and buildx rejects the tag.
+  DOCKER_IMAGE_API: ghcr.io/${{ github.repository_owner }}/institute-management-system/api
+  DOCKER_IMAGE_WORKER: ghcr.io/${{ github.repository_owner }}/institute-management-system/worker
+  DOCKER_IMAGE_NGINX: ghcr.io/${{ github.repository_owner }}/institute-management-system/nginx
   PYTHON_VERSION: "3.11"
 
 jobs:
