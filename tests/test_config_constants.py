@@ -1,6 +1,5 @@
 """Tests for IMS configuration constants."""
 
-import pytest
 
 from config.constants import (
     ANIMATION_DELAY,

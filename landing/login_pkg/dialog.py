@@ -17,7 +17,6 @@ The API base URL is read from the ``API_BASE_URL`` environment variable
 
 import os
 import traceback
-import urllib.error
 from tkinter import TclError
 
 import customtkinter as ctk
@@ -27,14 +26,6 @@ try:
 except ImportError:
     SQLAlchemyError = Exception  # type: ignore[misc, no-redef]
 
-# Use httpx if available, fall back to urllib.request
-try:
-    import httpx
-
-    _HTTPX_AVAILABLE = True
-except ImportError:
-    _HTTPX_AVAILABLE = False
-
 API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
 
 
@@ -43,7 +34,6 @@ from landing.api_auth import (
     _api_confirm_verification,
     _api_forgot_password,
     _api_login,
-    _api_logout,
     _api_reset_password,
     _api_send_verification_email,
     _api_verify_otp,

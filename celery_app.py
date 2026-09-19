@@ -101,10 +101,8 @@ class LoggedTask(Task):
 # at runtime but mypy cannot resolve attribute types through the cycle.
 if not TYPE_CHECKING:
     try:
-        from celery_tasks import (
-            cleanup_expired_otps_task,
-            retrain_ml_model_task,
-            send_email_task,
-        )
+        # Side-effect import: @app.task decorators in celery_tasks register
+        # against this app on module load; the name itself is not referenced.
+        import celery_tasks  # noqa: F401
     except ImportError:
         pass

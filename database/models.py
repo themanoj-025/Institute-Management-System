@@ -343,7 +343,7 @@ class Result(Base):
 
 
 # Re-export extended models for backward compatibility
-from database.models_extended import (
+from database.models_extended import (  # noqa: F401 -- re-export pattern
     ActivityLog,
     EmailVerificationToken,
     Enquiry,

@@ -1,6 +1,5 @@
 """Tests for api.circuit_breaker — CircuitBreaker state machine."""
 
-import asyncio
 
 import pytest
 

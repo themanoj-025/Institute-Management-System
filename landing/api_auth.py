@@ -17,11 +17,6 @@ The API base URL is read from the ``API_BASE_URL`` environment variable
 """
 
 import os
-import traceback
-import urllib.error
-from tkinter import TclError
-
-import customtkinter as ctk
 
 try:
     from sqlalchemy.exc import SQLAlchemyError
