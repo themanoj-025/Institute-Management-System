@@ -342,6 +342,7 @@ from api.schemas import (
     StudentPatch,  # noqa: F401
     paginated_response,  # noqa: F401
 )
+from utils.time import utc_now  # noqa: F401  (re-export: tests import it from api.main)
 
 # Compat aliases — canonical implementations live in api/deps.py.
 _blacklist_token = blacklist_token
