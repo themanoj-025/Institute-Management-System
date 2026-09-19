@@ -16,6 +16,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.exceptions import RedisError
 
 from database.db_session import get_session
+from utils.time import utc_now
 from database.models import (
     Attendance,
     Course,
@@ -79,7 +80,7 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
 
         from config.settings import REDIS_URL
 
-        now = datetime.now(timezone.utc)
+        now = utc_now()
         ttl_seconds = max(1, int(math.ceil((expires_at - now).total_seconds())))
         r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
         r.setex(f"bl:{jti}", ttl_seconds, "1")
@@ -93,7 +94,7 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
         entry = RevokedToken(
             jti=jti,
             token_type="access",
-            revoked_at=datetime.now(timezone.utc),
+            revoked_at=utc_now(),
             expires_at=expires_at,
             user_id=user_id,
         )
@@ -107,8 +108,6 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
 
 def create_access_token(data: dict) -> str:
     """Create a JWT with a unique jti claim for blacklist support."""
-    from utils.time import utc_now
-
     to_encode = data.copy()
     expire = utc_now() + timedelta(hours=JWT_EXPIRE_HOURS)
     to_encode.update(
