@@ -24,7 +24,7 @@ from sqlalchemy.orm import relationship
 from database.db_session import Base
 from utils.time import utc_now
 
-from .models import FeeStatus, LeaveStatus, UserRole
+from .models import FeeStatus, LeaveStatus
 
 
 class Leave(Base):

@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import logging
 from enum import Enum
-from typing import Any
 
 import numpy as np
-import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +34,9 @@ Usage::
     # report = {"drift_detected": bool, "feature_scores": {...}, "max_psi": float}
 """
 
-import json
 import logging
 from math import ceil, log2
 from pathlib import Path
-
-from ml.features import FEATURE_NAMES, compute_all_features
 
 logger = logging.getLogger("ml.drift")
 

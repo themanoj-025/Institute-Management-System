@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-import json
 import logging
-from pathlib import Path
 from typing import Any
 
 import numpy as np
-import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -41,11 +38,6 @@ Typical usage::
 """
 
 import logging
-
-from ml.features import FEATURE_NAMES, compute_all_features, compute_target
-from ml.registry import load_metadata, load_model
-from ml.train import DEFAULT_PARAMS
-from utils.time import utc_now
 
 logger = logging.getLogger("ml.evaluate")
 

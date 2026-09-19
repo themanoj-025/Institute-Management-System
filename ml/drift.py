@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -21,7 +19,6 @@ from ml.drift_psi import (
     _compute_categorical_psi,
     _compute_feature_psi,
     _compute_wasserstein_distance,
-    _get_n_bins,
     _is_feature_categorical,
 )
 from ml.features import FEATURE_NAMES, compute_all_features

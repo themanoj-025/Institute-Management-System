@@ -7,9 +7,8 @@ Extracted from main.py to reduce file size and enable reuse across route modules
 import os
 import uuid
 from collections.abc import Callable
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
-import bcrypt
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -25,7 +24,6 @@ from database.models import (
     RevokedToken,
     Staff,
     Student,
-    User,
 )
 from database.models_extended import Leave
 from utils.time import utc_now
@@ -129,7 +127,6 @@ def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(security),
 ) -> dict:
     """Verify JWT, check blacklist, check password-change revocation."""
-    from utils.time import utc_now
 
     if credentials is None:
         raise HTTPException(

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 # Shared modules (available to all roles)
 SHARED_ROUTES: dict[str, tuple[str, str]] = {
     "profile": ("modules.shared.profile", "ProfileView"),

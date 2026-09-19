@@ -3,12 +3,12 @@
 from datetime import datetime
 
 import bcrypt
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 
 from api.deps import get_current_user, require_role, serialize_student
 from api.schemas import AttendanceRecord, ResultRecord, StudentCreate, StudentPatch, StudentResponse
 from database.db_session import get_session
-from database.models import Attendance, Course, Result, Student, User, UserRole
+from database.models import Attendance, Result, Student, User, UserRole
 from utils.time import utc_now
 
 router = APIRouter(tags=["Students", "Attendance", "Results"])
