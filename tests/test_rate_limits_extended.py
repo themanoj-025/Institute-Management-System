@@ -130,18 +130,18 @@ class TestRateLimitsExtended:
             # First request should succeed, subsequent ones may also succeed
             # until we hit the limit
             if i < limit - 1:
-                assert (
-                    resp.status_code == 200
-                ), f"Request {i + 1}/{limit} on {path} should be 200, got {resp.status_code}"
+                assert resp.status_code == 200, (
+                    f"Request {i + 1}/{limit} on {path} should be 200, got {resp.status_code}"
+                )
 
         # The (limit+1)th request should be rate-limited
         if method == "POST":
             resp = client.post(path, json={})
         else:
             resp = client.get(path)
-        assert (
-            resp.status_code == 429
-        ), f"Request {limit + 1} on {path} should be 429, got {resp.status_code}"
+        assert resp.status_code == 429, (
+            f"Request {limit + 1} on {path} should be 429, got {resp.status_code}"
+        )
         data = resp.json()
         assert data["error"]["code"] == "rate_limited"
         assert "Retry-After" in resp.headers
@@ -193,9 +193,9 @@ class TestRateLimitsExtended:
 
         # Next request should succeed again
         resp = client.post(path, json={})
-        assert (
-            resp.status_code == 200
-        ), f"After window reset, request should succeed, got {resp.status_code}"
+        assert resp.status_code == 200, (
+            f"After window reset, request should succeed, got {resp.status_code}"
+        )
         assert "X-RateLimit-Remaining" in resp.headers
         remaining = int(resp.headers["X-RateLimit-Remaining"])
         assert remaining == limit - 1, f"Expected {limit - 1} remaining, got {remaining}"

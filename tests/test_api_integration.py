@@ -505,7 +505,6 @@ class TestCeleryConfiguration:
             ]
             assert any(found_tasks), f"No expected tasks found in {task_names[:10]}"
         except ImportError:
-
             pytest.skip("celery not installed")
 
 

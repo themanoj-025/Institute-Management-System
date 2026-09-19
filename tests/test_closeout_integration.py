@@ -88,9 +88,9 @@ class TestTimezoneRoundTrip:
 
             diff = safe_now - safe_loaded
             # The diff should be small (within a few seconds)
-            assert (
-                abs(diff.total_seconds()) < 5
-            ), f"Time difference too large: {diff.total_seconds()}s"
+            assert abs(diff.total_seconds()) < 5, (
+                f"Time difference too large: {diff.total_seconds()}s"
+            )
         finally:
             fresh_session.close()
 

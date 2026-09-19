@@ -379,7 +379,6 @@ class LandingPage(ctk.CTkFrame):
                 return
 
             try:
-
                 from database.models import Enquiry
 
                 enquiry = Enquiry(
@@ -531,7 +530,6 @@ class LandingPage(ctk.CTkFrame):
                     )
                     return
                 try:
-
                     from database.models import Enquiry
 
                     enquiry = Enquiry(

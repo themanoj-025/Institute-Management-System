@@ -130,7 +130,7 @@ class AuthService:
         )
         if not entry:
             raise AuthError(
-                "Password reset link is invalid or has expired. " "Request a new reset link."
+                "Password reset link is invalid or has expired. Request a new reset link."
             )
         # Single-use: mark as used
         entry.used_at = now
@@ -141,8 +141,7 @@ class AuthService:
         """Generate a reset token and send the password reset email."""
         raw_token = self.generate_password_reset_token(user.id)
         reset_link = (
-            f"{VERIFICATION_BASE_URL}/reset-password/confirm"
-            f"?user_id={user.id}&token={raw_token}"
+            f"{VERIFICATION_BASE_URL}/reset-password/confirm?user_id={user.id}&token={raw_token}"
         )
         if IS_DEV:
             logger.debug(
@@ -302,7 +301,7 @@ class AuthService:
         )
         if not entry:
             raise AuthError(
-                "Verification link is invalid or has expired. " "Request a new verification email."
+                "Verification link is invalid or has expired. Request a new verification email."
             )
         entry.is_used = True
         user = self.db.query(User).filter(User.id == user_id).first()
@@ -316,7 +315,7 @@ class AuthService:
         """Generate a verification token and send the verification email."""
         raw_token = self.generate_verification_token(user.id)
         verification_link = (
-            f"{VERIFICATION_BASE_URL}/verify-email/confirm" f"?user_id={user.id}&token={raw_token}"
+            f"{VERIFICATION_BASE_URL}/verify-email/confirm?user_id={user.id}&token={raw_token}"
         )
         if IS_DEV:
             logger.debug(
