@@ -128,7 +128,11 @@ def update_risk_thresholds(
                     else (
                         40.0
                         if "marks" in key
-                        else 0.7 if "high" in key else 0.5 if "medium" in key else 28
+                        else 0.7
+                        if "high" in key
+                        else 0.5
+                        if "medium" in key
+                        else 28
                     )
                 ),
             )

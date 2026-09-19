@@ -45,10 +45,10 @@ Use **Celery** with **Redis** as the message broker for background task processi
 ### Retry policy
 
 ```python
-task_acks_late = True          # Don't ack until task completes
+task_acks_late = True  # Don't ack until task completes
 task_reject_on_worker_lost = True  # Requeue if worker dies
-task_default_retry_delay = 60      # 60s before first retry
-task_max_retries = 3               # Max 3 retries
+task_default_retry_delay = 60  # 60s before first retry
+task_max_retries = 3  # Max 3 retries
 ```
 
 ### Drift Detection Flow
