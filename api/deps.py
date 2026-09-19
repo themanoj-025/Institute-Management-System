@@ -16,7 +16,6 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from redis.exceptions import RedisError
 
 from database.db_session import get_session
-from utils.time import utc_now
 from database.models import (
     Attendance,
     Course,
@@ -29,6 +28,7 @@ from database.models import (
     User,
 )
 from database.models_extended import Leave
+from utils.time import utc_now
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = "HS256"
