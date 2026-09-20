@@ -135,7 +135,7 @@ Alembic migrations (3 revisions)
 ### Desktop App (Local/Offline)
 
 ```bash
-git clone https://github.com/CodeWithHardik/Institute-Management-System.git
+git clone https://github.com/themanoj-025/Institute-Management-System.git
 cd Institute-Management-System
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -276,8 +276,8 @@ Contributions are welcome!
 ## ⭐ Show Your Support
 
 - ⭐ Star the repository if you found it useful
-- 🐛 [Report a bug](https://github.com/CodeWithHardik/Institute-Management-System/issues)
-- 💡 [Request a feature](https://github.com/CodeWithHardik/Institute-Management-System/issues)
+- 🐛 [Report a bug](https://github.com/themanoj-025/Institute-Management-System/issues)
+- 💡 [Request a feature](https://github.com/themanoj-025/Institute-Management-System/issues)
 ---
 
 ## ⭐ Star History
