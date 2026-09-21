@@ -1,5 +1,5 @@
 """
-Unit tests for error handling in main.py and error_dialog.py:
+Unit tests for error handling in main.py and ui/error_dialog.py:
 - navigate() error recovery via _prev_route
 - _resolve_module() import failure handling
 - show_error_dialog() and related helpers
@@ -233,11 +233,11 @@ class TestErrorDialog:
 
     def test_creates_dialog_with_correct_title(self, mock_ctk_app) -> None:
         """Dialog should have the correct title and attributes."""
-        with patch("error_dialog.ctk") as mock_ctk:
+        with patch("ui.error_dialog.ctk") as mock_ctk:
             dialog = MagicMock()
             mock_ctk.CTkToplevel.return_value = dialog
 
-            from error_dialog import show_error_dialog
+            from ui.error_dialog import show_error_dialog
 
             show_error_dialog(mock_ctk_app, "Test error message")
 
@@ -250,12 +250,12 @@ class TestErrorDialog:
     def test_dialog_with_traceback_calls_add_details(self, mock_ctk_app) -> None:
         """When full_traceback is provided, _add_error_details should be called."""
         with (
-            patch("error_dialog.ctk") as mock_ctk,
-            patch("error_dialog._add_error_details") as mock_add,
+            patch("ui.error_dialog.ctk") as mock_ctk,
+            patch("ui.error_dialog._add_error_details") as mock_add,
         ):
             mock_ctk.CTkToplevel.return_value = MagicMock()
 
-            from error_dialog import show_error_dialog
+            from ui.error_dialog import show_error_dialog
 
             show_error_dialog(mock_ctk_app, "Error", "Traceback line 1\nTraceback line 2")
 
@@ -264,12 +264,12 @@ class TestErrorDialog:
     def test_dialog_without_traceback_skips_details(self, mock_ctk_app) -> None:
         """When full_traceback is None, _add_error_details should NOT be called."""
         with (
-            patch("error_dialog.ctk") as mock_ctk,
-            patch("error_dialog._add_error_details") as mock_add,
+            patch("ui.error_dialog.ctk") as mock_ctk,
+            patch("ui.error_dialog._add_error_details") as mock_add,
         ):
             mock_ctk.CTkToplevel.return_value = MagicMock()
 
-            from error_dialog import show_error_dialog
+            from ui.error_dialog import show_error_dialog
 
             show_error_dialog(mock_ctk_app, "Error")
 
@@ -284,13 +284,13 @@ class TestAddErrorDetails:
 
     def test_creates_toggle_button(self, mock_ctk_app) -> None:
         """_add_error_details should create a toggle button and a textbox."""
-        with patch("error_dialog.ctk") as mock_ctk:
+        with patch("ui.error_dialog.ctk") as mock_ctk:
             textbox = MagicMock()
             textbox.winfo_viewable = MagicMock(return_value=False)
             mock_ctk.CTkTextbox.return_value = textbox
             mock_ctk.CTkButton.return_value = MagicMock()
 
-            from error_dialog import _add_error_details
+            from ui.error_dialog import _add_error_details
 
             _add_error_details(MagicMock(), "test traceback")
 
@@ -303,7 +303,7 @@ class TestAddErrorDetails:
 
     def test_toggle_shows_and_hides(self, mock_ctk_app) -> None:
         """Toggle button should show/hide the traceback textbox."""
-        with patch("error_dialog.ctk") as mock_ctk:
+        with patch("ui.error_dialog.ctk") as mock_ctk:
             textbox = MagicMock()
             # Initially hidden (not viewable)
             textbox.winfo_viewable = MagicMock(side_effect=[False, True])
@@ -311,7 +311,7 @@ class TestAddErrorDetails:
             toggle_btn = MagicMock()
             mock_ctk.CTkButton.return_value = toggle_btn
 
-            from error_dialog import _add_error_details
+            from ui.error_dialog import _add_error_details
 
             _add_error_details(MagicMock(), "traceback")
 
@@ -420,11 +420,11 @@ class TestErrorDialogActions:
 
     def test_restart_calls_reset_and_landing(self, mock_ctk_app) -> None:
         """Restart should destroy the dialog, reset state, and show the landing page."""
-        with patch("error_dialog.ctk") as mock_ctk:
+        with patch("ui.error_dialog.ctk") as mock_ctk:
             dialog = MagicMock()
             mock_ctk.CTkToplevel.return_value = dialog
 
-            from error_dialog import show_error_dialog
+            from ui.error_dialog import show_error_dialog
 
             mock_ctk_app._reset_app_state = MagicMock()
             mock_ctk_app.clear_main_window = MagicMock()
@@ -442,11 +442,11 @@ class TestErrorDialogActions:
 
     def test_exit_destroys_dialog_and_quits(self, mock_ctk_app) -> None:
         """Exit should destroy the dialog and call quit()."""
-        with patch("error_dialog.ctk") as mock_ctk:
+        with patch("ui.error_dialog.ctk") as mock_ctk:
             dialog = MagicMock()
             mock_ctk.CTkToplevel.return_value = dialog
 
-            from error_dialog import show_error_dialog
+            from ui.error_dialog import show_error_dialog
 
             show_error_dialog(mock_ctk_app, "boom")
 
