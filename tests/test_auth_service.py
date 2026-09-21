@@ -83,9 +83,9 @@ def test_account_locked_timestamp(test_db, auth_service) -> None:
     # to avoid ``TypeError: can't compare offset-naive and offset-aware``.
     locked_until_naive = user.locked_until.replace(tzinfo=None)
     now_naive = utc_now().replace(tzinfo=None)
-    assert locked_until_naive > now_naive, (
-        f"locked_until ({locked_until_naive}) should be after now ({now_naive})"
-    )
+    assert (
+        locked_until_naive > now_naive
+    ), f"locked_until ({locked_until_naive}) should be after now ({now_naive})"
 
 
 def test_otp_generation(auth_service) -> None:
