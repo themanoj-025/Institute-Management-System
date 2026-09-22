@@ -25,7 +25,7 @@
 - TypeScript/React: strict mode, ESLint + Prettier.
 - Structure:
 
-```
+```text
 main.py               # desktop entry
 api/main.py           # FastAPI
 web/                  # React SPA
