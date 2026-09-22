@@ -172,9 +172,7 @@ class MLService:
                     "risk_level": (
                         "High"
                         if proba >= high_risk_threshold
-                        else "Medium"
-                        if proba >= medium_risk_threshold
-                        else "Low"
+                        else "Medium" if proba >= medium_risk_threshold else "Low"
                     ),
                     "explanations": explanation,
                 }
@@ -233,9 +231,7 @@ class MLService:
                 "risk_level": (
                     "High"
                     if proba >= high_risk_threshold
-                    else "Medium"
-                    if proba >= medium_risk_threshold
-                    else "Low"
+                    else "Medium" if proba >= medium_risk_threshold else "Low"
                 ),
                 "model": self._model_name or "unknown",
                 "model_version": self._model_name or "",

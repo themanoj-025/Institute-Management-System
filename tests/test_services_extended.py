@@ -21,7 +21,9 @@ class TestActivityService:
         from services.activity_service import ActivityService
 
         db = MagicMock()
-        db.query.return_value.filter.return_value.order_by.return_value.limit.return_value.all.return_value = []
+        db.query.return_value.filter.return_value.order_by.return_value.limit.return_value.all.return_value = (
+            []
+        )
         svc = ActivityService(db)
         result = svc.get_user_logs(user_id=1)
         assert isinstance(result, list)

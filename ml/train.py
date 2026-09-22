@@ -259,9 +259,7 @@ def train_risk_model(
         active_version = (
             RISK_MODEL_NAME
             if promoted
-            else str(current_meta.get("name", RISK_MODEL_NAME))
-            if current_meta
-            else None
+            else str(current_meta.get("name", RISK_MODEL_NAME)) if current_meta else None
         )
         ph = PromotionHistory(
             candidate_model_version=candidate_name if not promoted else RISK_MODEL_NAME,

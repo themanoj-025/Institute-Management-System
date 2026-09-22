@@ -10,11 +10,11 @@ from tkinter import TclError
 import customtkinter as ctk
 
 from auth.session import SessionTracker
+from config.route_map import resolve_route
 from database.db_session import get_db, init_db
 from database.seeder import seed_database
-from error_dialog import show_error_dialog
 from landing.landing_page import LandingPage
-from routes import resolve_route
+from ui.error_dialog import show_error_dialog
 from ui.global_search import GlobalSearch
 from ui.loading_screen import LoadingScreen
 from ui.sidebar import Sidebar
