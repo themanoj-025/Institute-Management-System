@@ -147,9 +147,9 @@ def main() -> None:
         "revoked_tokens",
     ]
     # Safety: ensure all ordered tables are in the whitelist
-    assert set(ordered_tables) <= _VALID_TABLES, (
-        f"ordered_tables contains unknown tables: {set(ordered_tables) - _VALID_TABLES}"
-    )
+    assert (
+        set(ordered_tables) <= _VALID_TABLES
+    ), f"ordered_tables contains unknown tables: {set(ordered_tables) - _VALID_TABLES}"
 
     # Filter to only common tables, preserving order
     ordered_common = [t for t in ordered_tables if t in common_tables]
