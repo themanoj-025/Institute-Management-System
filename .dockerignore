@@ -28,7 +28,11 @@ start.bat
 docker-compose.yml
 Dockerfile
 Dockerfile.worker
-nginx/
+# The nginx image builds from the repo-root context (ci.yml) and COPYs its
+# config + Dockerfile from nginx/ - re-include them; the dir is ~20K.
+!nginx/
+!nginx/Dockerfile.nginx
+!nginx/default.conf
 pyproject.toml
 alembic.ini
 # NOTE: requirements.txt is intentionally NOT ignored — both Dockerfile
