@@ -1,6 +1,6 @@
 # BBIMS — Folder Structure
 
-```
+```text
 Institute-Management-System/
 ├── main.py                        # Streamlit app entry
 ├── celery_app.py                  # Celery worker entry

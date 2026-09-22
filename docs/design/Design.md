@@ -54,7 +54,7 @@
 
 **Data table** (core):
 
-```
+```text
 ┌───┬───────────┬──────────┬────────┐
 │ # │ Student   │ Attendance│ Fee %  │
 ├───┼───────────┼──────────┼────────┤
@@ -65,7 +65,7 @@ states: loading skeleton, empty, error, paginated
 
 **Risk card (SHAP):**
 
-```
+```text
 ┌───────────────────────────┐
 │ ⚠ HIGH RISK — Priya S.   │
 │ AUROC 0.91 · SHAP top-3  │

@@ -447,7 +447,7 @@ Every PR should include:
 
 ### Prohibited Patterns
 
-```
+```text
 ❌ datetime.now(timezone.utc)          — use utc_now() from utils/time.py
 ❌ Raw f-string SQL                    — use SQLAlchemy ORM
 ❌ Hardcoded secrets                   — use environment variables

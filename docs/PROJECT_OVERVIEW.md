@@ -75,7 +75,7 @@
 
 ## 3. High-Level Architecture
 
-```
+```text
 User Interfaces
     ├── Desktop Client (CustomTkinter) — 37 screens
     ├── Web Dashboard (React 19 SPA) — dark mode, command palette
@@ -100,7 +100,7 @@ Alembic migrations (3 revisions)
 
 ## 4. Complete Folder Structure Tree
 
-```
+```text
 Institute-Management-System/
 ├── .dockerignore
 ├── .editorconfig
@@ -494,7 +494,7 @@ docker-compose up -d
 
 ## 11. Dependency Graph Summary
 
-```
+```text
 main.py (Desktop) → modules/* → services/* → database/*
 api/main.py → services/* → database/*
 celery_app.py → services/* → ml/*
