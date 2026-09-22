@@ -109,7 +109,7 @@ A comprehensive educational institute management platform for small-to-medium co
 
 ## Architecture
 
-```
+```text
 User Interfaces
     ├── Desktop Client (CustomTkinter)
     ├── Web Dashboard (React SPA)
@@ -239,7 +239,7 @@ docker-compose up -d
 
 ## Project Structure
 
-```
+```text
 ├── main.py                         # Desktop app entry point
 ├── api/main.py                     # FastAPI (50+ endpoints)
 ├── celery_app.py                   # Celery worker
