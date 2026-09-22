@@ -153,7 +153,7 @@ The `alertmanager.yml` above uses a `webhook_configs` placeholder. Configure at 
 
 Alertmanager exposes a web UI on port **9093** (default). Access it at:
 
-```
+```text
 http://<your-server>:9093
 ```
 

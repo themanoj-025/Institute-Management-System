@@ -2,7 +2,7 @@
 
 ## Backend layering
 
-```
+```text
 config.settings / config.constants   ← imported by every backend module
 database.db_session                  ← used by services, seeder, alembic env
 database.models                      ← ORM models; used by services
@@ -38,7 +38,7 @@ landing/*            → services (public pages)
 
 ## Frontend
 
-```
+```text
 web/src/main.jsx → App.jsx → components/Layout (sidebar) + pages/*
 pages/*          → hooks (useAuth, useApi) + api/client.js
 api/client.js    → backend /api/* (JWT)

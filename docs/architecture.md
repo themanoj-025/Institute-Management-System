@@ -67,7 +67,7 @@ graph TD
 
 ## Data Flow (risk-scoring path)
 
-```
+```text
 student data ──► features (ml/features.py) ──► XGBoost risk_v1 ──► risk score
                                                     │
                              drift detection (ml/drift.py) ──► retrain trigger
