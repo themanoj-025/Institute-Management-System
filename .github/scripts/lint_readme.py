@@ -112,7 +112,9 @@ def lint(path: Path) -> list[str]:
             if rel:
                 if (path.parent / rel).exists():
                     if frag and rel.lower().endswith(".md"):
-                        md_slugs = collect_slugs((path.parent / rel).read_text(encoding="utf-8").splitlines())
+                        md_slugs = collect_slugs(
+                            (path.parent / rel).read_text(encoding="utf-8").splitlines()
+                        )
                         if frag and frag not in md_slugs:
                             problems.append(f"{path}:{no}: broken anchor {target}")
                 else:
@@ -126,7 +128,9 @@ def lint(path: Path) -> list[str]:
             prev_level = level
 
     if fence_char:
-        problems.append(f"{path}: unterminated fenced code block (opened with {fence_char * fence_len})")
+        problems.append(
+            f"{path}: unterminated fenced code block (opened with {fence_char * fence_len})"
+        )
     return problems
 
 
