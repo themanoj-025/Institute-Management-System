@@ -31,7 +31,7 @@ try:
     from packaging.version import Version
 except ImportError:  # pragma: no cover
     print("packaging is required: pip install packaging", file=sys.stderr)
-    raise SystemExit(2)
+    raise SystemExit(2) from None
 
 LOCK = "requirements.lock"
 SRC = "requirements.txt"
