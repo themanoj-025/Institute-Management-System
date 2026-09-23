@@ -17,6 +17,7 @@ Exit codes: 0 = in sync, 1 = drift/missing, 2 = tooling error.
 """
 import argparse
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -104,13 +105,28 @@ def strict_check(repo: Path, py: str) -> tuple[str, list[str]]:
         return "MISSING-LOCK", [f"{LOCK} not found"]
     with tempfile.TemporaryDirectory() as td:
         out = Path(td) / "expected.lock"
-        proc = subprocess.run(
+        uv = shutil.which("uv")
+        if uv is None:
+            return "COMPILE-ERROR", ["uv executable not found on PATH"]
+        proc = subprocess.run(  # noqa: S603 - fixed argv, no user input
             [
-                "uv", "pip", "compile", SRC,
-                "-o", str(out), "--quiet", "--no-header", "--strip-extras",
-                "--python-version", py, "--python-platform", PLATFORM,
+                uv,
+                "pip",
+                "compile",
+                SRC,
+                "-o",
+                str(out),
+                "--quiet",
+                "--no-header",
+                "--strip-extras",
+                "--python-version",
+                py,
+                "--python-platform",
+                PLATFORM,
             ],
-            cwd=repo, capture_output=True, text=True,
+            cwd=repo,
+            capture_output=True,
+            text=True,
         )
         if proc.returncode != 0:
             return "COMPILE-ERROR", [proc.stderr.strip()[:800]]
@@ -120,20 +136,25 @@ def strict_check(repo: Path, py: str) -> tuple[str, list[str]]:
         return "OK", []
     exp_lines = set(expected.splitlines())
     act_lines = set(actual.splitlines())
-    diffs = [f"+ {l}" for l in sorted(exp_lines - act_lines)[:6]]
-    diffs += [f"- {l}" for l in sorted(act_lines - exp_lines)[:6]]
+    diffs = [f"+ {line}" for line in sorted(exp_lines - act_lines)[:6]]
+    diffs += [f"- {line}" for line in sorted(act_lines - exp_lines)[:6]]
     return "STRICT-DRIFT", diffs
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__,
-                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("repos", nargs="*", default=["."])
-    ap.add_argument("--strict", action="store_true",
-                    help="byte-compare against a fresh uv compile (local use)")
-    ap.add_argument("--python-version", default="3.11",
-                    help="python-version for --strict compile (default: %(default)s; "
-                         "use 3.12 for repos with 3.12+ floors)")
+    ap.add_argument(
+        "--strict", action="store_true", help="byte-compare against a fresh uv compile (local use)"
+    )
+    ap.add_argument(
+        "--python-version",
+        default="3.11",
+        help="python-version for --strict compile (default: %(default)s; "
+        "use 3.12 for repos with 3.12+ floors)",
+    )
     args = ap.parse_args()
 
     failures = 0
@@ -151,9 +172,11 @@ def main() -> int:
         for p in problems[:10]:
             print(f"  {p}")
         if status == "DRIFT":
-            print(f"  -> regenerate: uv pip compile {SRC} -o {LOCK} "
-                  f"--quiet --no-header --strip-extras "
-                  f"--python-version {args.python_version} --python-platform {PLATFORM}")
+            print(
+                f"  -> regenerate: uv pip compile {SRC} -o {LOCK} "
+                f"--quiet --no-header --strip-extras "
+                f"--python-version {args.python_version} --python-platform {PLATFORM}"
+            )
         print()
 
     if failures:
