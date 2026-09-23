@@ -1,3 +1,14 @@
+# Cancel superseded runs of this workflow on the same ref (PR pushes).
+# Never cancels on main pushes or scheduled runs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Least-privilege token scope; jobs declaring their own permissions override this.
+permissions:
+  contents: read
+  packages: write
+
 # ── GitHub Actions CI/CD Pipeline ───────────────────────────────────
 #
 # Stages:
@@ -27,6 +38,7 @@ env:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -44,6 +56,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -72,6 +85,7 @@ jobs:
     name: Test (Python ${{ matrix.python-version }})
     needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
       matrix:
         # 3.10 dropped: the pinned scientific stack (matplotlib 3.11, pandas 3.0,
@@ -157,6 +171,7 @@ jobs:
     name: Test (Web frontend)
     needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: web
@@ -193,6 +208,7 @@ jobs:
     name: Build & Push Docker images
     needs: [test, web-build]
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -256,6 +272,7 @@ jobs:
     name: Security Scan
     needs: lint
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -300,6 +317,7 @@ jobs:
     needs: [build, security]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     environment:
       name: production
       url: https://ims.binarybrain.edu.in
@@ -362,6 +380,7 @@ jobs:
   hadolint:
     name: Container lint
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
@@ -374,6 +393,7 @@ jobs:
   schemathesis-fuzz:
     name: Contract fuzzing (Schemathesis)
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
