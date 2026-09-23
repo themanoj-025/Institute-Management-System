@@ -10,6 +10,7 @@ Checks (stdlib only, no dependencies):
 
 Exit codes: 0 = clean, 1 = violations found (printed with line numbers).
 """
+
 from __future__ import annotations
 
 import re
