@@ -64,6 +64,10 @@ ignore = [
     "RUF002",  # ambiguous unicode — intentional
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# CI helper: fixed argv built from shutil.which + literals, no user input
+".github/scripts/*" = ["S603", "S607"]
+
 [tool.isort]
 profile = "black"
 line_length = 100

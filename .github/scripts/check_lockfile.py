@@ -15,6 +15,7 @@ Strict mode (--strict, local use):
 
 Exit codes: 0 = in sync, 1 = drift/missing, 2 = tooling error.
 """
+
 import argparse
 import re
 import shutil
@@ -47,7 +48,8 @@ def load_source_requirements(repo: Path) -> list[Requirement]:
             continue
         # strip trailing inline comments: "pkg>=1  # note"
         line = re.split(r"\s+#", line, maxsplit=1)[0].strip()
-        if not line or line.startswith("-"):  # options like -r/-e/--hash handled by compiler
+        # options like -r/-e/--hash are handled by the compiler
+        if not line or line.startswith("-"):
             continue
         reqs.append(Requirement(line))
     return reqs
@@ -88,7 +90,7 @@ def constraint_check(repo: Path) -> tuple[str, list[str]]:
     for req in load_source_requirements(repo):
         key = norm(req.name)
         if key not in pins:
-            problems.append(f"{req.name} not pinned in {LOCK} (required: {req.specifier})")
+            problems.append(f"{req.name} not pinned in {LOCK}: needs {req.specifier}")
             continue
         ver = pins[key]
         if ver not in SpecifierSet(str(req.specifier)):
@@ -108,7 +110,7 @@ def strict_check(repo: Path, py: str) -> tuple[str, list[str]]:
         uv = shutil.which("uv")
         if uv is None:
             return "COMPILE-ERROR", ["uv executable not found on PATH"]
-        proc = subprocess.run(  # noqa: S603 - fixed argv, no user input
+        proc = subprocess.run(
             [
                 uv,
                 "pip",
@@ -147,7 +149,9 @@ def main() -> int:
     )
     ap.add_argument("repos", nargs="*", default=["."])
     ap.add_argument(
-        "--strict", action="store_true", help="byte-compare against a fresh uv compile (local use)"
+        "--strict",
+        action="store_true",
+        help="byte-compare against a fresh uv compile (local use)",
     )
     ap.add_argument(
         "--python-version",
