@@ -14,7 +14,7 @@
 *.js text
 
 # Markdown documentation
-*.md text
+*.md text eol=lf
 *.rst text
 
 # Config / locale files
