@@ -5,7 +5,6 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-00C7B7?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql&logoColor=white)](https://postgresql.org)
 [![License](https://img.shields.io/badge/License-MIT-10b981)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-348%20passed-22c55e)](https://github.com/CodeWithHardik/Institute-Management-System/actions)
 
 A comprehensive educational institute management platform for small-to-medium coaching institutes, private schools, and training centers. Manages the full institute lifecycle through three interfaces sharing a single business logic layer.
 
