@@ -31,14 +31,21 @@ def _isolated_ml_model_dir(tmp_path_factory, monkeypatch):
     from ml.drift_psi import MODELS_DIR as real_models_dir
 
     models_dir = tmp_path_factory.mktemp("ml_models")
-    for name in ("risk_v1.json", "risk_v1_meta.json", "reference_distributions.json"):
-        src = real_models_dir / name
-        if src.exists():
-            shutil.copy(src, models_dir / name)
+    # Copy every tracked ML model artifact (not just the canonical three) so
+    # that ML training/eval tests can rewrite them without touching the
+    # committed files in the working tree.
+    for src in sorted(real_models_dir.iterdir()):
+        if src.is_file() and src.name.endswith(".json"):
+            shutil.copy(src, models_dir / src.name)
     monkeypatch.setattr("ml.registry.MODELS_DIR", models_dir)
     reference_file = models_dir / "reference_distributions.json"
     monkeypatch.setattr("ml.drift.REFERENCE_FILE", reference_file)
     monkeypatch.setattr("ml.drift_psi.REFERENCE_FILE", reference_file)
+    # Also redirect the drift sub-module's reference file if it posts its own
+    # writes somewhere else.
+    import ml.drift as drift_module
+    if hasattr(drift_module, "MODELS_DIR"):
+        monkeypatch.setattr("ml.drift.MODELS_DIR", models_dir)
 
 
 @pytest.fixture(scope="session", autouse=True)

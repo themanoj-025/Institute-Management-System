@@ -36,4 +36,7 @@ RUN mkdir -p /etc/nginx/ssl
 
 EXPOSE 80 443
 
+# Healthcheck for the nginx web server (S-26).
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=10s CMD curl -f http://localhost/ || exit 1
+
 CMD ["nginx", "-g", "daemon off;"]

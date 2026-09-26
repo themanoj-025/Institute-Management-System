@@ -160,6 +160,23 @@ jobs:
           fi
           echo "PASS: Zero datetime.now(timezone.utc) calls outside utc_now()"
 
+      - name: Assert ML artifacts untracked
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+        run: |
+          # ML tests may rewrite committed artifacts (ml/models/*.json).
+          # This step is a hard gate: any such drift fails the build, which
+          # enforces the tmp_path / monkeypatch sandbox in tests/conftest.py.
+          # Failure here means the sandbox was bypassed and the committed
+          # models were mutated (BLK-001 class).
+          if ! git diff --exit-code --quiet ml/models/; then
+            echo "FAIL: ml/models/ drifted from committed state"
+            git status --porcelain -- ml/models/
+            exit 1
+          fi
+echo "PASS: ml/models/ unchanged after test suite"
+        shell: bash
+
       - name: Upload coverage report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:

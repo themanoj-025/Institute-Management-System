@@ -16,4 +16,7 @@ FROM dependencies AS app
 COPY . .
 RUN mkdir -p database logs assets/profiles exports/generated
 
+# Healthcheck for the Celery worker (S-26).
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s CMD celery -A celery_app inspect ping || exit 1
+
 CMD ["celery", "-A", "celery_app", "worker", "--loglevel=info", "--concurrency=4"]
