@@ -23,7 +23,10 @@ services:
   # Docker network. The api and worker services reach it via the service
   # name ``redis`` (``redis://redis:6379/0``).
   redis:
-    image: redis:7-alpine
+    # Pinned to 7.4: Redis 8.x changed default-user ACL handling and rejects
+    # passwordless AUTH from clients that send it (audit item 8.4). Move to
+    # 8.x only together with a client-ACL config review.
+    image: redis:7.4-alpine
     container_name: bb_ims_redis
     # No host port mapping — internal network only
     volumes:

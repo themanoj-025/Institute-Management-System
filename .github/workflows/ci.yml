@@ -106,7 +106,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: redis:7-alpine
+        # 7.4 pinned to match docker-compose: Redis 8.x rejects the default
+        # user AUTH flow used by the test suite (audit item 8.4).
+        image: redis:7.4-alpine
         ports:
           - 6379:6379
         options: >-
