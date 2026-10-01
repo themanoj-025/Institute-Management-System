@@ -42,6 +42,17 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", REDIS_URL)
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", REDIS_URL)
 
+# Background task dispatch: "celery" requires a running worker + broker
+# (docker-compose 'worker' service); "sync" executes tasks inline on the
+# caller — the dev/test fallback for environments without a worker.
+# Default flips to sync in dev/test so bare checkouts don't hit broker
+# connection errors; set explicitly in .env for docker deployments.
+USE_CELERY = os.getenv("USE_CELERY", "auto")
+_SYNC_DEFAULT = not (IS_DEV or ENV in ("test", "testing"))
+USE_CELERY = (
+    _SYNC_DEFAULT if USE_CELERY == "auto" else USE_CELERY.lower() in ("1", "true", "yes", "celery")
+)
+
 # Security
 SECRET_KEY = os.environ["SECRET_KEY"]  # Required — app fails to start if missing
 BCRYPT_COST = int(os.getenv("BCRYPT_COST", "14"))

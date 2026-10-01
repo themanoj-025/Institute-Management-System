@@ -12,8 +12,8 @@ from datetime import datetime, timedelta
 import jwt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from redis.exceptions import RedisError
 
+from api.resilience import get_redis_client, redis_call
 from database.db_session import get_session
 from database.models import (
     Attendance,
@@ -44,19 +44,21 @@ security = HTTPBearer(auto_error=False)
 
 
 def check_token_blacklist(jti: str) -> bool:
-    """Check if a JWT ID has been revoked."""
-    try:
-        import redis as _redis
+    """Check if a JWT ID has been revoked.
 
-        from config.settings import REDIS_URL
+    Redis is the fast path; a shared circuit breaker trips after repeated
+    failures so a hard Redis outage skips straight to the durable DB fallback
+    instead of stalling every auth on connect timeouts (audit item 8.1).
+    """
+    from config.settings import REDIS_URL
 
-        r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
-        if r.get(f"bl:{jti}") is not None:
-            return True
-    except RedisError:
-        pass
-    except (OSError, ConnectionError):
-        pass
+    hit = redis_call(
+        "blacklist check",
+        lambda: get_redis_client(REDIS_URL).get(f"bl:{jti}"),
+        default=None,
+    )
+    if hit is not None:
+        return True
 
     from database.db_session import SessionLocal
 
@@ -74,14 +76,19 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
     try:
         import math
 
-        import redis as _redis
+        from redis.exceptions import RedisError
 
         from config.settings import REDIS_URL
 
         now = utc_now()
         ttl_seconds = max(1, int(math.ceil((expires_at - now).total_seconds())))
-        r = _redis.from_url(REDIS_URL, socket_connect_timeout=1, socket_timeout=1)
-        r.setex(f"bl:{jti}", ttl_seconds, "1")
+
+        def _setex() -> None:
+            # set(ex=ttl) instead of deprecated setex (redis-py >= 2.6.12)
+            get_redis_client(REDIS_URL).set(f"bl:{jti}", "1", ex=ttl_seconds)
+
+        # DB write below is the durable record; Redis is best-effort speedup.
+        redis_call("blacklist write", _setex)
     except RedisError:
         pass  # Redis failure must not block logout
     except (OSError, ConnectionError):
