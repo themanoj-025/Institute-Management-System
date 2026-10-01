@@ -176,7 +176,7 @@ jobs:
             git status --porcelain -- ml/models/
             exit 1
           fi
-echo "PASS: ml/models/ unchanged after test suite"
+          echo "PASS: ml/models/ unchanged after test suite"
         shell: bash
 
       - name: Upload coverage report

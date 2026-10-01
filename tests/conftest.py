@@ -44,6 +44,7 @@ def _isolated_ml_model_dir(tmp_path_factory, monkeypatch):
     # Also redirect the drift sub-module's reference file if it posts its own
     # writes somewhere else.
     import ml.drift as drift_module
+
     if hasattr(drift_module, "MODELS_DIR"):
         monkeypatch.setattr("ml.drift.MODELS_DIR", models_dir)
 
