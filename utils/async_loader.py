@@ -17,7 +17,10 @@ class AsyncLoader:
             try:
                 result = task_func()
                 root.after(0, lambda: on_success(result))
-            except (ImportError, OSError) as e:
+            except Exception as e:
+                # a failing fetch must reach on_error instead of hanging the
+                # UI spinner forever (audit item 8.5). Original traceback is
+                # preserved below; tkinter callbacks must never see it.
                 import traceback
 
                 traceback.print_exc()

@@ -106,7 +106,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: redis:7-alpine
+        # 7.4 pinned to match docker-compose: Redis 8.x rejects the default
+        # user AUTH flow used by the test suite (audit item 8.4).
+        image: redis:7.4-alpine
         ports:
           - 6379:6379
         options: >-
@@ -132,7 +134,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql://bbims:testpass@localhost:5432/bb_ims_test
+          DATABASE_URL: postgresql+psycopg2://bbims:testpass@localhost:5432/bb_ims_test
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key-for-ci-12345678
           ENV: test
@@ -174,7 +176,7 @@ jobs:
             git status --porcelain -- ml/models/
             exit 1
           fi
-echo "PASS: ml/models/ unchanged after test suite"
+          echo "PASS: ml/models/ unchanged after test suite"
         shell: bash
 
       - name: Upload coverage report
