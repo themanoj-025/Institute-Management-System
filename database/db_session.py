@@ -13,7 +13,9 @@ os.makedirs(db_dir, exist_ok=True)
 # Use PostgreSQL via ``DATABASE_URL`` env var, falling back to SQLite for
 # local/offline desktop mode. PostgreSQL gets proper connection pooling.
 
-_is_pg = DATABASE_URL.startswith("postgresql://")
+# postgresql+psycopg2:// is the explicit DSN (psycopg2 is the pinned driver;
+# SQLAlchemy >=2.1 would otherwise resolve a bare postgresql:// to psycopg3).
+_is_pg = DATABASE_URL.startswith("postgresql")
 
 if _is_pg:
     engine = create_engine(

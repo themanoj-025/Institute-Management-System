@@ -140,9 +140,15 @@ class AnalyticsDashboard(ctk.CTkFrame):
         AsyncLoader.run(self, self._fetch_all, self._render_all, on_error=self._on_refresh_error)
 
     def _on_refresh_error(self, error) -> None:
-        """Handle errors during data fetch — re-enable the refresh button."""
+        """Handle errors during data fetch — show a visible unavailable state.
+
+        Audit item 8.5: previously the fetch died silently (empty charts, no
+        message). Now the user gets a persistent banner over the charts plus
+        an error toast, with the exception detail for support.
+        """
         self._loading = False
         self.refresh_btn.configure(text="🔄 Refresh Data", state="normal")
+        self._show_data_unavailable(error)
         try:
             from ui.toast import ToastManager
 
@@ -154,6 +160,51 @@ class AnalyticsDashboard(ctk.CTkFrame):
         except (OSError, ValueError):
             pass
 
+    def _ensure_error_banner(self):
+        """Return the 'data unavailable' banner frame, creating it if needed."""
+        import customtkinter as ctk
+
+        if getattr(self, "_error_banner", None) is not None and self._error_banner.winfo_exists():
+            return self._error_banner
+
+        banner = ctk.CTkFrame(self, corner_radius=8, border_width=1, border_color="#f38ba8")
+        ctk.CTkLabel(
+            banner,
+            text="⚠ Data unavailable — dashboard data could not be loaded.",
+            font=ctk.CTkFont(size=13, weight="bold"),
+            text_color="#f38ba8",
+            anchor="w",
+        ).pack(fill="x", padx=12, pady=(8, 0))
+        detail_lbl = ctk.CTkLabel(
+            banner,
+            text="",
+            font=ctk.CTkFont(size=11),
+            text_color="gray",
+            anchor="w",
+            wraplength=760,
+            justify="left",
+        )
+        detail_lbl.pack(fill="x", padx=12, pady=(0, 8))
+        self._error_detail_label = detail_lbl
+        self._error_banner = banner
+        return banner
+
+    def _show_data_unavailable(self, error) -> None:
+        """Show the persistent 'data unavailable' banner with error detail."""
+
+        banner = self._ensure_error_banner()
+        if getattr(self, "_error_detail_label", None) is not None:
+            self._error_detail_label.configure(text=f"Details: {error}")
+        # Pack the banner directly under the subtitle, above the metrics row.
+        banner.pack(fill="x", padx=20, pady=(8, 0), before=self.metrics_frame)
+
+    def _clear_data_unavailable(self) -> None:
+        """Remove the banner after a successful load."""
+        banner = getattr(self, "_error_banner", None)
+        if banner is not None and banner.winfo_exists():
+            banner.destroy()
+        self._error_banner = None
+
     def _fetch_all(self) -> None:
         """Fetch summary + course performance in one background pass."""
         summary = self.engine.full_summary()
@@ -164,6 +215,7 @@ class AnalyticsDashboard(ctk.CTkFrame):
         # Re-enable refresh button
         self.refresh_btn.configure(text="🔄 Refresh Data", state="normal")
         self._loading = False
+        self._clear_data_unavailable()
 
         summary = data
         att = summary.get("attendance", {})
