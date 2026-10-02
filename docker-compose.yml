@@ -50,7 +50,7 @@ services:
       - .env
     environment:
       - ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
@@ -75,7 +75,7 @@ services:
       - .env
     environment:
       - ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
+      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER:-bbims}:${POSTGRES_PASSWORD:-}@postgres:5432/bb_ims
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0

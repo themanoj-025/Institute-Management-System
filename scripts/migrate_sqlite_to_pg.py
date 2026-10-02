@@ -8,7 +8,7 @@ database, preserving IDs, relationships, and sequence state.
 Usage:
     python scripts/migrate_sqlite_to_pg.py \\
         --sqlite path/to/bb_ims.db \\
-        --pg-url postgresql://user:pass@host:5432/bb_ims
+        --pg-url postgresql+psycopg2://user:pass@host:5432/bb_ims
 
 Requirements:
     pip install psycopg2-binary sqlalchemy
@@ -81,7 +81,7 @@ def main() -> None:
     parser.add_argument(
         "--pg-url",
         required=True,
-        help="PostgreSQL connection string (e.g., postgresql://user:pass@host:5432/bb_ims)",
+        help="PostgreSQL connection string (e.g., postgresql+psycopg2://user:pass@host:5432/bb_ims)",
     )
     parser.add_argument(
         "--dry-run",

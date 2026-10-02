@@ -32,7 +32,7 @@ try:
 except ImportError:  # celery not installed (dev/test fallback environments)
     _CELERY_AVAILABLE = False
 
-    class MaxRetriesExceededError(Exception):
+    class MaxRetriesExceededError(Exception):  # type: ignore[no-redef]
         """Stub so type references resolve when celery is absent."""
 
 
