@@ -485,7 +485,7 @@ Our CI/CD pipeline runs on **GitHub Actions** (`.github/workflows/ci.yml`):
 | Variable | CI Value | Note |
 | ---------- | ---------- | ------ |
 | `SECRET_KEY` | `test-secret-key-for-ci-12345678` | Non-sensitive test key |
-| `DATABASE_URL` | `postgresql://bbims:testpass@localhost:5432/bb_ims_test` | Ephemeral PG service |
+| `DATABASE_URL` | `postgresql+psycopg2://bbims:testpass@localhost:5432/bb_ims_test` | Ephemeral PG service |
 | `REDIS_URL` | `redis://localhost:6379/0` | Ephemeral Redis service |
 | `ENV` | `test` | Disables production-only features |
 

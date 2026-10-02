@@ -33,7 +33,10 @@ DATABASE_URL = os.getenv(
     "DATABASE_URL",
     f"sqlite:///{os.path.join(BASE_DIR, DB_PATH)}",
 )
-IS_POSTGRES = DATABASE_URL.startswith("postgresql://")
+# Matches both the legacy postgresql:// and the explicit
+# postgresql+psycopg2:// DSN (SQLAlchemy >=2.1 defaults a bare postgresql://
+# to the psycopg3 driver, which is not a project dependency).
+IS_POSTGRES = DATABASE_URL.startswith("postgresql")
 
 # Redis
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")

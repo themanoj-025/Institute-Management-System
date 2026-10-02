@@ -134,7 +134,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql://bbims:testpass@localhost:5432/bb_ims_test
+          DATABASE_URL: postgresql+psycopg2://bbims:testpass@localhost:5432/bb_ims_test
           REDIS_URL: redis://localhost:6379/0
           SECRET_KEY: test-secret-key-for-ci-12345678
           ENV: test

@@ -34,8 +34,8 @@ except ImportError:  # pragma: no cover - pybreaker missing in stripped envs
     # Minimal stand-ins so the module (and the listener class below) still
     # imports when pybreaker is absent; redis_call then degrades to a plain
     # guarded call without breaker state.
-    CircuitBreaker = None
-    CircuitBreakerError = type("CircuitBreakerError", (Exception,), {})
+    CircuitBreaker = None  # type: ignore[misc]
+    CircuitBreakerError = type("CircuitBreakerError", (Exception,), {})  # type: ignore[misc]
     CircuitBreakerListener = object  # type: ignore[assignment,misc]
 
 T = TypeVar("T")
