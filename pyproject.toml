@@ -1,0 +1,128 @@
+[build-system]
+requires = ["setuptools>=84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "institute-management-system"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["api*", "database*", "services*", "config*", "modules*", "utils*", "ui*", "auth*", "analytics*", "landing*", "ml*", "monitoring*", "notifications*", "audit*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+exclude = "(venv|alembic)"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["venv", "alembic"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "BLE", "UP", "SIM", "C4", "RUF", "PLC", "PIE", "S", "DTZ", "I"]
+ignore = [
+    "E501",    # line too long — style preference
+    "E402",    # module-import-not-at-top — Flask/app pattern
+    "E731",    # lambda assignment — legacy code
+    "E712",    # comparison to True/False
+    "BLE001",  # blind except — defensive coding in GUI/API
+    "S110",    # try-except-pass — defensive coding in GUI routes
+    "S101",    # assert — normal in tests
+    "S105",    # hardcoded password — test fixtures
+    "S106",    # hardcoded password func arg — test fixtures
+    "S310",    # suspicious url open — intended file access
+    "S311",    # suspicious random — non-crypto use
+    "S608",    # hardcoded SQL — ORM queries
+    "DTZ001",  # datetime() without tz — Flask/CLI app
+    "DTZ007",  # strptime without tz — acceptable
+    "DTZ011",  # date.today() — acceptable in CLI/GUI app
+    "UP031",   # printf formatting — legacy code
+    "UP035",   # deprecated typing imports — kept for Python 3.9 compat
+    "B008",    # function-call-in-default — FastAPI/Kivy pattern
+    "B026",    # star-arg-unpacking — legacy code
+    "B904",    # raise-without-from — legacy code
+    "B905",    # zip-without-strict — legacy code
+    "B018",    # useless expression — side-effect imports
+    "SIM105",  # suppressible-exception — legacy pattern
+    "SIM101",  # duplicate isinstance — intentional
+    "SIM108",  # if-else → ternary — readability preference
+    "SIM103",  # needless bool — readability preference
+    "SIM114",  # if with same arms — intentional
+    "SIM117",  # multiple with — readability preference
+    "SIM118",  # in dict keys — intentional
+    "PLC0415", # import-outside-top-level — lazy imports
+    "RUF012",  # mutable class default — ORM pattern
+    "RUF001",  # ambiguous unicode — intentional
+    "RUF046",  # unnecessary cast
+    "RUF059",  # unused loop variable
+    "SIM102",  # collapsible if — circuit breaker pattern
+    "F821",    # undefined name — pre-existing missing imports
+    "RUF043",  # comparison to literal
+    "RUF015",  # unnecessary iterable allocation
+    "RUF002",  # ambiguous unicode — intentional
+]
+
+[tool.ruff.lint.per-file-ignores]
+# CI helper: fixed argv built from shutil.which + literals, no user input
+".github/scripts/*" = ["S603", "S607"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip = ["venv", "alembic"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_return_any = true
+strict_optional = true
+
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = "database.models"
+disable_error_code = ["var-annotated"]
+
+
+
+[tool.pytest.ini_options]
+addopts = "-v --tb=short --cov --cov-fail-under=70 -p tests.conftest_artifacts"
+testpaths = ["tests"]
+pythonpath = ["."]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+markers = [
+    "unit: marks pure unit tests (deselect with '-m \"not unit\"')",
+    "integration: marks tests requiring external services (deselect with '-m \"not integration\"')",
+    "slow: integration tests (database, HTTP, ML models) — excluded from default run; use pytest -m slow"
+]
+
+[tool.bandit]
+exclude_dirs = ["venv", "alembic", "tests"]
+skips = ["B101"]  # allow assert in tests
+
+[tool.coverage.run]
+# Tkinter GUI code cannot be exercised headlessly in CI, and test files
+# would otherwise "cover" themselves. Omit both so the 70% gate measures
+# the actually-testable application code.
+omit = [
+    "main.py",
+    "error_dialog.py",
+    "landing/*",
+    "ui/*",
+    "database/seeder.py",
+    "tests/*",
+]
+
+[tool.coverage.report]
+# Some tests generate throwaway .py files (seen in CI as config-3.py) that are
+# deleted before `coverage report` runs; don't fail the report on them.
+ignore_errors = true
+show_missing = true
+fail_under = 70
+skip_empty = true

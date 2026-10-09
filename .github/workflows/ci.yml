@@ -1,0 +1,476 @@
+# Cancel superseded runs of this workflow on the same ref (PR pushes).
+# Never cancels on main pushes or scheduled runs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Least-privilege token scope; jobs declaring their own permissions override this.
+permissions:
+  contents: read
+  packages: write
+
+# ── GitHub Actions CI/CD Pipeline ───────────────────────────────────
+#
+# Stages:
+#   1. Lint — ruff (fast linter) + black --check (formatting)
+#   2. Test — pytest with coverage, minimum 70%
+#   3. Build — docker build for api and worker images
+#   4. Security — bandit (static analysis) + pip-audit (dependency vulns)
+#   5. Deploy — manual-approval-gated deploy on main branch
+# ───────────────────────────────────────────────────────────────────
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  # GHCR only accepts lowercase repository names; github.repository is
+  # "Institute-Management-System" (mixed case) and buildx rejects the tag.
+  DOCKER_IMAGE_API: ghcr.io/${{ github.repository_owner }}/institute-management-system/api
+  DOCKER_IMAGE_WORKER: ghcr.io/${{ github.repository_owner }}/institute-management-system/worker
+  DOCKER_IMAGE_NGINX: ghcr.io/${{ github.repository_owner }}/institute-management-system/nginx
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.11"
+
+      - name: Run pre-commit hooks
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files
+
+  # ── Stage 1: Lint ──────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # Pinned so new ruff/black releases (which expand default rule
+          # sets / reformat) cannot break CI on pre-existing code. Rule
+          # selection is pinned in pyproject.toml [tool.ruff].
+          pip install ruff==0.16.1 black==24.10.0
+
+      - name: Run ruff (fast linter)
+        run: ruff check .
+
+      - name: Run black (formatting check)
+        run: black --check --line-length 100 --exclude "venv|alembic" .
+
+  # ── Stage 2: Test ──────────────────────────────────────────────
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      matrix:
+        # 3.10 dropped: the pinned scientific stack (matplotlib 3.11, pandas 3.0,
+        # numpy/scipy 2.x-era floors) requires Python >=3.11 — installs on 3.10 fail.
+        python-version: ["3.11", "3.12"]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: bb_ims_test
+          POSTGRES_USER: bbims
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        # 7.4 pinned to match docker-compose: Redis 8.x rejects the default
+        # user AUTH flow used by the test suite (audit item 8.4).
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install coverage pytest pytest-cov
+
+      - name: Run tests with coverage
+        env:
+          DATABASE_URL: postgresql+psycopg2://bbims:testpass@localhost:5432/bb_ims_test
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-secret-key-for-ci-12345678
+          ENV: test
+        run: |
+          # -o addopts= strips pyproject's --cov (pytest-cov): running it inside
+          # `coverage run` double-measures and clobbers the data file, leaving
+          # `coverage report`/`coverage json` with no data.
+          coverage run -m pytest tests/ -v --tb=short --override-ini="addopts="
+          coverage report --fail-under=70
+          coverage json -o coverage.json
+
+      - name: Verify closeout greps
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+        run: |
+          echo "=== Checking for datetime.now(timezone.utc) outside utc_now() ==="
+          # `grep -c` exits 1 when the count is 0 — exactly the passing case —
+          # which killed this step under bash -e even when the tree was clean.
+          # `|| true` lets the count of zero flow into the check below.
+          REMAINING=$(grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py\|IMPLEMENTATION_NOTES.md" | grep -c . || true)
+          if [ "$REMAINING" -ne "0" ]; then
+            echo "FAIL: Found $REMAINING datetime.now(timezone.utc) calls outside utc_now()"
+            grep -rn "datetime\.now(timezone\.utc)" --include="*.py" | grep -v "utils/time.py"
+            exit 1
+          fi
+          echo "PASS: Zero datetime.now(timezone.utc) calls outside utc_now()"
+
+      - name: Assert ML artifacts untracked
+        env:
+          SECRET_KEY: test-secret-key-for-ci
+        run: |
+          # ML tests may rewrite committed artifacts (ml/models/*.json).
+          # This step is a hard gate: any such drift fails the build, which
+          # enforces the tmp_path / monkeypatch sandbox in tests/conftest.py.
+          # Failure here means the sandbox was bypassed and the committed
+          # models were mutated (BLK-001 class).
+          if ! git diff --exit-code --quiet ml/models/; then
+            echo "FAIL: ml/models/ drifted from committed state"
+            git status --porcelain -- ml/models/
+            exit 1
+          fi
+          echo "PASS: ml/models/ unchanged after test suite"
+        shell: bash
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: coverage-report
+          path: coverage.json
+
+  # ── Stage 2b: Web frontend build ────────────────────────────
+  web-build:
+    name: Test (Web frontend)
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          # Node 24: required by jsdom 30 (>=22.22.2), vite 8.2 (>=20.19.0||>=22.12.0),
+          # and @vitejs/plugin-react 6 (>=22.12.0) — coordinated bump for dependabot majors.
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Run frontend tests with coverage
+        run: npm run test:ci
+
+      - name: Build frontend (production)
+        run: npm run build
+
+  # ── Stage 3: Build & Push ─────────────────────────────────────
+  # Builds Docker images and pushes them to GHCR on main branch.
+  # The deploy job later pulls these images on the production server.
+  build:
+    name: Build & Push Docker images
+    needs: [test, web-build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_API }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_API }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Worker image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: Dockerfile.worker
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_WORKER }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_WORKER }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Nginx image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: nginx/Dockerfile.nginx
+          push: ${{ github.ref == 'refs/heads/main' }}
+          load: ${{ github.ref != 'refs/heads/main' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_NGINX }}:${{ github.sha }}
+            ${{ github.ref == 'refs/heads/main' && env.DOCKER_IMAGE_NGINX }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Check build context size
+        run: |
+          SIZE=$(du -sh . | cut -f1)
+          echo "Build context size: $SIZE"
+          echo "If this is > 100MB, check .dockerignore"
+
+  # ── Stage 4: Security Scan ─────────────────────────────────────
+  security:
+    name: Security Scan
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit==1.9.4 pip-audit
+
+      - name: Run Bandit (static analysis)
+        run: bandit -r . -x venv,alembic,tests -f json -o bandit-report.json || true
+
+      - name: Run pip-audit (dependency vulnerabilities)
+        run: pip-audit || true
+
+      # Pinned binary instead of gitleaks-action@v2: the action intermittently
+      # fails with gitleaks' "stderr is not empty" git-plumbing error (gitleaks
+      # #1464) even with no leaks; a direct scan is deterministic.
+      - name: Run Gitleaks (secret scanning)
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz -o gitleaks.tgz
+          sudo tar -xzf gitleaks.tgz -C /usr/local/bin gitleaks
+          gitleaks detect --source . --report-format json --report-path gitleaks-report.json --no-git --redact -v
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        continue-on-error: true
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            gitleaks-report.json
+
+  # ── Stage 5: Deploy (manual approval, main branch only) ────────
+  deploy:
+    name: Deploy to Production
+    needs: [build, security]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: production
+      url: https://ims.binarybrain.edu.in
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || '22' }}
+          script: |
+            set -e
+            echo "=== Pulling latest images ==="
+            cd /opt/bb-ims
+            docker compose pull
+
+            echo "=== Setting up TLS certificates ==="
+            # If USE_LETSENCRYPT is set and domain is configured,
+            # symlink Let's Encrypt certs to the paths nginx expects.
+            # MUST use RELATIVE symlinks so they resolve inside the nginx
+            # container (which sees the same bind-mounted directory but at
+            # a different mount point: /etc/nginx/ssl vs /opt/bb-ims/nginx/ssl).
+            if [ "${USE_LETSENCRYPT:-false}" = "true" ] && [ -n "${DOMAIN_NAME:-}" ]; then
+              echo "Linking Let's Encrypt certificates for $DOMAIN_NAME"
+              cd /opt/bb-ims/nginx/ssl
+              ln -sf "live/$DOMAIN_NAME/fullchain.pem" "cert.pem"
+              ln -sf "live/$DOMAIN_NAME/privkey.pem" "key.pem"
+            fi
+
+            echo "=== Running Alembic migrations ==="
+            docker compose run --rm api alembic upgrade head
+
+            echo "=== Restarting services ==="
+            docker compose up -d --remove-orphans
+
+            echo "=== Pruning old images ==="
+            docker image prune -f
+
+            echo "=== Deployment complete ==="
+            docker compose ps
+
+  typecheck:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mypy==2.3.1
+      - name: Type check with mypy
+        run: mypy . --ignore-missing-imports
+
+  hadolint:
+    name: Container lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with:
+          dockerfile: Dockerfile
+          # DL3008/DL3013 (warnings): apt/pip versions float with the slim base
+          # image / requirements.txt ranges by design; DL3066 fixed via numeric UID.
+          failure-threshold: error
+
+  schemathesis-fuzz:
+    name: Contract fuzzing (Schemathesis)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt 2>/dev/null || pip install -e ".[dev]" 2>/dev/null || true
+          pip install schemathesis
+      - name: Generate OpenAPI spec
+        env:
+          SECRET_KEY: test-secret-key-for-ci-12345678
+        run: |
+          python -c "
+          from api.main import app
+          import json, sys
+          with open('/tmp/openapi.json', 'w') as f:
+              json.dump(app.openapi(), f, indent=2)
+          print('OpenAPI spec generated:', len(json.dumps(app.openapi())), 'bytes')
+          "
+      - name: Fuzz API against OpenAPI contract
+        env:
+          SECRET_KEY: test-secret-key-for-ci-12345678
+        run: |
+          uvicorn api.main:app --host 0.0.0.0 --port 8000 &
+          sleep 3
+          st run --checks all /tmp/openapi.json --base-url http://localhost:8000 -w 5 --hypothesis-suppress-health-check=too_slow 2>&1 | tail -20 || true
+
+  lighthouse:
+    name: "Frontend — Lighthouse CI (performance budgets)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build frontend
+        run: npm run build
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+      - name: Start preview server + run Lighthouse
+        run: |
+          npx vite preview --port 3000 &
+          sleep 5
+          lhci autorun --config=lighthouserc.json
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: lighthouse-reports
+          path: web/lhci-reports

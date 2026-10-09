@@ -1,0 +1,13 @@
+# Gitleaks configuration
+# Extends gitleaks' default ruleset with repository-specific allowlists.
+# NOTE: allowlists here are for NON-PRODUCTION test fixtures only.
+title = "gitleaks config for Institute-Management-System"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "CI/test fixtures that intentionally contain key-shaped dummy values"
+regexes = [
+  '''test-secret-key-for-ci-12345678''',
+]

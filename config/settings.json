@@ -1,0 +1,7 @@
+{
+    "theme": "dark",
+    "accent_color": "#a6e3a1",
+    "font_size": "Medium",
+    "language": "en",
+    "_note": "SMTP credentials removed from config file. Loaded via environment variables (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD) in .env only."
+}
