@@ -34,12 +34,12 @@
 - [Interfaces](#interfaces)
 - [🧰 Tech stack](#-tech-stack)
 - [🏗️ Architecture](#️-architecture)
-- [Quick start](#-quick-start)
-- [API reference](#api-reference)
-- [Security](#security)
-- [ML pipeline](#ml-pipeline)
-- [Project structure](#project-structure)
-- [Roadmap](#roadmap)
+- [Quick start](#quick-start)
+- [API reference](#-api-reference)
+- [Security](#-security)
+- [ML pipeline](#️-ml-pipeline)
+- [Project structure](#-project-structure)
+- [Roadmap](#️-roadmap)
 - [Contributing](#-contributing)
 - [License](#license)
 
@@ -181,7 +181,7 @@ The ML pipeline is a separate service used by the analytics screens:
 
 ## 📁 Project structure
 
-```
+```text
 Institute-Management-System/
 ├── desktop/                    # CustomTkinter desktop client
 ├── web/                        # React 19 + Vite SPA
@@ -232,3 +232,4 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 MIT License — see [LICENSE](LICENSE).
 
 > [!IMPORTANT] The license in this README matches the `license` field in `pyproject.toml` and the contents of the `LICENSE` file. No conflicts were found.
+
