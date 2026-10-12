@@ -1,235 +1,251 @@
-# 🌐 Binary Brain Institute Management System (BB-IMS)
-
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-2563eb?logo=python&logoColor=white" alt="Python 3.10+" />
-  <img src="https://img.shields.io/badge/React-19-0ea5e9?logo=react&logoColor=white" alt="React 19" />
-  <img src="https://img.shields.io/badge/FastAPI-0.115-00C7B7?logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/License-MIT-10b981" alt="License" />
+  <img src="https://img.shields.io/badge/BB--IMS-Institute%20Management%20System-blue?style=for-the-badge" alt="BB-IMS Logo" />
 </p>
 
-<h1 align="center">🌐 Binary Brain Institute Management System (BB-IMS)</h1>
+<h1 align="center">Binary Brain Institute Management System (BB-IMS)</h1>
 
 <p align="center">
-  <strong>A comprehensive educational institute management platform for small-to-medium coaching institutes, private schools, and training centers.</strong> Manages the full institute lifecycle through three interfaces sharing a single business logic layer.
+  <strong>Comprehensive educational institute management platform: unified operations across CustomTkinter desktop, React web SPA, and FastAPI REST backend.</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/themanoj-025/Institute-Management-System/actions"><img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Institute-Management-System/ci.yml?style=flat-square&label=CI" alt="CI Status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License MIT" /></a>
+  <a href="https://github.com/themanoj-025/Institute-Management-System/stargazers"><img src="https://img.shields.io/github/stars/themanoj-025/Institute-Management-System?style=social" alt="GitHub Stars" /></a>
+  <a href="https://github.com/themanoj-025/Institute-Management-System/issues"><img src="https://img.shields.io/github/issues/themanoj-025/Institute-Management-System?style=flat-square" alt="GitHub Issues" /></a>
+  <a href="https://github.com/themanoj-025/Institute-Management-System/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" /></a>
 </p>
 
 ---
 
-## 📸 Screenshots
+## Overview
 
-> To add screenshots: run `python main.py` for desktop or `npm run dev` for web, capture your screen, save images to `docs/assets/`, and reference them below.
->
-> **Suggested screenshots:**
-> - Desktop client dashboard with KPIs
-> - React web dashboard (dark mode)
-> - Student attendance management
-> - Analytics dashboard with SHAP risk cards
+Binary Brain Institute Management System (BB-IMS) streamlines administrative, academic, and financial workflows for schools, coaching institutes, and training centers. Designed around a single shared domain service layer, it supports desktop offline operation (via CustomTkinter), browser-based administration (via a React 19 SPA), and programmatic integration (via FastAPI).
+
+It manages the complete educational lifecycle including student admissions, faculty assignments, session timetables, attendance tracking, fee invoicing, and ML-assisted student risk analytics.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Screenshots](#-screenshots)
-- [Interfaces](#interfaces)
-- [🧰 Tech stack](#-tech-stack)
-- [🏗️ Architecture](#️-architecture)
-- [Quick start](#quick-start)
-- [API reference](#-api-reference)
-- [Security](#-security)
-- [ML pipeline](#️-ml-pipeline)
-- [Project structure](#-project-structure)
-- [Roadmap](#️-roadmap)
-- [Contributing](#-contributing)
+- [Supported Interfaces](#supported-interfaces)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+- [Configuration](#configuration)
+- [Security](#security)
+- [Testing](#testing)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
 - [License](#license)
+- [Support](#support)
 
 ---
 
-## Interfaces
+## Supported Interfaces
 
-| Interface | Stack | Users |
-| --- | --- | --- |
-| Desktop Client | CustomTkinter | Admin, Staff, Students (local/offline) |
-| Web Dashboard | React 19 + Vite SPA | Admin, Staff (browser-based) |
-| REST API | FastAPI /v1/ (50+ endpoints) | All clients, integrations |
+| Interface | Technology | Target Users |
+| :--- | :--- | :--- |
+| **Desktop Client** | Python 3.10+, CustomTkinter | Administrators and front-desk staff (offline-first capable) |
+| **Web Dashboard** | React 19 + Vite SPA | Remote administrators, instructors, and staff |
+| **REST API** | FastAPI /v1/ (50+ endpoints) | Backend services, mobile apps, and third-party integrations |
 
-Each interface talks to the same service layer — no duplicated business logic between the CLI, the web SPA, and the API.
+All interfaces interact with the same underlying service modules in `services/` and database models in `database/`, eliminating duplicated business rules.
 
-## 🧰 Tech stack
+---
 
-| Category | Technology |
-| --- | --- |
-| Desktop client | Python 3.10+, CustomTkinter |
-| Web dashboard | React 19 + Vite SPA |
-| API | FastAPI 0.115+ |
-| Database | PostgreSQL 16 |
-| ORM | SQLAlchemy 2.x |
-| Auth | JWT (RS256) + password hashing |
-| Infra | Docker, GitHub Actions (lint, typecheck, test, security) |
+## Tech Stack
 
-## 🏗️ Architecture
+| Domain | Technologies |
+| :--- | :--- |
+| **Desktop Application** | Python, CustomTkinter, Matplotlib |
+| **Web Frontend** | React 19, TypeScript, Tailwind CSS, Vite |
+| **Backend REST API** | FastAPI, Pydantic v2, Uvicorn |
+| **Database & ORM** | PostgreSQL 16 / SQLite, SQLAlchemy 2.x, Alembic |
+| **Task Queue & Workers**| Celery, Redis |
+| **Authentication** | JWT (RS256 / HS256), bcrypt password hashing |
+
+---
+
+## Architecture
+
+```text
+  ┌───────────────────────┐             ┌───────────────────────┐
+  │ CustomTkinter Desktop │             │   React 19 Vite SPA   │
+  │     (ui/ / main.py)   │             │        (web/)         │
+  └───────────┬───────────┘             └───────────┬───────────┘
+              │                                     │
+              │  Direct ORM / API                  │ HTTP REST API
+              └──────────────────┐ ┌────────────────┘
+                                 ▼ ▼
+                      ┌───────────────────────┐
+                      │    FastAPI Server     │
+                      │     (api/main.py)     │
+                      └──────────┬────────────┘
+                                 │
+                      ┌──────────┴────────────┐
+                      │ Shared Services Layer │
+                      │  (services/, auth/)   │
+                      └──────────┬────────────┘
+                                 │
+                      ┌──────────┴────────────┐
+                      │ SQLAlchemy 2.x / DB   │
+                      │ (PostgreSQL / SQLite) │
+                      └───────────────────────┘
+```
+
+---
+
+## Project Structure
 
 ```text
 Institute-Management-System/
-├── desktop/                   # CustomTkinter desktop client
-├── web/                       # React 19 + Vite SPA
-├── apis/                      # FastAPI /v1 service
-│   ├── routes/                # Endpoints
-│   ├── services/              # Shared business logic
-│   ├── models/                # SQLAlchemy models
-│   └── security/              # JWT, password hashing
-├── db/                        # Alembic migrations
-├── tests/                     # pytest suite
-├── docker-compose.yml
-└── requirements.txt
+├── api/                    # FastAPI routes, schemas, rate limiter, and dependencies
+├── auth/                   # Authentication, JWT handling, and password hashing
+├── database/               # SQLAlchemy models and database session management
+├── services/               # Shared domain business logic (students, fees, attendance)
+├── ui/                     # CustomTkinter desktop interface views and controllers
+├── web/                    # React 19 web single-page application
+├── ml/                     # Student risk analytics and performance ML models
+├── tests/                  # Pytest backend test suite
+├── alembic.ini             # Alembic database migration configuration
+├── celery_app.py           # Celery asynchronous task configuration
+├── docker-compose.yml      # Multi-container orchestration (API, Web, DB, Redis)
+├── main.py                 # Desktop application entry point
+├── pyproject.toml          # Python build and linting configuration
+├── requirements.txt        # Backend dependencies
+└── README.md               # Project documentation
 ```
 
-## Quick start
+---
 
-### Prerequisites
+## Prerequisites
 
-- Python 3.10 or newer
-- Node.js 18+ (web dev)
-- PostgreSQL 16 (or use the bundled SQLite for local dev)
+- **Python**: `>= 3.10`
+- **Node.js**: `>= 18.0` (required for web frontend development)
+- **Database**: PostgreSQL 16 (or local SQLite for dev)
 
-### Option A — Desktop client
+---
+
+## Quick Start
+
+### 1. Backend & Database Setup
 
 ```bash
-# 1. Clone the repository
+# Clone the repository
 git clone https://github.com/themanoj-025/Institute-Management-System.git
 cd Institute-Management-System
 
-# 2. Install Python dependencies
+# Setup virtual environment
+python -m venv .venv
+# Linux/macOS: source .venv/bin/activate
+# Windows: .venv\Scripts\Activate.ps1
+
+# Install Python dependencies
 pip install -r requirements.txt
 
-# 3. Apply database migrations
-alembic upgrade heads
+# Run database migrations
+alembic upgrade head
+```
 
-# 4. Run the desktop app
+### 2. Choose Your Interface
+
+**Option A: Desktop Client**
+```bash
 python main.py
 ```
 
-### Option B — Web dashboard
-
+**Option B: FastAPI REST Server**
 ```bash
-# 1. Install Node dependencies (from the web directory)
-cd web && npm install
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+*Access interactive Swagger documentation at http://localhost:8000/docs.*
 
-# 2. Start the dev server
+**Option C: React Web Dashboard**
+```bash
+cd web
+npm install
 npm run dev
 ```
+*Access the React SPA at http://localhost:5173.*
 
-### Option C — REST API (all clients)
+---
 
-```bash
-# 1. Install Python dependencies
-pip install -r requirements.txt
+## API Reference
 
-# 2. Apply migrations
-alembic upgrade heads
+The FastAPI service exposes endpoints under `/api/v1/`:
 
-# 3. Start the API
-uvicorn apis.main:app --reload --port 8000
-```
+| Module | Typical Routes |
+| :--- | :--- |
+| **Auth** | `POST /v1/auth/login`, `POST /v1/auth/refresh` |
+| **Students** | `GET /v1/students`, `POST /v1/students`, `PATCH /v1/students/{id}` |
+| **Faculty & Staff** | `GET /v1/staff`, `POST /v1/staff`, `PATCH /v1/staff/{id}` |
+| **Courses & Classes** | `GET /v1/courses`, `GET /v1/subjects`, `POST /v1/sessions` |
+| **Attendance** | `GET /v1/attendance`, `POST /v1/attendance` |
+| **Fee Management** | `GET /v1/fees`, `POST /v1/fees`, `PATCH /v1/fees/{id}` |
+| **Reports** | `GET /v1/reports/attendance`, `GET /v1/reports/fees` |
 
-Open `http://localhost:8000/docs` for the Swagger UI.
+---
 
-### Environment variables
+## Configuration
 
-| Variable | Default | Required | Description |
-| --- | --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///ims.db` | No | Dev: SQLite. Prod: PostgreSQL. |
-| `DATABASE_URL_POSTGRES` | `postgresql+psycopg2://user:pass@localhost/ims` | No | Production PostgreSQL |
-| `JWT_SECRET` | — | Yes | JWT signing secret |
-| `SECRET_KEY` | — | Yes | App secret key |
-| `LOG_LEVEL` | `info` | No | Logging verbosity |
+Settings can be specified in `.env` (copy from `.env.example`):
 
-## 🔌 API reference
+| Variable | Default | Purpose |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | `sqlite:///ims.db` | Development SQLite database path |
+| `DATABASE_URL_POSTGRES` | `postgresql://...` | Production PostgreSQL connection string |
+| `JWT_SECRET` | `""` | Cryptographic secret for signing tokens |
+| `REDIS_URL` | `redis://localhost:6379/0` | Message broker for Celery tasks |
+| `LOG_LEVEL` | `info` | Application logging level |
 
-The FastAPI app exposes `/v1/` endpoints grouped by resource. Each endpoint calls a function in `apis/services/` inside a DB transaction and is covered by the test suite.
+---
 
-| Group | Endpoints |
-| --- | --- |
-| Students | `GET /v1/students`, `POST /v1/students`, `PATCH /v1/students/{id}` |
-| Staff | `GET /v1/staff`, `POST /v1/staff`, `PATCH /v1/staff/{id}` |
-| Courses & subjects | `GET /v1/courses`, `GET /v1/subjects` |
-| Sessions | `GET /v1/sessions`, `POST /v1/sessions` |
-| Attendance | `GET /v1/attendance`, `POST /v1/attendance` |
-| Fees | `GET /v1/fees`, `POST /v1/fees`, `PATCH /v1/fees/{id}` |
-| Reports | `GET /v1/reports/attendance`, `GET /v1/reports/fees` |
-| Auth | `POST /v1/auth/login`, `POST /v1/auth/refresh` |
+## Security
 
-> [!NOTE] The OpenAPI docs live at `/docs` and `/redoc` served by FastAPI. A static spec is generated by CI so the published README stays truthful.
+- **Cryptographic Token Verification**: Implements JWT authentication with token rotation.
+- **Role-Based Access Control**: Strict segregation between Admin, Staff, and Student permissions.
+- **Input Sanitization**: Pydantic v2 schemas validate all payload structures before execution.
+- Review [SECURITY.md](SECURITY.md) for vulnerability disclosure procedures.
 
-## 🔒 Security
+---
 
-- **JWT (RS256)** — short-lived access tokens with refresh rotation
-- **Password hashing** — bcrypt via `passlib`
-- **CORS** — scoped to the React dev server
-- **Input validation** — Pydantic v2 schemas on every request
-- **Dependency scans** — in CI (repository maintainer's `requirements.txt` pins)
-
-> [!IMPORTANT] This is an educational-portfolio project. Do not expose it to untrusted external networks without hardening (rate limiting, email verification, MFA) and a third-party security review.
-
-## 🏋️ ML pipeline
-
-The ML pipeline is a separate service used by the analytics screens:
-
-- **Training**: `python -m ml.train` — trains per-course/student performance models
-- **Inference**: `/v1/ml/predict` — returns a risk score + explanation
-- **Artifacts**: recorded in MLflow under the `ims-ml` experiment
-
-## 📁 Project structure
-
-```text
-Institute-Management-System/
-├── desktop/                    # CustomTkinter desktop client
-├── web/                        # React 19 + Vite SPA
-├── apis/                       # FastAPI /v1 service
-│   ├── routes/
-│   ├── services/
-│   ├── models/
-│   └── security/
-├── db/                         # Alembic migrations
-├── tests/                      # pytest suite
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
-
-## 🚀 Deployment
-
-### Docker
+## Testing
 
 ```bash
-docker compose up --build
+# Run backend test suite
+pytest tests/ -v
 ```
 
-The compose file ships a `web` service (React), an `api` service (FastAPI), and a `db` service (PostgreSQL), with the desktop client bundled in the image.
+---
 
-## 🗺️ Roadmap
+## Roadmap
 
-> [!CAUTION] Checked items are built and verified. Unchecked items are tracked in the issue tracker.
+- [x] CustomTkinter desktop interface
+- [x] React 19 web dashboard
+- [x] Comprehensive FastAPI backend
+- [x] Concurrency-safe financial transactions
+- [ ] Multi-tenant organization support <!-- TODO: Track in GitHub issue -->
+- [ ] Biometric hardware integration for attendance <!-- TODO: Track in GitHub issue -->
 
-- [x] Desktop client (37 screens)
-- [x] Web dashboard (React 19)
-- [x] REST API (50+ endpoints)
-- [x] Concurrent-safe transactions
-- [ ] OAuth2 / SSO (tracked public issue)
+---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are welcomed! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-## 📬 Support
-
-- 🐛 [Report a bug](https://github.com/themanoj-025/Institute-Management-System/issues)
-- 💡 [Request a feature](https://github.com/themanoj-025/Institute-Management-System/issues)
-- 📧 Email the maintainer via the issue tracker
+---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
-> [!IMPORTANT] The license in this README matches the `license` field in `pyproject.toml` and the contents of the `LICENSE` file. No conflicts were found.
+---
 
+## Support
+
+- 🐛 **Issue Tracker**: [GitHub Issues](https://github.com/themanoj-025/Institute-Management-System/issues)
+- 💬 **Discussions & Feedback**: [GitHub Pull Requests](https://github.com/themanoj-025/Institute-Management-System/pulls)
