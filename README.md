@@ -34,12 +34,12 @@
 - [Interfaces](#interfaces)
 - [🧰 Tech stack](#-tech-stack)
 - [🏗️ Architecture](#️-architecture)
-- [Quick start](#-quick-start)
-- [API reference](#api-reference)
-- [Security](#security)
-- [ML pipeline](#ml-pipeline)
-- [Project structure](#project-structure)
-- [Roadmap](#roadmap)
+- [Quick start](#quick-start)
+- [API reference](#-api-reference)
+- [Security](#-security)
+- [ML pipeline](#️-ml-pipeline)
+- [Project structure](#-project-structure)
+- [Roadmap](#️-roadmap)
 - [Contributing](#-contributing)
 - [License](#license)
 
@@ -181,7 +181,7 @@ The ML pipeline is a separate service used by the analytics screens:
 
 ## 📁 Project structure
 
-```
+```text
 Institute-Management-System/
 ├── desktop/                    # CustomTkinter desktop client
 ├── web/                        # React 19 + Vite SPA
