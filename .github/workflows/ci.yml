@@ -340,8 +340,15 @@ jobs:
     environment:
       name: production
       url: https://ims.binarybrain.edu.in
+    env:
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
     steps:
+      - name: Skip deployment notice
+        if: ${{ env.DEPLOY_HOST == '' }}
+        run: echo "DEPLOY_HOST secret is not configured; skipping production deployment."
+
       - name: Deploy via SSH
+        if: ${{ env.DEPLOY_HOST != '' }}
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1
         with:
           host: ${{ secrets.DEPLOY_HOST }}
