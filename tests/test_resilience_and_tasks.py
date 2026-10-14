@@ -20,6 +20,7 @@ class TestRedisCircuitBreaker:
     @pytest.fixture(autouse=True)
     def _ensure_closed_breaker(self):
         from api.resilience import redis_breaker
+
         if redis_breaker is not None:
             redis_breaker.close()
         yield
