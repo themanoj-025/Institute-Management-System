@@ -1,234 +1,393 @@
-# 🌐 Binary Brain Institute Management System (BB-IMS)
+# Binary Brain Institute Management System (BB-IMS)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%2B-2563eb?logo=python&logoColor=white" alt="Python 3.10+" />
-  <img src="https://img.shields.io/badge/React-19-0ea5e9?logo=react&logoColor=white" alt="React 19" />
-  <img src="https://img.shields.io/badge/FastAPI-0.115-00C7B7?logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169e1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/License-MIT-10b981" alt="License" />
-</p>
+[![CI](https://img.shields.io/github/actions/workflow/status/themanoj-025/Institute-Management-System/ci.yml?branch=main&label=CI&style=flat-square)](https://github.com/themanoj-025/Institute-Management-System/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg?style=flat-square)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.143-009688.svg?style=flat-square)](https://fastapi.tiangolo.com/)
+[![React 19](https://img.shields.io/badge/React-19-61DAFB.svg?style=flat-square)](https://react.dev/)
+[![Tests: 463 Passing](https://img.shields.io/badge/Tests-463%20Passing-brightgreen.svg?style=flat-square)](tests/)
 
-<h1 align="center">🌐 Binary Brain Institute Management System (BB-IMS)</h1>
-
-<p align="center">
-  <strong>A comprehensive educational institute management platform for small-to-medium coaching institutes, private schools, and training centers.</strong> Manages the full institute lifecycle through three interfaces sharing a single business logic layer.
-</p>
+Comprehensive educational institute management platform designed for academies,
+coaching centers, and vocational training institutes. Unifies a CustomTkinter
+desktop application, React 19 web SPA, and high-performance FastAPI microservice
+backed by an ML-driven student dropout risk engine with TreeSHAP explainability.
 
 ---
 
-## 📸 Screenshots
+## Quick Facts
 
-> To add screenshots: run `python main.py` for desktop or `npm run dev` for web, capture your screen, save images to `docs/assets/`, and reference them below.
->
-> **Suggested screenshots:**
-> - Desktop client dashboard with KPIs
-> - React web dashboard (dark mode)
-> - Student attendance management
-> - Analytics dashboard with SHAP risk cards
+| Dimension | Details |
+| --- | --- |
+| **Domain** | Academic ERP, Student Information System & Predictive Dropout Analytics |
+| **Core Architecture** | Shared Service Layer + CustomTkinter Desktop + React 19 SPA + FastAPI v1 |
+| **Database** | PostgreSQL 16 (production) with seamless offline SQLite fallback |
+| **Predictive ML** | Gradient-boosted student dropout risk classifier with TreeSHAP attribution cards |
+| **Background Tasks** | Celery task queues with Redis broker (auto-fallback to synchronous dispatch) |
+| **Security & Auth** | JWT with unique JTI, Redis token blacklist, bcrypt cost 14, role-based guards |
+| **Test Coverage** | 463 collected tests across 45 unit, security, integration, and ML suites |
+| **License** | [MIT License](./LICENSE) |
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Screenshots](#-screenshots)
-- [Interfaces](#interfaces)
-- [🧰 Tech stack](#-tech-stack)
-- [🏗️ Architecture](#️-architecture)
-- [Quick start](#quick-start)
-- [API reference](#-api-reference)
-- [Security](#-security)
-- [ML pipeline](#️-ml-pipeline)
-- [Project structure](#-project-structure)
-- [Roadmap](#️-roadmap)
-- [Contributing](#-contributing)
+- [What It Does](#what-it-does)
+- [Screenshots](#screenshots)
+- [Three Unified Interfaces](#three-unified-interfaces)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Machine Learning & Explainability](#machine-learning--explainability)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Project Structure](#project-structure)
+- [API Reference](#api-reference)
+- [Testing](#testing)
+- [Limitations](#limitations)
+- [Contributing](#contributing)
+- [Security](#security)
 - [License](#license)
 
 ---
 
-## Interfaces
+## What It Does
 
-| Interface | Stack | Users |
-| --- | --- | --- |
-| Desktop Client | CustomTkinter | Admin, Staff, Students (local/offline) |
-| Web Dashboard | React 19 + Vite SPA | Admin, Staff (browser-based) |
-| REST API | FastAPI /v1/ (50+ endpoints) | All clients, integrations |
+Educational institutions frequently wrestle with fragmented systems: attendance
+is taken on paper or offline spreadsheets, fees are tracked in standalone accounting
+software, and students slipping toward dropout remain unnoticed until it is too late.
 
-Each interface talks to the same service layer — no duplicated business logic between the CLI, the web SPA, and the API.
+**Binary Brain IMS** solves this by providing a unified administrative hub:
+1. **Full Student Lifecycle:** Tracks admissions, biometric/manual attendance,
+   course enrollments, exam grading, fee installments, and career placement.
+2. **Predictive Dropout Prevention:** Uses historical attendance, fee compliance,
+   and grade trajectories to flag at-risk students before critical attrition points.
+3. **Transparent Decision Support:** Generates TreeSHAP feature attribution cards
+   explaining exactly why an individual student was marked at risk.
+4. **Three Native Interfaces:** Allows administrators and staff to work via an
+   offline-capable desktop app, a modern web dashboard, or automated REST integrations.
+5. **Robust Audit & Governance:** Logs every administrative activity, enforces
+   strict Role-Based Access Control (RBAC), and monitors data drift with PSI metrics.
 
-## 🧰 Tech stack
+---
 
-| Category | Technology |
-| --- | --- |
-| Desktop client | Python 3.10+, CustomTkinter |
-| Web dashboard | React 19 + Vite SPA |
-| API | FastAPI 0.115+ |
-| Database | PostgreSQL 16 |
-| ORM | SQLAlchemy 2.x |
-| Auth | JWT (RS256) + password hashing |
-| Infra | Docker, GitHub Actions (lint, typecheck, test, security) |
+## Screenshots
 
-## 🏗️ Architecture
+<!-- TODO[L2-01]: Add desktop client and React 19 web dashboard screenshots from running instances -->
+> *CustomTkinter desktop client with global search, React 19 web dashboard, and student dropout risk cards.*
 
-```text
-Institute-Management-System/
-├── desktop/                   # CustomTkinter desktop client
-├── web/                       # React 19 + Vite SPA
-├── apis/                      # FastAPI /v1 service
-│   ├── routes/                # Endpoints
-│   ├── services/              # Shared business logic
-│   ├── models/                # SQLAlchemy models
-│   └── security/              # JWT, password hashing
-├── db/                        # Alembic migrations
-├── tests/                     # pytest suite
-├── docker-compose.yml
-└── requirements.txt
+---
+
+## Three Unified Interfaces
+
+All three clients interface directly with the same underlying `services/` layer,
+eliminating discrepancies between desktop and web operations:
+
+| Interface | Technology | Target Users | Key Capabilities |
+| --- | --- | --- | --- |
+| **Desktop Client** | CustomTkinter + CTkMessagebox | Front-desk staff, offline operators | Full offline SQLite capability, keyboard shortcuts (`Ctrl+K` search), native dialogs |
+| **Web Dashboard** | React 19 + Vite + Tailwind | Remote administrators, instructors | Real-time analytics, responsive mobile layouts, dark/light theme switching |
+| **REST API** | FastAPI v1 + OpenAPI | External integrations, automated scripts | 50+ REST endpoints, Swagger `/docs`, rate-limited endpoints, JWT bearer auth |
+
+---
+
+## Key Features
+
+- **Automated Timetabling & Attendance:** Auto-generates course schedules and
+  records daily staff and student attendance with monthly compliance aggregation.
+- **Fee Installment Management:** Issues receipts, tracks partial payments, calculates
+  overdue penalties, and generates exportable PDF statements via ReportLab.
+- **TreeSHAP Risk Cards:** Identifies key risk drivers (e.g., sudden attendance drop,
+  unpaid dues, declining test marks) with visual impact scores.
+- **Data Drift Monitoring:** Employs Population Stability Index (PSI) and
+  Kolmogorov-Smirnov (KS) tests to alert staff when incoming student cohorts diverge from training baselines.
+- **Hardened Security Architecture:** Implements Redis-backed token revocation,
+  per-IP rate limiting, IDOR defenses, SQL injection prevention, and strict parameter typing.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    subgraph Presentation["Client Presentation Tier"]
+        Desktop["CustomTkinter Desktop UI\n(main.py & ui/)"]
+        Web["React 19 + Vite Web Dashboard\n(web/)"]
+        ClientAPI["External Integrations / Third-Party"]
+    end
+
+    subgraph APILayer["FastAPI Gateway & Auth"]
+        FastAPI["FastAPI Application (api/main.py)"]
+        Auth["JWT & Role Guard (auth/)"]
+        Limiter["Rate Limiting & Circuit Breaker"]
+        Web --> FastAPI
+        ClientAPI --> FastAPI
+        FastAPI --> Auth --> Limiter
+    end
+
+    subgraph ServiceTier["Unified Business Logic (services/)"]
+        StudentSvc["Student & Attendance Services"]
+        FeeSvc["Fee & Installment Services"]
+        AnalyticsSvc["Analytics & Report Generator"]
+        MLSvc["ML Dropout & SHAP Engine (ml/)"]
+    end
+
+    Desktop --> ServiceTier
+    Limiter --> ServiceTier
+
+    subgraph DataTier["Data Persistence & Infrastructure"]
+        DB[("PostgreSQL 16 / SQLite Fallback\nSQLAlchemy ORM & Alembic")]
+        Redis[("Redis Token Blacklist & Celery Broker")]
+        Workers["Celery Background Workers (celery_tasks.py)"]
+        ServiceTier --> DB
+        ServiceTier --> Redis
+        Redis --> Workers
+    end
 ```
 
-## Quick start
+### Architectural Highlights
 
-### Prerequisites
+- **Shared Domain Services:** Business rules reside in `services/` rather than
+  API route handlers or GUI view classes, ensuring 100% logic reusability.
+- **Dual Persistence Strategy:** Runs seamlessly against PostgreSQL for multi-user
+  production deployments or local SQLite for single-workstation offline use.
+- **Graceful Task Degradation:** The task dispatcher resolves to Celery in production
+  environments and cleanly falls back to in-process synchronous execution in dev/test.
 
-- Python 3.10 or newer
-- Node.js 18+ (web dev)
-- PostgreSQL 16 (or use the bundled SQLite for local dev)
+---
 
-### Option A — Desktop client
+## Machine Learning & Explainability
+
+The dropout prediction pipeline analyzes operational indicators across three core axes:
+
+```text
+Student Indicators (Attendance %, Unpaid Fees, Grade Trend)
+    ├── Feature Pipeline (ml/features.py)
+    ├── Gradient Boosted Model (ml/train.py)
+    ├── Probability Calibration (ml/eval_metrics.py)
+    └── TreeSHAP Explainer (ml/explain.py)
+         └── Output: Risk Level (High/Med/Low) + Top Contributory Features
+```
+
+Model drift is actively tracked in `ml/drift_psi.py`. If student population characteristics
+drift by a PSI score $> 0.25$, an automated warning recommends model retraining.
+
+---
+
+## Tech Stack
+
+| Component | Library / Framework | Version | Purpose |
+| --- | --- | --- | --- |
+| **Language** | Python | `>=3.10` | Core backend runtime |
+| **Desktop UI** | CustomTkinter | `>=5.2.0` | Modern themed desktop interface |
+| **Web Frontend** | React & Vite | `19.x` | High-performance SPA dashboard |
+| **REST Framework** | FastAPI & Uvicorn | `>=0.143.0` | Asynchronous REST service |
+| **ORM & Migrations** | SQLAlchemy & Alembic | `2.x` | Database persistence and schema revisions |
+| **Machine Learning** | scikit-learn, XGBoost, SHAP | Latest | Dropout classification & TreeSHAP attributions |
+| **Task Queue** | Celery & Redis | Latest | Asynchronous background report generation |
+| **Reporting & Export** | ReportLab & OpenPyXL | Latest | PDF fee receipts and Excel audit exports |
+| **Auth & Crypto** | PyJWT & bcrypt | Latest | Cryptographic authentication & password hashing |
+
+---
+
+## Prerequisites
+
+- **Python 3.10+** (Python 3.11 recommended)
+- **Node.js 18+** (for building the React web dashboard)
+- **PostgreSQL 16** (or SQLite for local single-user testing)
+- Optional: **Redis** (for production token blacklisting and Celery queues)
+
+---
+
+## Quick Start
+
+### 1. Clone & Set Up Python Environment
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/themanoj-025/Institute-Management-System.git
 cd Institute-Management-System
+```
 
-# 2. Install Python dependencies
-pip install -r requirements.txt
+#### Windows (PowerShell)
 
-# 3. Apply database migrations
-alembic upgrade heads
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.lock
+Copy-Item .env.example .env
+```
 
-# 4. Run the desktop app
+#### Linux / macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.lock
+cp .env.example .env
+```
+
+### 2. Launch the Desktop Client (Offline Mode)
+
+```bash
 python main.py
 ```
 
-### Option B — Web dashboard
+*The CustomTkinter interface boots immediately, creating a local `database/bb_ims.db` if uninitialized.*
+
+### 3. Launch the FastAPI Microservice
 
 ```bash
-# 1. Install Node dependencies (from the web directory)
-cd web && npm install
+uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
-# 2. Start the dev server
+*Expected output:*
+```text
+INFO:     Started server process
+INFO:     Waiting for application startup.
+INFO:     Database tables initialized successfully.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+
+Interactive OpenAPI Swagger documentation is accessible at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+### 4. Launch the React Web Dashboard
+
+```bash
+cd web
+npm install
 npm run dev
 ```
 
-### Option C — REST API (all clients)
+The web dashboard will be available at [http://localhost:5173](http://localhost:5173).
 
-```bash
-# 1. Install Python dependencies
-pip install -r requirements.txt
+---
 
-# 2. Apply migrations
-alembic upgrade heads
+## Configuration
 
-# 3. Start the API
-uvicorn apis.main:app --reload --port 8000
-```
+All environment variables can be specified in `.env` or injected at runtime:
 
-Open `http://localhost:8000/docs` for the Swagger UI.
-
-### Environment variables
-
-| Variable | Default | Required | Description |
+| Variable | Default | Secret? | Description |
 | --- | --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///ims.db` | No | Dev: SQLite. Prod: PostgreSQL. |
-| `DATABASE_URL_POSTGRES` | `postgresql+psycopg2://user:pass@localhost/ims` | No | Production PostgreSQL |
-| `JWT_SECRET` | — | Yes | JWT signing secret |
-| `SECRET_KEY` | — | Yes | App secret key |
-| `LOG_LEVEL` | `info` | No | Logging verbosity |
+| `SECRET_KEY` | `""` | Yes | **Required**: 32-byte hexadecimal cryptographic key |
+| `DATABASE_URL` | `postgresql+psycopg2://...` | Yes | Target database connection string |
+| `DB_PATH` | `database/bb_ims.db` | No | Local SQLite file path when PostgreSQL is unset |
+| `REDIS_URL` | `redis://localhost:6379/0` | No | Redis connection URI for blacklists and caching |
+| `USE_CELERY` | `auto` | No | Toggle Celery execution (`true`, `false`, `auto`) |
+| `BCRYPT_COST` | `14` | No | Hashing work factor for user credentials |
+| `API_PORT` | `8000` | No | Port binding for the FastAPI server |
+| `JWT_EXPIRE_HOURS` | `24` | No | Validity duration for access bearer tokens |
+| `SMTP_HOST` | `smtp.gmail.com` | No | Mail server hostname for notices and resets |
+| `SMTP_PASSWORD` | `""` | Yes | Application password for SMTP authentication |
 
-## 🔌 API reference
+---
 
-The FastAPI app exposes `/v1/` endpoints grouped by resource. Each endpoint calls a function in `apis/services/` inside a DB transaction and is covered by the test suite.
-
-| Group | Endpoints |
-| --- | --- |
-| Students | `GET /v1/students`, `POST /v1/students`, `PATCH /v1/students/{id}` |
-| Staff | `GET /v1/staff`, `POST /v1/staff`, `PATCH /v1/staff/{id}` |
-| Courses & subjects | `GET /v1/courses`, `GET /v1/subjects` |
-| Sessions | `GET /v1/sessions`, `POST /v1/sessions` |
-| Attendance | `GET /v1/attendance`, `POST /v1/attendance` |
-| Fees | `GET /v1/fees`, `POST /v1/fees`, `PATCH /v1/fees/{id}` |
-| Reports | `GET /v1/reports/attendance`, `GET /v1/reports/fees` |
-| Auth | `POST /v1/auth/login`, `POST /v1/auth/refresh` |
-
-> [!NOTE] The OpenAPI docs live at `/docs` and `/redoc` served by FastAPI. A static spec is generated by CI so the published README stays truthful.
-
-## 🔒 Security
-
-- **JWT (RS256)** — short-lived access tokens with refresh rotation
-- **Password hashing** — bcrypt via `passlib`
-- **CORS** — scoped to the React dev server
-- **Input validation** — Pydantic v2 schemas on every request
-- **Dependency scans** — in CI (repository maintainer's `requirements.txt` pins)
-
-> [!IMPORTANT] This is an educational-portfolio project. Do not expose it to untrusted external networks without hardening (rate limiting, email verification, MFA) and a third-party security review.
-
-## 🏋️ ML pipeline
-
-The ML pipeline is a separate service used by the analytics screens:
-
-- **Training**: `python -m ml.train` — trains per-course/student performance models
-- **Inference**: `/v1/ml/predict` — returns a risk score + explanation
-- **Artifacts**: recorded in MLflow under the `ims-ml` experiment
-
-## 📁 Project structure
+## Project Structure
 
 ```text
 Institute-Management-System/
-├── desktop/                    # CustomTkinter desktop client
-├── web/                        # React 19 + Vite SPA
-├── apis/                       # FastAPI /v1 service
-│   ├── routes/
-│   ├── services/
-│   ├── models/
-│   └── security/
-├── db/                         # Alembic migrations
-├── tests/                      # pytest suite
-├── docker-compose.yml
-├── requirements.txt
+├── api/                        # FastAPI REST service
+│   ├── main.py                 # Application factory and middleware
+│   ├── routes/                 # admin, auth, courses, fees, students, etc.
+│   └── schemas.py              # Pydantic request and response models
+├── auth/                       # Authentication and authorization guards
+│   ├── jwt_handler.py          # Token issuance, decoding, and verification
+│   └── session.py              # User session tracking state
+├── database/                   # Database layer
+│   ├── db_session.py           # Engine creation and session factories
+│   ├── models.py               # SQLAlchemy ORM entity models
+│   └── seeder.py               # Initial seed data generator
+├── ml/                         # Machine learning and explainability
+│   ├── drift_psi.py            # Population Stability Index monitoring
+│   ├── explain.py              # TreeSHAP feature attribution generator
+│   ├── service.py              # High-level dropout prediction service
+│   └── train.py                # Model training and calibration pipeline
+├── services/                   # Shared domain service layer
+│   ├── activity_service.py     # System audit and logging services
+│   ├── fee_service.py          # Payments, installments, and receipts
+│   └── student_service.py      # Student records, enrollments, attendance
+├── ui/                         # CustomTkinter desktop interface components
+│   ├── sidebar.py              # Navigation sidebar widget
+│   └── theme_manager.py        # Light and dark visual appearance manager
+├── web/                        # React 19 + Vite web application
+├── tests/                      # Pytest suite (463 unit and integration tests)
+├── main.py                     # Desktop GUI launch entrypoint
+├── celery_app.py               # Celery application instance
+├── docker-compose.yml          # Full-stack container orchestration
+├── pyproject.toml              # Build settings and tool configurations
 └── README.md
 ```
 
-## 🚀 Deployment
+---
 
-### Docker
+## API Reference
+
+| Method | Endpoint | Role | Description |
+| --- | --- | --- | --- |
+| `POST` | `/api/v1/auth/login` | Public | Authenticate user and issue JWT token pair |
+| `POST` | `/api/v1/auth/logout` | Authenticated | Revoke active token into Redis blacklist |
+| `GET` | `/api/v1/students` | Staff / Admin | Paginated list of registered students with filters |
+| `POST` | `/api/v1/students` | Admin | Register new student profile and enrollment |
+| `GET` | `/api/v1/fees/pending` | Staff / Admin | List overdue student fee installments |
+| `POST` | `/api/v1/fees/pay` | Staff / Admin | Record payment and generate receipt reference |
+| `GET` | `/api/v1/analytics/kpis` | Admin | High-level enrollment, revenue, and attendance KPIs |
+| `POST` | `/api/v1/ml/predict-dropout` | Staff / Admin | Calculate dropout probability with TreeSHAP breakdown |
+
+---
+
+## Testing
+
+The test suite covers database migrations, domain services, security constraints,
+IDOR prevention, API endpoints, rate limiting, and ML model drift.
 
 ```bash
-docker compose up --build
+# Run all tests
+pytest tests/ -v -o addopts=""
+
+# Run with test coverage
+pytest tests/ --cov=services -o addopts=""
 ```
 
-The compose file ships a `web` service (React), an `api` service (FastAPI), and a `db` service (PostgreSQL), with the desktop client bundled in the image.
+All external services (Redis, SMTP, external databases) are automatically
+mocked or run in isolated temporary SQLite test sessions during test runs.
 
-## 🗺️ Roadmap
+---
 
-> [!CAUTION] Checked items are built and verified. Unchecked items are tracked in the issue tracker.
+## Limitations
 
-- [x] Desktop client (37 screens)
-- [x] Web dashboard (React 19)
-- [x] REST API (50+ endpoints)
-- [x] Concurrent-safe transactions
-- [ ] OAuth2 / SSO (tracked public issue)
+- **GUI Platform Dependencies:** The CustomTkinter desktop client requires an
+  active display server (X11/Wayland on Linux, Windows Desktop, or macOS Quartz);
+  headless servers should run the FastAPI and Web SPA tiers.
+- **Biometric Hardware Integration:** Biometric attendance relies on standard
+  CSV/API imports; direct hardware SDK bindings require custom device drivers.
+- **Model Training Scale:** The baseline dropout model is calibrated on synthetic
+  and standard institutional benchmarks; large universities should retrain with
+  local historical graduation datasets using `python -m ml.train`.
 
-## 🤝 Contributing
+---
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+## Contributing
 
-## 📬 Support
+Contributions are welcome! Please follow these guidelines:
 
-- 🐛 [Report a bug](https://github.com/themanoj-025/Institute-Management-System/issues)
-- 💡 [Request a feature](https://github.com/themanoj-025/Institute-Management-System/issues)
-- 📧 Email the maintainer via the issue tracker
+1. Fork the repository.
+2. Create your branch: `git checkout -b feat/new-feature`.
+3. Format and lint code: `ruff check .` and `black .`.
+4. Ensure all tests pass: `pytest tests/ -o addopts=""`.
+5. Submit a pull request to `main`.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for complete contribution policies.
+
+---
+
+## Security
+
+Please report vulnerabilities privately via GitHub Security Advisories or by
+contacting the repository administrators. Never commit production secrets or
+active credentials. See [SECURITY.md](./SECURITY.md) for full policy.
+
+---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
-
-> [!IMPORTANT] The license in this README matches the `license` field in `pyproject.toml` and the contents of the `LICENSE` file. No conflicts were found.
+This project is licensed under the [MIT License](./LICENSE).
