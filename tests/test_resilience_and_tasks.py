@@ -17,6 +17,15 @@ from utils.time import utc_now
 class TestRedisCircuitBreaker:
     """Unit tests for api.resilience (breaker wraps Redis, fallback safe)."""
 
+    @pytest.fixture(autouse=True)
+    def _ensure_closed_breaker(self):
+        from api.resilience import redis_breaker
+        if redis_breaker is not None:
+            redis_breaker.close()
+        yield
+        if redis_breaker is not None:
+            redis_breaker.close()
+
     def test_redis_call_returns_result_on_success(self) -> None:
         from api.resilience import redis_call
 
