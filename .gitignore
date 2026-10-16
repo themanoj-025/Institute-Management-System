@@ -1,3 +1,7 @@
+# ==============================================================================
+# Institute-Management-System - Security & Production .gitignore
+# ==============================================================================
+
 # [GITIGNORE SECTION 1] Python runtime artifacts
 __pycache__/
 *.py[cod]
@@ -29,20 +33,68 @@ venv/
 env/
 ENV/
 .venv/
+.venv*/
 .env_folder/
 Pipfile.lock
 poetry.lock
+env.bak/
+venv.bak/
 
 # [GITIGNORE SECTION 3] Environment & secrets (CRITICAL)
 .env
+.env.*
+*.env
 .env.local
 .env.*.local
+.env.development
+.env.test
+.env.staging
+.env.production
+!.env.example
+!.env.template
+!.env.sample
+
+# Private keys, certificates & credentials
 *.pem
 *.key
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pkcs12
+*.cer
+*.crt
+*.der
+*.id_rsa
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+nginx/ssl/
+
+# Cloud & service credentials
 secrets.json
 credentials.json
-nginx/ssl/
-# NOTE: .env.example is NOT ignored — it must be committed
+client_secret*.json
+service-account*.json
+service_account*.json
+serviceAccountKey*.json
+google-services.json
+GoogleService-Info.plist
+.aws/
+.azure/
+.gcp/
+gcloud/
+.act-secrets
+*.publishsettings
+
+# Authentication tokens & configs
+.netrc
+.pypirc
+.npmrc
+*token*.json
+token.pickle
+auth*.json
 
 # [GITIGNORE SECTION 4] Database files
 database/*.db
@@ -54,12 +106,20 @@ database/*.sqlite3
 # Database JSON data files contain seed/personal data — not committed
 # Locale JSON files (locales/*.json) remain tracked
 database/*.json
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
 
 # [GITIGNORE SECTION 5] Logs
 logs/
 *.log
 log/
 *.log.*
+*.dump
+*.stackdump
 
 # [GITIGNORE SECTION 6] User-generated assets (runtime)
 assets/profiles/*.jpg
@@ -71,6 +131,7 @@ exports/generated/
 # [GITIGNORE SECTION 7] OS artifacts
 # macOS
 .DS_Store
+.DS_Store?
 .AppleDouble
 .LSOverride
 ._*
@@ -83,6 +144,7 @@ Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 Desktop.ini
+desktop.ini
 $RECYCLE.BIN/
 *.cab
 *.msi
@@ -97,11 +159,19 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 .nfs*
+*.tmp
+*.temp
+*.bak
 
 # [GITIGNORE SECTION 8] IDE & editor artifacts
 # VS Code
 .vscode/*
 !.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vscode/*.local.*
+.vscode/mcp.json
 *.code-workspace
 
 # PyCharm / JetBrains
@@ -124,11 +194,6 @@ out/
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
-# Emacs
-*~
-#*#
-.#*
-
 # [GITIGNORE SECTION 9] Testing & coverage
 .pytest_cache/
 .tox/
@@ -143,10 +208,12 @@ htmlcov/
 nosetests.xml
 test-results/
 coverage.json
+radar_balance.txt
+.ruff_cache/
+.mypy_cache/
 
 # [GITIGNORE SECTION 10] Alembic runtime
 alembic/versions/*.pyc
-# alembic/versions/ migration scripts ARE committed
 
 # [GITIGNORE SECTION 11] ML model artifacts (runtime-generated)
 ml/models/*.json
@@ -163,33 +230,23 @@ ml/models/*.model
 *.backup
 backups/
 
-.gemini/
-.cursorrules
-
-CLAUDE.md
-
-# [GITIGNORE SECTION 13] Web dashboard (built separately)
+# [GITIGNORE SECTION 13] Web dashboard & Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 web/node_modules/
 web/dist/
 web/.vite/
 web/coverage/
 
 # [GITIGNORE SECTION 14] Jupyter (if used for analytics dev)
-.ipynb_checkpoints
+.ipynb_checkpoints/
 *.ipynb
 
-
-# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
-radar_balance.txt
-*.db
-*.db-shm
-*.db-wal
-
 # =====================================================================
-# KEEP: AI provenance & transparency files — these must remain
-# visible to any repository viewer. Do not add rules above this block
-# that would shadow a directory these files live in without also
-# adding a negation here. Verified with `git check-ignore -v`.
+# KEEP: AI provenance & transparency files — must remain visible
 # =====================================================================
 !AI_DISCLOSURE.md
 !AI_USAGE.md

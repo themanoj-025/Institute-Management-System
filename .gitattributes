@@ -1,5 +1,5 @@
 # Auto-detect text files and normalize line endings
-* text=auto
+* text=auto eol=lf
 
 # Python source
 *.py text diff=python
@@ -12,6 +12,9 @@
 
 # JavaScript
 *.js text
+*.ts text
+*.jsx text diff=javascript
+*.tsx text diff=javascript
 
 # Markdown documentation
 *.md text eol=lf
@@ -24,26 +27,36 @@
 *.json text
 *.cfg text
 *.ini text
-*.env text
+
+# Security: prevent secret files from appearing in diffs if accidentally created
+*.env -diff
+*.pem -diff
+*.key -diff
+*.cert -diff
+*.p12 -diff
+*.pfx -diff
+*.pkcs12 -diff
 
 # Shell / batch scripts
 *.sh text eol=lf
 *.bat text eol=crlf
+*.ps1 text eol=crlf
 
 # Docker
 Dockerfile text
 Dockerfile.* text
 docker-compose.yml text
+.dockerignore text
 
 # Requirements / project config
 requirements.txt text
+requirements*.txt text
 pyproject.toml text
 LICENSE text
 
 # Web dashboard
 package.json text
 vite.config.js text
-*.jsx text diff=javascript
 
 # Binary / export files - don't modify
 *.png binary
@@ -56,7 +69,12 @@ vite.config.js text
 *.xls binary
 *.db binary
 *.sqlite binary
+*.sqlite3 binary
 *.zip binary
+*.tar.gz binary
+*.pkl binary
+*.joblib binary
+*.model binary
 
 # nginx config
 nginx/*.conf text
