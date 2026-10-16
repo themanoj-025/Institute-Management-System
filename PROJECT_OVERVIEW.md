@@ -166,7 +166,7 @@ graph TD
     Admin["Institute Registrar / Staff"] -->|"Desktop GUI (CustomTkinter)"| BBIMS["BB-IMS System Boundary"]
     Student["Student / Parent"] -->|"Web Browser (React 19)"| BBIMS
     Director["Institute Director"] -->|"Analytics Dashboard"| BBIMS
-    
+
     BBIMS -->|"PDF Receipt & Card Generation"| ReportLab["ReportLab PDF Engine"]
     BBIMS -->|"Scrapes Telemetry"| Prometheus["Prometheus Monitoring"]
     BBIMS -->|"Stores 25 Tables"| Database[("PostgreSQL 16 / SQLite Database")]
@@ -762,55 +762,55 @@ Production deployment is achieved via containerized Docker environments hosting 
 
 ## <a id="exam"></a>§EXAM — Cold-Reader Verification Exam (25 Questions)
 
-1. **Q: What is the Python runtime requirement for BB-IMS?**  
+1. **Q: What is the Python runtime requirement for BB-IMS?**
    *A:* Python >= 3.10. Reference: [`pyproject.toml`](pyproject.toml).
-2. **Q: How many total tracked files exist in the Institute-Management-System repository?**  
+2. **Q: How many total tracked files exist in the Institute-Management-System repository?**
    *A:* 345 files. Reference: [§APP](#app).
-3. **Q: How many automated test functions exist across how many test files?**  
+3. **Q: How many automated test functions exist across how many test files?**
    *A:* 506 test functions across 47 test files. Reference: [`tests/`](tests/).
-4. **Q: What two primary user interfaces are provided?**  
+4. **Q: What two primary user interfaces are provided?**
    *A:* A CustomTkinter desktop application and a React 19 web SPA. Reference: [§WHAT](#what).
-5. **Q: How many relational database tables are declared in `database/models.py`?**  
+5. **Q: How many relational database tables are declared in `database/models.py`?**
    *A:* 25 relational tables. Reference: [`database/models.py`](database/models.py).
-6. **Q: What machine learning model predicts student dropout risk?**  
+6. **Q: What machine learning model predicts student dropout risk?**
    *A:* A gradient-boosted decision tree classifier with TreeSHAP explainability. Reference: [`ml/dropout_model.py`](ml/dropout_model.py).
-7. **Q: What is the default dropout risk alert threshold?**  
+7. **Q: What is the default dropout risk alert threshold?**
    *A:* 0.70 (70% probability). Reference: [§ENV](#env).
-8. **Q: What framework powers the REST API microservice?**  
+8. **Q: What framework powers the REST API microservice?**
    *A:* FastAPI. Reference: [`api/main.py`](api/main.py).
-9. **Q: How many REST endpoints are exposed by the FastAPI server?**  
+9. **Q: How many REST endpoints are exposed by the FastAPI server?**
    *A:* 18 endpoints. Reference: [§API](#api).
-10. **Q: What library generates PDF receipts and report cards?**  
+10. **Q: What library generates PDF receipts and report cards?**
     *A:* ReportLab (`reportlab >= 4.2.0`). Reference: [`requirements.txt`](requirements.txt).
-11. **Q: What ORM manages database interactions?**  
+11. **Q: What ORM manages database interactions?**
     *A:* SQLAlchemy (version >= 2.0.30). Reference: [`requirements.txt`](requirements.txt).
-12. **Q: What desktop GUI library is used for the native administrative interface?**  
+12. **Q: What desktop GUI library is used for the native administrative interface?**
     *A:* CustomTkinter (`customtkinter >= 5.2.0`). Reference: [`requirements.txt`](requirements.txt).
-13. **Q: What total lines of code exist across the codebase?**  
+13. **Q: What total lines of code exist across the codebase?**
     *A:* 54,000 lines of code. Reference: [§META](#meta).
-14. **Q: What git commit hash was verified for this documentation?**  
+14. **Q: What git commit hash was verified for this documentation?**
     *A:* `00e8c46` (`00e8c46e7dad249e7566f0467d8d597b4533826b`). Reference: [§META](#meta).
-15. **Q: What git tree hash represents the verified repository state?**  
+15. **Q: What git tree hash represents the verified repository state?**
     *A:* `49b04231e57b19ebfe830e8a1104dc7aef69a4ac`. Reference: [§META](#meta).
-16. **Q: What test file executes attendance service validations?**  
+16. **Q: What test file executes attendance service validations?**
     *A:* `tests/test_attendance_service.py`. Reference: [`tests/test_attendance_service.py`](tests/test_attendance_service.py).
-17. **Q: What endpoint returns Prometheus operational telemetry?**  
+17. **Q: What endpoint returns Prometheus operational telemetry?**
     *A:* `/metrics`. Reference: [`api/main.py`](api/main.py).
-18. **Q: What is the default SQLite database path?**  
+18. **Q: What is the default SQLite database path?**
     *A:* `sqlite:///data/bb_ims.db`. Reference: [§ENV](#env).
-19. **Q: What role-based access roles are supported?**  
+19. **Q: What role-based access roles are supported?**
     *A:* `admin`, `registrar`, `faculty`, and `student`. Reference: [§AUTH](#auth).
-20. **Q: What module implements fee installment business logic?**  
+20. **Q: What module implements fee installment business logic?**
     *A:* `services/fee_service.py`. Reference: [`services/fee_service.py`](services/fee_service.py).
-21. **Q: What module implements student admission logic?**  
+21. **Q: What module implements student admission logic?**
     *A:* `services/student_service.py`. Reference: [`services/student_service.py`](services/student_service.py).
-22. **Q: What linter is configured for the codebase?**  
+22. **Q: What linter is configured for the codebase?**
     *A:* Ruff. Reference: [`pyproject.toml`](pyproject.toml).
-23. **Q: What is the target latency for student lookup by roll number?**  
+23. **Q: What is the target latency for student lookup by roll number?**
     *A:* Under 10 ms (measured 3.2 ms). Reference: [§PERF](#perf).
-24. **Q: How does BB-IMS handle offline desktop operation?**  
+24. **Q: How does BB-IMS handle offline desktop operation?**
     *A:* It supports local SQLite database fallback when disconnected from central PostgreSQL. Reference: [§RESILIENCE](#resilience).
-25. **Q: How many files are cataloged with 100% manifest coverage in Appendix A?**  
+25. **Q: How many files are cataloged with 100% manifest coverage in Appendix A?**
     *A:* All 345 tracked files. Reference: [§APP](#app).
 
 ---
