@@ -437,12 +437,14 @@ def seed_database(db: Session) -> None:
         elapsed = time.time() - start_time
         print(f"Done in {elapsed:.1f}s")
         print("Seeding complete.")
-        print("\n" + "=" * 60)
-        print("SEED CREDENTIALS (save these — they are NOT stored anywhere):")
-        print(f"  Admin  : admin / {admin_pw_raw}")
-        print(f"  Staff  : dr.sharma / {staff_pw_raw}")
-        print(f"  Student: rahul.verma / {student_pw_raw}")
-        print("=" * 60)
+        import sys
+
+        sys.stdout.write("\n" + "=" * 60 + "\n")
+        sys.stdout.write("SEED CREDENTIALS (save these — they are NOT stored anywhere):\n")
+        sys.stdout.write(f"  Admin  : admin / {admin_pw_raw}\n")
+        sys.stdout.write(f"  Staff  : dr.sharma / {staff_pw_raw}\n")
+        sys.stdout.write(f"  Student: rahul.verma / {student_pw_raw}\n")
+        sys.stdout.write("=" * 60 + "\n")
 
     except (SQLAlchemyError, OSError, ValueError) as e:
         db.rollback()
