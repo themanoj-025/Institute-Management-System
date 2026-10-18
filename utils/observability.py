@@ -201,7 +201,8 @@ class HealthChecker:
                 session.execute(text("SELECT 1"))
             return True, "Connected"
         except (OSError, ValueError) as exc:
-            return False, str(exc)
+            logger.warning("Database connectivity check failed: %s", exc)
+            return False, "Database connection unavailable"
 
     def _check_ml(self) -> tuple:
         """Check if a trained ML model exists in the registry."""
@@ -233,7 +234,8 @@ class HealthChecker:
                 return False, f"Low disk space: {free_gb:.2f} GB free"
             return True, f"{free_gb:.2f} GB free"
         except (OSError, ValueError) as exc:
-            return False, str(exc)
+            logger.warning("Disk check failed: %s", exc)
+            return False, "Disk space check failed"
 
 
 # OpenTelemetry Tracing (optional)
