@@ -59,7 +59,7 @@ jobs:
         uses: grafana/setup-k6-action@43b9fc21641a76002687994433dd586f56e791b1 # v1
 
       - name: Run k6 load test
-        uses: grafana/run-k6-action@edc3caa23751024c725fbad360a2072e340492d8 # v1
+        uses: grafana/run-k6-action@4082a08c7e40cf6d65863911077dfb60ae0a4f04 # v1
         with:
           path: scripts/loadtest/load-test.js
           flags: --quiet --summary-export=k6-results/summary.json
