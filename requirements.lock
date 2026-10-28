@@ -1,5 +1,5 @@
 alembic==1.20.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 amqp==5.4.0
     # via kombu
 annotated-doc==0.0.5
@@ -17,13 +17,13 @@ async-timeout==5.0.1
 babel==2.18.0
     # via tkcalendar
 bandit==1.9.4
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 bcrypt==4.0.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 billiard==4.3.0
     # via celery
 celery==5.4.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 certifi==2026.7.22
     # via
     #   httpcore
@@ -53,9 +53,9 @@ cloudpickle==3.1.2
 contourpy==1.3.3
     # via matplotlib
 coverage==7.17.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 customtkinter==5.2.2
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 cycler==0.12.1
     # via matplotlib
 darkdetect==0.8.0
@@ -63,13 +63,13 @@ darkdetect==0.8.0
 dnspython==2.8.0
     # via email-validator
 email-validator==2.3.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 et-xmlfile==2.0.0
     # via openpyxl
 faker==40.43.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 fastapi==0.161.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 fonttools==4.66.0
     # via matplotlib
 googleapis-common-protos==1.75.4
@@ -85,7 +85,7 @@ h11==0.16.0
 httpcore==1.0.9
     # via httpx
 httpx==0.27.2
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 idna==3.20
     # via
     #   anyio
@@ -112,20 +112,20 @@ markupsafe==3.0.3
     # via mako
 matplotlib==3.11.2
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   mplcursors
     #   seaborn
 mdurl==0.1.2
     # via markdown-it-py
 mplcursors==0.7.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 narwhals==2.26.0
     # via scikit-learn
 numba==0.67.0
     # via shap
 numpy==2.4.6
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   contourpy
     #   matplotlib
     #   numba
@@ -139,12 +139,12 @@ numpy==2.4.6
 nvidia-nccl-cu12==2.32.3
     # via xgboost
 opencv-python==4.11.0.86
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 openpyxl==3.1.2
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 opentelemetry-api==1.45.1
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   fastapi
     #   opentelemetry-exporter-http-transport
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -157,7 +157,7 @@ opentelemetry-api==1.45.1
 opentelemetry-exporter-http-transport==0.66b1
     # via opentelemetry-exporter-otlp-proto-http
 opentelemetry-exporter-otlp==1.45.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 opentelemetry-exporter-otlp-common==0.66b1
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -177,7 +177,7 @@ opentelemetry-instrumentation==0.66b1
 opentelemetry-instrumentation-asgi==0.66b1
     # via opentelemetry-instrumentation-fastapi
 opentelemetry-instrumentation-fastapi==0.66b1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 opentelemetry-proto==1.45.1
     # via
     #   opentelemetry-exporter-otlp-proto-common
@@ -185,7 +185,7 @@ opentelemetry-proto==1.45.1
     #   opentelemetry-exporter-otlp-proto-http
 opentelemetry-sdk==1.45.1
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   opentelemetry-exporter-otlp-common
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
@@ -207,22 +207,22 @@ packaging==26.3
     #   opentelemetry-instrumentation
     #   pytest
     #   shap
-pandas==3.0.6
+pandas==3.1.0
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   seaborn
     #   shap
-pillow==12.3.0
+pillow==13.0.0
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   matplotlib
     #   reportlab
 pluggy==1.6.0
     # via pytest
 plyer==2.1.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 prometheus-client==0.26.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 prompt-toolkit==3.0.53
     # via click-repl
 protobuf==7.36.2
@@ -230,12 +230,12 @@ protobuf==7.36.2
     #   googleapis-common-protos
     #   opentelemetry-proto
 psycopg2-binary==2.9.13
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 pybreaker==1.4.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 pydantic==2.14.1
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   fastapi
 pydantic-core==2.50.1
     # via pydantic
@@ -244,30 +244,30 @@ pygments==2.21.0
     #   pytest
     #   rich
 pyjwt==2.15.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 pyotp==2.10.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 pyparsing==3.3.3
     # via matplotlib
 pytest==9.0.3
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   pytest-asyncio
 pytest-asyncio==1.4.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 python-dateutil==2.9.0.post0
     # via
     #   celery
     #   matplotlib
     #   pandas
 python-dotenv==1.2.4
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 pyyaml==6.0.3
     # via bandit
 redis==8.1.0
-    # via -r requirements.txt
-reportlab==5.0.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
+reportlab==5.1.0
+    # via -r Institute-Management-System/requirements.txt
 requests==2.34.2
     # via
     #   opentelemetry-exporter-http-transport
@@ -275,21 +275,21 @@ requests==2.34.2
 rich==15.0.0
     # via bandit
 ruff==0.17.3
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 scikit-learn==1.9.1
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   shap
 scipy==1.16.0
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   scikit-learn
     #   shap
     #   xgboost
 seaborn==0.13.2
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 shap==0.51.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 six==1.17.0
     # via python-dateutil
 slicer==0.0.8
@@ -298,21 +298,21 @@ sniffio==1.3.1
     # via httpx
 sqlalchemy==2.1.6
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   alembic
 starlette==0.46.2
     # via fastapi
 stevedore==5.9.1
     # via bandit
 structlog==26.1.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 threadpoolctl==3.7.0
     # via scikit-learn
 tkcalendar==1.6.1
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 tqdm==4.70.1
     # via
-    #   -r requirements.txt
+    #   -r Institute-Management-System/requirements.txt
     #   shap
 typing-extensions==4.16.0
     # via
@@ -343,7 +343,7 @@ tzdata==2026.4
 urllib3==2.8.0
     # via requests
 uvicorn==0.53.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
 vine==5.1.0
     # via
     #   amqp
@@ -354,4 +354,4 @@ wcwidth==0.9.1
 wrapt==2.4.1
     # via opentelemetry-instrumentation
 xgboost==3.2.0
-    # via -r requirements.txt
+    # via -r Institute-Management-System/requirements.txt
