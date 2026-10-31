@@ -899,8 +899,6 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`.mailmap`](.mailmap) | `no-ext` | 6 | 298 | Configuration or static asset |
 | [`.pre-commit-config.yaml`](.pre-commit-config.yaml) | `.yaml` | 37 | 1128 | Configuration or static asset |
 | [`.vscode/settings.json`](.vscode/settings.json) | `.json` | 17 | 465 | Configuration or static asset |
-| [`AGENTS.md`](AGENTS.md) | `.md` | 75 | 1882 | Documentation asset |
-| [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md) | `.md` | 67 | 2533 | Documentation asset |
 | [`CHANGELOG.md`](CHANGELOG.md) | `.md` | 40 | 1378 | Documentation asset |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | `.md` | 14 | 548 | Documentation asset |
 | [`Dockerfile`](Dockerfile) | `no-ext` | 43 | 2049 | Configuration or static asset |
@@ -910,7 +908,6 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`Makefile`](Makefile) | `no-ext` | 41 | 1512 | Configuration or static asset |
 | [`README.md`](README.md) | `.md` | 393 | 16446 | Documentation asset |
 | [`SECURITY.md`](SECURITY.md) | `.md` | 25 | 1003 | Documentation asset |
-| [`ai-provenance.json`](ai-provenance.json) | `.json` | 64 | 1717 | Configuration or static asset |
 | [`alembic.ini`](alembic.ini) | `.ini` | 149 | 5017 | Configuration or static asset |
 | [`analytics/__init__.py`](analytics/__init__.py) | `.py` | 0 | 0 | Root application runner or utility |
 | [`analytics/engine.py`](analytics/engine.py) | `.py` | 404 | 14649 | Root application runner or utility |
