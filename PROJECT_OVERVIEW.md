@@ -927,7 +927,7 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`api/routes/staff_routes.py`](api/routes/staff_routes.py) | `.py` | 135 | 4868 | FastAPI endpoint router or schema |
 | [`api/routes/student_routes.py`](api/routes/student_routes.py) | `.py` | 198 | 6955 | FastAPI endpoint router or schema |
 | [`api/schemas.py`](api/schemas.py) | `.py` | 342 | 13529 | FastAPI endpoint router or schema |
-| [`audit/dependabot-agent/2026-08-13-run.md`](audit/dependabot-agent/2026-08-13-run.md) | `.md` | 30 | 2709 | Documentation asset |
+| [`docs/audit/dependabot-agent/2026-08-13-run.md`](docs/audit/dependabot-agent/2026-08-13-run.md) | `.md` | 30 | 2709 | Documentation asset |
 | [`auth/__init__.py`](auth/__init__.py) | `.py` | 0 | 0 | Root application runner or utility |
 | [`auth/role_guard.py`](auth/role_guard.py) | `.py` | 30 | 855 | Root application runner or utility |
 | [`auth/session.py`](auth/session.py) | `.py` | 117 | 4002 | Root application runner or utility |
@@ -1206,3 +1206,4 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`web/src/test/__tests__/pages.test.jsx`](web/src/test/__tests__/pages.test.jsx) | `.jsx` | 250 | 8908 | Configuration or static asset |
 | [`web/src/test/setup.js`](web/src/test/setup.js) | `.js` | 46 | 1629 | Configuration or static asset |
 | [`web/vite.config.js`](web/vite.config.js) | `.js` | 44 | 855 | Configuration or static asset |
+
