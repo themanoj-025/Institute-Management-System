@@ -1206,4 +1206,3 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`web/src/test/__tests__/pages.test.jsx`](web/src/test/__tests__/pages.test.jsx) | `.jsx` | 250 | 8908 | Configuration or static asset |
 | [`web/src/test/setup.js`](web/src/test/setup.js) | `.js` | 46 | 1629 | Configuration or static asset |
 | [`web/vite.config.js`](web/vite.config.js) | `.js` | 44 | 855 | Configuration or static asset |
-
