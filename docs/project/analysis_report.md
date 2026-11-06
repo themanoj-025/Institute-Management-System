@@ -1,6 +1,5 @@
 # Institute Management System (BBIMS) — Repository Analysis Report (v5.0)
 
-> Generated during the Ultra Master Repository Modernization pass.
 > Scope: inventory, classification, duplicate/dead-code audit, and risk assessment.
 
 ## 1. Overview
