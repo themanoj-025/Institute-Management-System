@@ -65,7 +65,7 @@
 
 | Item | Verdict | Evidence |
 |---|---|---|
-| `AGENTS_FIX.md` (root) | **DELETE** | Leftover "ULTRA MASTER FIX PROMPT v7.0" AI scaffolding, duplicated in 16 sibling repos; only reference is a PROJECT_OVERVIEW tree line (updated) |
+| `AGENTS_FIX.md` (root) | **DELETE** | Leftover "legacy scaffolding" AI scaffolding, duplicated in 16 sibling repos; only reference is a PROJECT_OVERVIEW tree line (updated) |
 | `web/node_modules` | **OK** | Not tracked (0 files) |
 | `web/package-lock.json` | **KEEP** | Legit lockfile (canonical for reproducible installs) |
 | Runtime DBs | **OK** | `database/*.db*` gitignored; none tracked |
