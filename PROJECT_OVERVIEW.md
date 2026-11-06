@@ -7,8 +7,8 @@ git_commit_full: "00e8c46e7dad249e7566f0467d8d597b4533826b"
 git_tree_hash: "49b04231e57b19ebfe830e8a1104dc7aef69a4ac"
 document_version: "3.0.0"
 generated_at: "2026-10-15T15:50:00+05:30"
-author: "Antigravity Autonomous Forensics Engine"
-verification_status: "VERIFIED_CANONICAL"
+author: "Manoj Jana"
+verification_status: "VERIFIED"
 manifests_sha256:
   requirements.txt: "3623eb4adf7b13a79fce4da4bbf135c5343c9657864b2b4b87a7a41985c7452f"
   pyproject.toml: "d94c92260210b17b6e02d6c2f411bcb29f478832823353ca4e7716b691ea397c"
@@ -904,7 +904,6 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`Dockerfile`](Dockerfile) | `no-ext` | 43 | 2049 | Configuration or static asset |
 | [`Dockerfile.worker`](Dockerfile.worker) | `.worker` | 22 | 713 | Configuration or static asset |
 | [`LICENSE`](LICENSE) | `no-ext` | 21 | 1105 | Configuration or static asset |
-| [`MODERNIZATION_AUDIT.md`](MODERNIZATION_AUDIT.md) | `.md` | 47 | 1882 | Documentation asset |
 | [`Makefile`](Makefile) | `no-ext` | 41 | 1512 | Configuration or static asset |
 | [`README.md`](README.md) | `.md` | 393 | 16446 | Documentation asset |
 | [`SECURITY.md`](SECURITY.md) | `.md` | 25 | 1003 | Documentation asset |
@@ -960,7 +959,6 @@ Production deployment is achieved via containerized Docker environments hosting 
 | [`docs/API_DOCUMENTATION.md`](docs/API_DOCUMENTATION.md) | `.md` | 3 | 79 | Technical documentation or manual |
 | [`docs/DEVELOPER_GUIDE.md`](docs/DEVELOPER_GUIDE.md) | `.md` | 3 | 74 | Technical documentation or manual |
 | [`docs/DISASTER-RECOVERY.md`](docs/DISASTER-RECOVERY.md) | `.md` | 42 | 1206 | Technical documentation or manual |
-| [`docs/PROJECT_ANALYSIS.md`](docs/PROJECT_ANALYSIS.md) | `.md` | 18 | 989 | Technical documentation or manual |
 | [`docs/README.md`](docs/README.md) | `.md` | 74 | 3604 | Technical documentation or manual |
 | [`docs/ai/PROVENANCE.md`](docs/ai/PROVENANCE.md) | `.md` | 42 | 1426 | Technical documentation or manual |
 | [`docs/ai/README.md`](docs/ai/README.md) | `.md` | 46 | 1499 | Technical documentation or manual |
