@@ -56,7 +56,7 @@ jobs:
         run: mkdir -p k6-results
 
       - name: Setup k6
-        uses: grafana/setup-k6-action@43b9fc21641a76002687994433dd586f56e791b1 # v1
+        uses: grafana/setup-k6-action@c47136d33d365efbeb9ae7266908b5dcf98cdece # v1
 
       - name: Run k6 load test
         uses: grafana/run-k6-action@4082a08c7e40cf6d65863911077dfb60ae0a4f04 # v1
