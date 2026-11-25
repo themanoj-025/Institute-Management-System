@@ -13,8 +13,6 @@ anyio==4.15.1
     #   starlette
 asgiref==3.12.1
     # via opentelemetry-instrumentation-asgi
-async-timeout==5.0.1
-    # via redis
 babel==2.18.0
     # via tkcalendar
 bandit==1.9.4
