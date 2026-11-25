@@ -98,7 +98,7 @@ def blacklist_token(jti: str, expires_at: datetime, user_id: int | None = None) 
     try:
         entry = RevokedToken(
             jti=jti,
-            token_type="access",
+            token_type="access",  # nosec B106 - token type label, not a credential
             revoked_at=utc_now(),
             expires_at=expires_at,
             user_id=user_id,

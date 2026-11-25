@@ -53,7 +53,7 @@ def login(req: LoginRequest) -> dict:
     description="Submit the OTP received via email to complete authentication. Returns a JWT access token.",
     response_description="JWT access token with user details",
 )
-def verify_otp(req: VerifyOtpRequest) -> bool:
+def verify_otp(req: VerifyOtpRequest) -> dict:
     from services.auth_service import AuthError, AuthService
 
     with get_session() as session:

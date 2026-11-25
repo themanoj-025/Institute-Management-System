@@ -25,7 +25,7 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
 
 from utils.logger import setup_logger
 
@@ -245,8 +245,9 @@ _health_checker = HealthChecker().with_db(get_session)
     summary="Root health check",
     description="Liveness probe that checks database connectivity, ML model status, and disk space.",
     tags=["Health"],
+    responses={503: {"description": "Service unhealthy"}},
 )
-def health_check() -> bool:
+def health_check() -> Response:
     from fastapi import status as http_status
 
     report = _health_checker.check()
@@ -265,10 +266,9 @@ def health_check() -> bool:
     summary="Prometheus metrics",
     description="Returns application metrics in Prometheus text format.",
     tags=["Health"],
+    response_class=PlainTextResponse,
 )
-def metrics() -> dict:
-    from fastapi.responses import PlainTextResponse
-
+def metrics() -> PlainTextResponse:
     from utils.observability import metrics_endpoint as _metrics
 
     return PlainTextResponse(content=_metrics(), media_type="text/plain; version=0.0.4")
@@ -278,8 +278,9 @@ def metrics() -> dict:
     "/health",
     summary="Versioned health check",
     tags=["Health"],
+    responses={503: {"description": "Service unhealthy"}},
 )
-def v1_health_check() -> bool:
+def v1_health_check() -> Response:
     from fastapi import status as http_status
 
     report = _health_checker.check()

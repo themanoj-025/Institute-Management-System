@@ -79,8 +79,8 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
         method = request.method
         endpoint = request.url.path
-        assert ACTIVE_REQUESTS is not None
-        ACTIVE_REQUESTS.inc()
+        if ACTIVE_REQUESTS is not None:
+            ACTIVE_REQUESTS.inc()
         start = time.monotonic()
         response: Response | None = None
 
@@ -90,14 +90,12 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         finally:
             duration = time.monotonic() - start
             status = getattr(response, "status_code", 500) if response is not None else 500
-            assert (
-                REQUEST_COUNT is not None
-                and REQUEST_LATENCY is not None
-                and ACTIVE_REQUESTS is not None
-            )
-            REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
-            REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(duration)
-            ACTIVE_REQUESTS.dec()
+            if REQUEST_COUNT is not None:
+                REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=status).inc()
+            if REQUEST_LATENCY is not None:
+                REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(duration)
+            if ACTIVE_REQUESTS is not None:
+                ACTIVE_REQUESTS.dec()
 
 
 def metrics_endpoint() -> str:
@@ -112,9 +110,8 @@ def metrics_endpoint() -> str:
                 media_type=\"text/plain; version=0.0.4\",
             )
     """
-    if not _metrics_enabled:
+    if not _metrics_enabled or generate_latest is None:
         return "# prometheus_client not installed — no metrics available\n"
-    assert generate_latest is not None
     return generate_latest().decode("utf-8")
 
 
@@ -177,9 +174,8 @@ class HealthChecker:
             overall = "degraded" if overall == "ok" else overall
 
         # Update Prometheus gauge for DB status
-        if _metrics_enabled:
+        if _metrics_enabled and DB_CONNECTION_STATUS is not None:
             try:
-                assert DB_CONNECTION_STATUS is not None
                 DB_CONNECTION_STATUS.set(1 if db_ok else 0)
             except (OSError, ValueError):
                 pass
