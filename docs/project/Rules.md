@@ -1,4 +1,4 @@
-# Rules — BB-IMS: Coding Standards & AI-Agent Operating Rules
+# Rules — BB-IMS: Coding Standards & Engineering Operating Rules
 
 | Field | Value |
 | --- | --- |
@@ -50,7 +50,7 @@ tests/
 - MUST have tests: auth/JWT/jti, RBAC + IDOR, rate limits, OTP, ML promotion gate, PSI drift, API contracts.
 - See [Testing.md](../technical/Testing.md).
 
-## 5. AI Agent Operating Rules
+## 5. Engineering Operating Rules
 
 - Always read Tracker.md and ImplementationPlan.md before starting.
 - Never mark a task 🟢 Done without tests passing.
