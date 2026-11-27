@@ -307,10 +307,14 @@ jobs:
           pip install bandit==1.9.4 pip-audit
 
       - name: Run Bandit (static analysis)
-        run: bandit -r . -x venv,alembic,tests -f json -o bandit-report.json || true
+        # Blocking: medium-and-above findings fail the pipeline. The previous
+        # `|| true` made the scan purely advisory, so nothing was enforced.
+        run: bandit -r . -x venv,alembic,tests -ll -f json -o bandit-report.json
 
       - name: Run pip-audit (dependency vulnerabilities)
-        run: pip-audit || true
+        # `pip-audit` with no `-r` only audits the runner's own environment
+        # (pip/setuptools). Audit the project requirements instead.
+        run: pip-audit -r requirements.txt
 
       # Pinned binary instead of gitleaks-action@v2: the action intermittently
       # fails with gitleaks' "stderr is not empty" git-plumbing error (gitleaks

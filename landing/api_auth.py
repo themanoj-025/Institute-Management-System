@@ -76,7 +76,7 @@ def _api_login(username: str, password: str) -> dict:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 if resp.status == 401:
                     raise ApiAuthError("Invalid credentials")
@@ -122,7 +122,7 @@ def _api_verify_otp(user_id: int, otp: str) -> dict:
             url, data=data, headers={"Content-Type": "application/json"}, method="POST"
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 return _json.loads(body)
         except urllib.error.HTTPError as e:
@@ -168,7 +168,7 @@ def _api_send_verification_email(user_id: int) -> dict:
             url, data=data, headers={"Content-Type": "application/json"}, method="POST"
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 return _json.loads(body)
         except urllib.error.HTTPError as e:
@@ -209,7 +209,7 @@ def _api_confirm_verification(user_id: int, token: str) -> dict:
             url, data=data, headers={"Content-Type": "application/json"}, method="POST"
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 return _json.loads(body)
         except urllib.error.HTTPError as e:
@@ -243,7 +243,7 @@ def _api_logout(token: str) -> bool:
 
         req = urllib.request.Request(url, data=b"", headers=headers, method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=10):
+            with urllib.request.urlopen(req, timeout=10):  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 return True
         except (urllib.error.URLError, OSError):
             return False
@@ -282,7 +282,7 @@ def _api_forgot_password(email: str) -> dict:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 return _json.loads(body)
         except urllib.error.HTTPError as e:
@@ -333,7 +333,7 @@ def _api_reset_password(user_id: int, token: str, new_password: str) -> dict:
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:  # nosec B310 - URL is the configured HTTP(S) API base, not caller-supplied
                 body = resp.read().decode("utf-8")
                 return _json.loads(body)
         except urllib.error.HTTPError as e:

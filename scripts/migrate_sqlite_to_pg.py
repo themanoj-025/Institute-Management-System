@@ -232,7 +232,7 @@ def main() -> None:
                     # identifiers can't be parameterized in SQL, but the whitelist
                     # validation in _quote_identifier prevents injection)
                     max_id = pg_session.execute(
-                        text(f"SELECT COALESCE(MAX(id), 0) FROM {quoted_table}")
+                        text(f"SELECT COALESCE(MAX(id), 0) FROM {quoted_table}")  # nosec B608 - identifier whitelisted + quoted by _quote_identifier
                     ).scalar()
                     seq_name = _quote_identifier(f"{table_name}_id_seq")
                     next_val = (max_id or 0) + 1
